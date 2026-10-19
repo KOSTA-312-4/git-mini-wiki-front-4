@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import './App.css'
-import Loading from './components/GithubRepositories'
 import axios from 'axios';
 import GithubRepositories from './components/GithubRepositories';
 
