@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import './App.css'
 import axios from 'axios';
-import GithubRepositories from './components/GithubRepositories';
+import GithubRepositories from './pages/GithubRepositories';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import SideBar from './components/SideBar';
 
 function App() {
 //   const [gits, setGits] = useState([]);
@@ -27,7 +30,10 @@ function App() {
 
   return (
     <>
+    <Header/>
     <GithubRepositories keyword="자바 language:Java"/>
+    <SideBar/>
+    <Footer/>
     </>
   )
 }
