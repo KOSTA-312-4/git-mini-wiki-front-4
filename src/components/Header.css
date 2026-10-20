@@ -1,0 +1,43 @@
+/* Header는 브라우저 화면의 최상단에 고정됩니다. */
+:root {
+  --site-header-height: 64px;
+}
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1030;
+  width: 100%;
+  height: var(--site-header-height);
+  color: #fff;
+  background-color: #343a40; /* 완전한 검정보다 밝은 차콜 그레이 */
+  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+}
+
+.site-header .navbar {
+  height: 100%;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.site-header .navbar-brand {
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.site-header .navbar-brand:hover {
+  color: #f8f9fa;
+}
+
+.site-header .header-link {
+  color: #dee2e6;
+}
+
+.site-header .header-link:hover,
+.site-header .header-link:focus,
+.site-header .header-link.active {
+  color: #fff;
+}

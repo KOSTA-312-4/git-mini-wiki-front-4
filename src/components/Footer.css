@@ -1,0 +1,16 @@
+.site-footer {
+  flex-shrink: 0;
+  padding: 24px 0;
+  color: #dee2e6;
+  background: #343a40;
+}
+
+.footer-brand {
+  color: #fff;
+}
+
+.footer-brand:hover,
+.footer-brand:focus {
+  color: #fff;
+  text-decoration: underline;
+}

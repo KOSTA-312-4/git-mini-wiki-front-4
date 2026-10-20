@@ -1,41 +1,43 @@
-import { useEffect, useState } from 'react';
-import './App.css'
-import axios from 'axios';
-import GithubRepositories from './pages/GithubRepositories';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import SideBar from './components/SideBar';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import Header from './components/Header.jsx';
+import Sidebar from './components/Sidebar.jsx';
+import Footer from './components/Footer.jsx';
+// import HomePage from './pages/HomePage.jsx';
+import GithubRepositories from './pages/GithubRepositories.jsx';
+// import FavoritesPage from './pages/FavoritesPage.jsx';
+// import MyPage from './pages/MyPage.jsx';
+// import LoginPage from './pages/LoginPage.jsx';
+// import SignupPage from './pages/SignupPage.jsx';
+import './App.css';
 
-function App() {
-//   const [gits, setGits] = useState([]);
+const AUTH_PATHS = ['/login', '/signup'];
 
-//   const initSet = async ()=>{
-//     await axios.get(
-//   "https://api.github.com/search/repositories",
-//   {
-//     params: {
-//       q: `${''} language:Java`,
-//       sort: "stars",
-//       order: "desc",
-//       per_page: 10,
-//       page: 1,
-//     },
-//   }
-// );
-//   };
-
-//   useEffect(()=>{
-//     initSet();
-//   });
+export default function App() {
+  const { pathname } = useLocation();
+  const isAuthPage = AUTH_PATHS.includes(pathname);
 
   return (
-    <>
-    <Header/>
-    <GithubRepositories keyword="자바 language:Java"/>
-    <SideBar/>
-    <Footer/>
-    </>
-  )
-}
+    <div className="app-shell">
+      <Header />
 
-export default App
+      <div className={`container page-layout${isAuthPage ? ' page-layout-auth' : ''}`}>
+        <main className="main-content">
+          <Routes>
+            {/* <Route path="/" element={<HomePage />} /> */}
+            <Route path="/search" element={<GithubRepositories />} />
+            {/* <Route path="/favorites" element={<FavoritesPage />} />
+            <Route path="/mypage" element={<MyPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/signup" element={<SignupPage />} /> */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
+
+        {/* 로그인과 회원가입 화면에서는 Sidebar를 렌더링하지 않습니다. */}
+        {!isAuthPage && <Sidebar />}
+      </div>
+
+      <Footer />
+    </div>
+  );
+}

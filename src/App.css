@@ -1,0 +1,71 @@
+/*
+ * Header는 fixed이므로 문서 흐름에서 빠집니다.
+ * app-shell의 padding-top으로 Header 아래에서 콘텐츠가 시작되게 합니다.
+ */
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-top: var(--site-header-height, 64px);
+}
+
+/*
+ * 데스크톱에서는 Main 오른쪽에 240px + 24px의 빈 공간을 확보합니다.
+ * Sidebar는 fixed라서 화면에 고정되지만, 이 빈 열 덕분에 Main과 겹치지 않습니다.
+ */
+.page-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 24px;
+  align-items: stretch;
+  padding-top: 24px;
+  padding-bottom: 40px;
+  flex: 1 0 auto;
+}
+
+.main-content {
+  min-width: 0;
+  min-height: 60vh;
+  padding: 32px;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgb(33 37 41 / 3%);
+}
+
+/* 로그인/회원가입은 Sidebar를 렌더링하지 않고 Main을 단일 열로 표시합니다. */
+.page-layout-auth {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+.page-layout-auth .main-content {
+  width: 100%;
+  max-width: 720px;
+  min-height: 0;
+  margin: 24px auto;
+  padding: 40px;
+}
+
+/* Footer는 고정하지 않습니다. 모든 콘텐츠 다음에 위치합니다. */
+.site-footer {
+  margin-top: auto;
+}
+
+@media (max-width: 767.98px) {
+  .page-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding-top: 16px;
+    padding-bottom: 24px;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .page-layout-auth .main-content {
+    margin: 8px auto;
+    padding: 24px 20px;
+  }
+}
