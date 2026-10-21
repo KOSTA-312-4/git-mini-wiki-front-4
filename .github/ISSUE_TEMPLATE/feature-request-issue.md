@@ -1,9 +1,10 @@
 ---
-name: Blank issue
+name: feature request-issue
 about: Issue
 title: "[Issue] "
-labels: ""
-assignees: ""
+labels: ''
+assignees: ''
+
 ---
 
 ## 📝 작업 내용
