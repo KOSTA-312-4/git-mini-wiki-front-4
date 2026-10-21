@@ -1,5 +1,5 @@
 ---
-name: Blank Issue
+name: Blank issue
 about: Issue
 title: "[Issue] "
 labels: ""
