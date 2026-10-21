@@ -1,3 +1,11 @@
+---
+name: Bug Report
+about: ""
+title: "[Issue] "
+labels: ""
+assignees: ""
+---
+
 ## 📝 작업 내용
 > 어떤 작업인지 간단하게 작성해주세요.
 
