@@ -1,5 +1,5 @@
 ---
-name: Bug Report
+name: Blank Issue
 about: Issue
 title: "[Issue] "
 labels: ""
