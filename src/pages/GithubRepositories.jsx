@@ -1,12 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import "./GithubRepositories.css";
 
 const API_URL = "https://api.github.com/search/repositories";
-const PER_PAGE = 9;
+
+// API 응답 개수와 화면 표시 개수 분리
+const API_PER_PAGE = 99;
+const DISPLAY_PER_PAGE = 9;
+
 const FAVORITES_KEY = "github-repository-favorites";
 
-// localStorage에서 즐겨찾기 목록 가져오기
 function loadFavorites() {
   try {
     const saved = localStorage.getItem(FAVORITES_KEY);
@@ -18,22 +21,28 @@ function loadFavorites() {
   }
 }
 
-function GithubRepositories({ keyword = "java" }) {
+function GithubRepositories({ key = "자바 language:", isLogin = [] }) {
   const [repositories, setRepositories] = useState([]);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [keyword, setKeyword] = useState(key);
+  const [login, setLogin] = useState(isLogin);
 
   const [favorites, setFavorites] = useState(loadFavorites);
+  const inputRef = useRef();
 
-  // 페이지 또는 검색어가 바뀌면 API 요청
+  // 검색어가 변경되면 API 요청
   useEffect(() => {
     const controller = new AbortController();
 
     const fetchRepositories = async () => {
       setLoading(true);
       setError("");
+      setRepositories([]);
+      setTotalCount(0);
+      setPage(1);
 
       try {
         const response = await axios.get(API_URL, {
@@ -41,28 +50,27 @@ function GithubRepositories({ keyword = "java" }) {
             q: keyword,
             sort: "stars",
             order: "desc",
-            per_page: PER_PAGE,
-            page: page,
+            per_page: API_PER_PAGE,
+            page: 1,
           },
           signal: controller.signal,
         });
 
-        // GitHub JSON에서 필요한 부분만 추출
         setRepositories(response.data.items ?? []);
         setTotalCount(response.data.total_count ?? 0);
       } catch (err) {
         if (controller.signal.aborted) return;
 
-        if (err.response?.status === 403 || err.response?.status === 429) {
+        if (
+          err.response?.status === 403 ||
+          err.response?.status === 429
+        ) {
           setError(
-            "API 요청 한도에 도달했을 수 있습니다. 잠시 후 다시 시도해주세요.",
+            "API 요청 한도에 도달했을 수 있습니다. 잠시 후 다시 시도해주세요."
           );
         } else {
           setError("저장소를 불러오지 못했습니다.");
         }
-
-        setRepositories([]);
-        setTotalCount(0);
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false);
@@ -72,22 +80,32 @@ function GithubRepositories({ keyword = "java" }) {
 
     fetchRepositories();
 
-    // 이전 요청이 남아 있으면 취소
     return () => controller.abort();
-  }, [keyword, page]);
+  }, [keyword]);
 
-  // 즐겨찾기가 바뀌면 localStorage에 저장
+  // 즐겨찾기 변경 사항을 localStorage에 저장
   useEffect(() => {
-    localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
+    try {
+      localStorage.setItem(
+        FAVORITES_KEY,
+        JSON.stringify(favorites)
+      );
+    } catch {
+      // 브라우저 저장 공간을 사용할 수 없는 경우 무시
+    }
   }, [favorites]);
 
   // 즐겨찾기 추가 및 해제
   const toggleFavorite = (repo) => {
     setFavorites((prevFavorites) => {
-      const exists = prevFavorites.some((favorite) => favorite.id === repo.id);
+      const exists = prevFavorites.some(
+        (favorite) => favorite.id === repo.id
+      );
 
       if (exists) {
-        return prevFavorites.filter((favorite) => favorite.id !== repo.id);
+        return prevFavorites.filter(
+          (favorite) => favorite.id !== repo.id
+        );
       }
 
       return [
@@ -110,10 +128,21 @@ function GithubRepositories({ keyword = "java" }) {
     });
   };
 
-  // GitHub Search API는 검색 결과 최대 1,000개까지 페이지 조회 가능
+  // GitHub Search API 검색 결과 최대 1,000개 제한
+  const searchableCount = Math.min(totalCount, 1000);
+
+  // 화면 페이지 수 계산
   const totalPages = Math.max(
     1,
-    Math.ceil(Math.min(totalCount, 1000) / PER_PAGE),
+    Math.ceil(searchableCount / DISPLAY_PER_PAGE)
+  );
+
+  // 현재 페이지에 해당하는 저장소 9개 추출
+  const startIndex = (page - 1) * DISPLAY_PER_PAGE;
+
+  const visibleRepositories = repositories.slice(
+    startIndex,
+    startIndex + DISPLAY_PER_PAGE
   );
 
   const goToPreviousPage = () => {
@@ -121,22 +150,37 @@ function GithubRepositories({ keyword = "java" }) {
   };
 
   const goToNextPage = () => {
-    setPage((prevPage) => Math.min(totalPages, prevPage + 1));
+    setPage((prevPage) =>
+      Math.min(totalPages, prevPage + 1)
+    );
   };
+
+  function handleSearch(event) {
+    event.preventDefault();
+    if(inputRef.current.value == '') {
+      alert('검색어를 입력해주세요.');
+      inputRef.current.focus();
+      return;
+    }
+    setKeyword(inputRef.current.value);
+  }
 
   return (
     <section className="repo-page">
+      <form onSubmit={handleSearch} className="d-flex gap-2 mb-4">
+        <input className="form-control" type="search" ref={inputRef} name="q" placeholder="검색어를 입력하세요." aria-label="검색어" defaultValue={keyword}/>
+        <button className="btn btn-primary flex-shrink-0" type="submit">검색</button>
+      </form>
       <div className="repo-grid">
         {!loading &&
           !error &&
-          repositories.map((repo) => {
+          visibleRepositories.map((repo) => {
             const isFavorite = favorites.some(
-              (favorite) => favorite.id === repo.id,
+              (favorite) => favorite.id === repo.id
             );
 
             return (
               <article className="repo-card" key={repo.id}>
-                {/* 카드 상단: 저장소 이름과 즐겨찾기 */}
                 <div className="repo-card-header">
                   <h2 className="repo-title">{repo.name}</h2>
 
@@ -146,15 +190,24 @@ function GithubRepositories({ keyword = "java" }) {
                       isFavorite ? "is-favorite" : ""
                     }`}
                     onClick={() => toggleFavorite(repo)}
-                    aria-label={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+                    aria-label={
+                      isFavorite
+                        ? "즐겨찾기 해제"
+                        : "즐겨찾기 추가"
+                    }
                     aria-pressed={isFavorite}
-                    title={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
+                    title={
+                      isFavorite
+                        ? "즐겨찾기 해제"
+                        : "즐겨찾기 추가"
+                    }
+                    // 로그인 유저 판별 후 버튼 표시
+                    hidden={login.length == 0? true : false}
                   >
-                    {isFavorite ? "★" : "☆"}
+                    {isFavorite ? "♥" : "♡"}
                   </button>
                 </div>
 
-                {/* 저장소 소유자의 프로필 이미지 */}
                 {repo.owner?.avatar_url && (
                   <img
                     className="repo-avatar"
@@ -164,12 +217,10 @@ function GithubRepositories({ keyword = "java" }) {
                   />
                 )}
 
-                {/* 저장소 설명 */}
                 <p className="repo-description">
                   {repo.description || "설명이 없습니다."}
                 </p>
 
-                {/* 저장소 통계와 GitHub 링크 */}
                 <div className="repo-details">
                   <div className="repo-stats">
                     <p className="repo-stat">
@@ -183,7 +234,8 @@ function GithubRepositories({ keyword = "java" }) {
                     </p>
 
                     <p className="repo-stat">
-                      <strong>Language:</strong> {repo.language ?? "정보 없음"}
+                      <strong>Language:</strong>{" "}
+                      {repo.language ?? "정보 없음"}
                     </p>
                   </div>
 
@@ -201,49 +253,60 @@ function GithubRepositories({ keyword = "java" }) {
           })}
       </div>
 
-      {/* 로딩 및 오류 메시지 */}
+      {/* 로딩 메시지 */}
       {loading && (
         <p className="repo-message" role="status">
           저장소 정보를 불러오는 중입니다...
         </p>
       )}
 
+      {/* 오류 메시지 */}
       {!loading && error && (
         <p className="repo-message repo-error" role="alert">
           {error}
         </p>
       )}
 
-      {!loading && !error && repositories.length === 0 && (
-        <p className="repo-message">검색 결과가 없습니다.</p>
-      )}
+      {/* 검색 결과 없음 */}
+      {!loading &&
+        !error &&
+        repositories.length === 0 && (
+          <p className="repo-message">
+            검색 결과가 없습니다.
+          </p>
+        )}
 
-      {/* 이전 / 다음 페이지 */}
-      {!loading && !error && totalCount > 0 && (
-        <nav className="repo-pagination" aria-label="저장소 검색 페이지 이동">
-          <button
-            type="button"
-            className="pagination-button"
-            onClick={goToPreviousPage}
-            disabled={page <= 1}
+      {/* 페이지네이션 */}
+      {!loading &&
+        !error &&
+        repositories.length > 0 && (
+          <nav
+            className="repo-pagination"
+            aria-label="저장소 검색 페이지 이동"
           >
-            Previous
-          </button>
+            <button
+              type="button"
+              className="pagination-button"
+              onClick={goToPreviousPage}
+              disabled={page <= 1}
+            >
+              Previous
+            </button>
 
-          <span className="repo-page-number">
-            {page} / {totalPages}
-          </span>
+            <span className="repo-page-number">
+              {page} / {totalPages}
+            </span>
 
-          <button
-            type="button"
-            className="pagination-button"
-            onClick={goToNextPage}
-            disabled={page >= totalPages}
-          >
-            Next
-          </button>
-        </nav>
-      )}
+            <button
+              type="button"
+              className="pagination-button"
+              onClick={goToNextPage}
+              disabled={page >= totalPages}
+            >
+              Next
+            </button>
+          </nav>
+        )}
     </section>
   );
 }
