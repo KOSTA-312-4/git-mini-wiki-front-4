@@ -59,7 +59,7 @@
   border: none;
   border-radius: 50%;
   background-color: #dfe3e9;
-  color: #c18a00;
+  color: #f80808;
   font-size: 30px;
   line-height: 1;
   cursor: pointer;
@@ -70,12 +70,12 @@
 
 .favorite-button:hover {
   transform: scale(1.06);
-  background-color: #fff0bf;
+  background-color: #ffbfbf;
 }
 
 .favorite-button.is-favorite {
-  color: #f0ad00;
-  background-color: #fff0bf;
+  color: #f80808;
+  background-color: #ffbfbf;
 }
 
 /* 소유자 프로필 이미지 */
