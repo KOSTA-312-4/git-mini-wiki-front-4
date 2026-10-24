@@ -1,27 +1,64 @@
-import {useState} from "react";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+  loginSuccess,
+  DEMO_EMAIL,
+  DEMO_PASSWORD,
+  saveDemoSession,
+} from "../store/authSlice";
+
 import "./LoginPage.css";
 
 export default function LoginPage() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // 입력상태
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
 
+  // 로그인 상태 처리
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
 
+    // 비어있는 입력값 확인
     if (!email.trim() || !password) {
       setError("이메일과 비밀번호를 입력해주세요.");
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    // 이메일 형식 검증
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       setError("올바른 이메일 주소를 입력해주세요.");
       return;
     }
 
-    setError("로그인 서버 연결 전입니다.");
+    // 데모 계정 정보 확인
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (
+      normalizedEmail !== DEMO_EMAIL ||
+      password !== DEMO_PASSWORD
+    ) {
+      setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+      return;
+    }
+
+    // 새로운 데모 로그인 세션 저장
+    saveDemoSession();
+
+    // Redux 상태 업데이트
+    dispatch(loginSuccess());
+
+    // 비밀번호 입력 초기화
+    setPassword("");
+
+    // 마이페이지로 이동
+    navigate("/mypage", { replace: true });
   };
 
   return (
