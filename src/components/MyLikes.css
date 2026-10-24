@@ -1,0 +1,33 @@
+.myLike-toolbar {
+  border: 1px solid black;
+}
+
+.myLike-list {
+  border: 1px solid black;
+  display: grid; /*가로로 배치*/
+  gap: 10px; /*레포 카드 끼리의 갭*/
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /*1fr :남는 공간을 1비율로 나눠가지기
+    minmax(0,1fr) : 최소 폭은 0이고, 최대는 1fr (비율만큼 차지하되 줄어들땐 0까지)
+    repeat(2,) : 괄호 안의 열 정의를 2번 반복
+    => 열의 폭을 균등하게 유지하기 위해 사용함
+  */
+}
+
+.myLike-search {
+  padding: 6px;
+  border: 1px solid #ccc;
+  font-size: 12px;
+  width: 200px;
+}
+
+.myLike-select-container {
+  display: flex;
+  justify-content: space-between; /*양쪽 끝 배치*/
+  align-items: center;
+}
+
+.myLike-label {
+  font-size: 12px;
+  color: gray;
+}
