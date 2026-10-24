@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./MyLikes.css";
 import "../pages/GithubRepositories.css"; //기존 레포 출력 스타일 반영
+import MyLikesCard from "./MyLikesCard";
 
 function MyLikes() {
   //TODO: 교체하기
@@ -41,15 +42,14 @@ function MyLikes() {
       </div>
 
       {/*좋아요 목록 조회 영역*/}
+      {/*TODO: 실제 repo로 연결한 후 삭제 예장*/}
       <div className="myLike-list">
         {favorites.length === 0 ? (
           <p className="myLike-if-empty">
             아직 좋아요한 레포지토리가 없습니다.
           </p>
         ) : (
-          favorites.map((repo) => (
-            <article className="repo-card" key={repo.id}></article>
-          ))
+          favorites.map((repo) => <MyLikesCard key={repo.id} repo={repo} />)
         )}
 
         {/*article1 */}
