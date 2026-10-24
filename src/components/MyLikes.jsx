@@ -16,10 +16,23 @@ function MyLikes() {
         />
         <div className="myLike-select-container">
           <div className="language-filter">
-            <label className="myLike-label">필터:</label>
+            {/*언어별 필터*/}
+            <label className="myLike-label">언어:</label>
+            <select id="likeLanguage" className="myLike-select">
+              <option value="">전체</option>
+              <option value="Java">Java</option>
+              <option value="JavaScript">JavaScript</option>
+              <option value="Python">Python</option>
+              <option value="TypeScript">TypeScript</option>
+            </select>
           </div>
+          {/*정렬*/}
           <div className="like-sort">
             <label className="myLike-label">정렬:</label>
+            <select id="likeSort" className="myLike-select">
+              <option value="recent">최근 저장순</option>
+              <option value="name">이름순</option>
+            </select>
           </div>
         </div>
       </div>

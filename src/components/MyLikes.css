@@ -19,6 +19,7 @@
   border: 1px solid #ccc;
   font-size: 12px;
   width: 200px;
+  margin-bottom: 12px;
 }
 
 .myLike-select-container {
@@ -30,4 +31,16 @@
 .myLike-label {
   font-size: 12px;
   color: gray;
+}
+
+.myLike-select {
+  margin-left: 6px;
+  margin-bottom: 12px;
+  padding: 4px 8px;
+  border: 1px solid #dedede;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #495057;
+  font-size: 10px;
+  cursor: pointer;
 }
