@@ -5,7 +5,7 @@ import Footer from './components/Footer.jsx';
 import HomePage from './pages/HomePage.jsx';
 import GithubRepositories from './pages/GithubRepositories.jsx';
 // import FavoritesPage from './pages/FavoritesPage.jsx';
-// import MyPage from './pages/MyPage.jsx';
+import MyPage from './pages/MyPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 // import SignupPage from './pages/SignupPage.jsx';
 import './App.css';
@@ -26,10 +26,12 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/search" element={<GithubRepositories />} />
             <Route path="/login" element={<LoginPage />} />
-            {/* <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/mypage" element={<MyPage />} />
+
+            {/* <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/signup" element={<SignupPage />} /> */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+
+            <Route path="*" element={<Navigate to="/search" replace />} />
           </Routes>
         </main>
 
