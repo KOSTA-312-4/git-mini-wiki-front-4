@@ -1,0 +1,13 @@
+.favorite-title {
+  background-color: khaki;
+}
+.favorite-collection {
+  background-color: bisque;
+  border: 1px solid black;
+  margin-bottom: 10px;
+}
+
+.favorite-list {
+  background-color: #e8f5e9;
+  border: 1px solid black;
+}
