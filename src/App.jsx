@@ -2,7 +2,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Header from './components/Header.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import Footer from './components/Footer.jsx';
-// import HomePage from './pages/HomePage.jsx';
+import HomePage from './pages/HomePage.jsx';
 import GithubRepositories from './pages/GithubRepositories.jsx';
 // import FavoritesPage from './pages/FavoritesPage.jsx';
 // import MyPage from './pages/MyPage.jsx';
@@ -23,7 +23,7 @@ export default function App() {
       <div className={`container page-layout${isAuthPage ? ' page-layout-auth' : ''}`}>
         <main className="main-content">
           <Routes>
-            {/* <Route path="/" element={<HomePage />} /> */}
+            <Route path="/" element={<HomePage />} />
             <Route path="/search" element={<GithubRepositories />} />
             <Route path="/login" element={<LoginPage />} />
             {/* <Route path="/favorites" element={<FavoritesPage />} />
