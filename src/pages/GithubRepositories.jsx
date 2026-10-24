@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import axios from "axios";
+
 import "./GithubRepositories.css";
 
 const API_URL = "https://api.github.com/search/repositories";
 
 // API 응답 개수와 화면 표시 개수 분리
-const API_PER_PAGE = 99;
 const DISPLAY_PER_PAGE = 9;
 
 const FAVORITES_KEY = "github-repository-favorites";
@@ -21,14 +23,21 @@ function loadFavorites() {
   }
 }
 
-function GithubRepositories({ key = "자바", isLogin = [] }) {
+function GithubRepositories() {
+  let selectUser = useSelector(s=>s.auth);
+
+  const /*[params, setParams]*/[params] = useSearchParams();
+  const initKeyword = params.get('q') + (params.get('lang') != ''? ' language:' + params.get('lang') : '');
+
   const [repositories, setRepositories] = useState([]);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [keyword, setKeyword] = useState(key);
-  const [login, setLogin] = useState(isLogin);
+  const [keyword, setKeyword] = useState(initKeyword);
+
+  let defaultKeyword = keyword;
+  if(keyword.split(' language:').length>=2) defaultKeyword = keyword.split(' language:')[0];
 
   const [favorites, setFavorites] = useState(loadFavorites);
   const inputRef = useRef();
@@ -51,7 +60,7 @@ function GithubRepositories({ key = "자바", isLogin = [] }) {
             q: keyword,
             sort: "stars",
             order: "desc",
-            per_page: API_PER_PAGE,
+            per_page: 99,
             page: 1,
           },
           signal: controller.signal,
@@ -169,7 +178,7 @@ function GithubRepositories({ key = "자바", isLogin = [] }) {
   return (
     <section className="repo-page">
       <form onSubmit={handleSearch} className="d-flex gap-2 mb-4">
-        <input className="form-control" type="search" ref={inputRef} name="q" placeholder="검색어를 입력하세요." aria-label="검색어" defaultValue={keyword}/>
+        <input className="form-control" type="search" ref={inputRef} name="q" placeholder="검색어를 입력하세요." aria-label="검색어" defaultValue={defaultKeyword}/>
         <select
                         onChange={(e) => detailRef.current = e.target.value}
                         style={{
@@ -220,7 +229,7 @@ function GithubRepositories({ key = "자바", isLogin = [] }) {
                         : "즐겨찾기 추가"
                     }
                     // 로그인 유저 판별 후 버튼 표시
-                    hidden={login.length == 0? true : false}
+                    hidden={selectUser.isLoggedIn? false : true}
                   >
                     {isFavorite ? "♥" : "♡"}
                   </button>
