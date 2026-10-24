@@ -51,6 +51,12 @@ export default function Header() {
 
                 <Link
                   className="nav-link header-link"
+                  to="/board">
+                  커뮤니티
+                </Link>
+
+                <Link
+                  className="nav-link header-link"
                   to="/mypage">
                   마이페이지
                 </Link>
@@ -81,6 +87,12 @@ export default function Header() {
                   className="nav-link header-link"
                   to="/favorites">
                   Favorite
+                </Link>
+
+                <Link
+                  className="nav-link header-link"
+                  to="/board">
+                  커뮤니티
                 </Link>
               </>
             )}

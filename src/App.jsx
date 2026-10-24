@@ -9,6 +9,7 @@ import MyPage from './pages/MyPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
 // import SignupPage from './pages/SignupPage.jsx';
 import './App.css';
+import Board from './pages/Board.jsx';
 
 const AUTH_PATHS = ['/login', '/signup'];
 
@@ -30,7 +31,7 @@ export default function App() {
 
             {/* <Route path="/favorites" element={<FavoritesPage />} />
             <Route path="/signup" element={<SignupPage />} /> */}
-
+            <Route path="/board" element={<Board />} />
             <Route path="*" element={<Navigate to="/search" replace />} />
           </Routes>
         </main>
