@@ -21,7 +21,7 @@ function loadFavorites() {
   }
 }
 
-function GithubRepositories({ key = "자바 language:", isLogin = [] }) {
+function GithubRepositories({ key = "자바", isLogin = [] }) {
   const [repositories, setRepositories] = useState([]);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -32,6 +32,7 @@ function GithubRepositories({ key = "자바 language:", isLogin = [] }) {
 
   const [favorites, setFavorites] = useState(loadFavorites);
   const inputRef = useRef();
+  const detailRef = useRef('');
 
   // 검색어가 변경되면 API 요청
   useEffect(() => {
@@ -162,14 +163,31 @@ function GithubRepositories({ key = "자바 language:", isLogin = [] }) {
       inputRef.current.focus();
       return;
     }
-    setKeyword(inputRef.current.value);
+    setKeyword(inputRef.current.value + " language:" + detailRef.current);
   }
 
   return (
     <section className="repo-page">
       <form onSubmit={handleSearch} className="d-flex gap-2 mb-4">
         <input className="form-control" type="search" ref={inputRef} name="q" placeholder="검색어를 입력하세요." aria-label="검색어" defaultValue={keyword}/>
-        <button className="btn btn-primary flex-shrink-0" type="submit">검색</button>
+        <select
+                        onChange={(e) => detailRef.current = e.target.value}
+                        style={{
+                          padding: "10px",
+                          marginLeft: "10px",
+                          borderRadius: "4px",
+                          border: "1px solid #ccc",
+                          width: "150px",
+                        }}
+                      >
+                        <option value="">언어 선택</option>
+                        <option value="Java">Java</option>
+                        <option value="Kotlin">Kotlin</option>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="Python">Python</option>
+                        <option value="TypeScript">TypeScript</option>
+                      </select>
+                      <button className="btn btn-primary flex-shrink-0" type="submit">검색</button>
       </form>
       <div className="repo-grid">
         {!loading &&
