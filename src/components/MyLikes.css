@@ -44,3 +44,12 @@
   font-size: 10px;
   cursor: pointer;
 }
+
+.myLike-if-empty {
+  grid-column: 1 / -1; /*첫 열 부터 마지막 열까지 -> 전체 폭*/
+  margin: 0;
+  padding: 40px 0;
+  text-align: center;
+  font-size: 14px;
+  color: #868e96;
+}
