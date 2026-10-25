@@ -25,13 +25,14 @@ function MyLikesCard({ repo }) {
         {/*포크수, 스크랩 수 등*/}
         <div className="repo-stats">
           <p className="repo-stat">
-            <strong>Stars:{repo.stargazers_count}</strong> 0
+            <strong>Stars:{repo.stargazers_count}</strong>{" "}
+            {repo.stargazers_count}
           </p>
           <p className="repo-stat">
-            <strong>Forks:{repo.forks_count}</strong> 0
+            <strong>Forks:{repo.forks_count}</strong> {repo.forks_count}
           </p>
           <p className="repo-stat">
-            <strong>Language:{repo.language}</strong> 0
+            <strong>Language:{repo.language}</strong> {repo.language}
           </p>
         </div>
 
