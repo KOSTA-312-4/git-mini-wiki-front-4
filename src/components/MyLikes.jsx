@@ -24,18 +24,19 @@ function MyLikes() {
   //TODO: 교체하기
   const [favorites, setFavorites] = useState(DUMMY_FAVORITES);
 
-  //검색
+  //====검색====
   const [input, setInput] = useState("");
 
-  //언어별 필터
+  //====언어별 필터====
   const [language, setLanguage] = useState("");
 
-  //데이터를 필터링 한 결과
+  //====정렬====
+  const [sort, setSort] = useState("");
+
+  //====데이터를 필터링 한 결과====
   const filteredFavorites = favorites.filter((repo) => {
     //검색
-    const matchName = repo.full_name
-      .toLowerCase()
-      .includes(input.toLowerCase()); //input값을 소문자로 + repo이름을 소문자로 만듦
+    const matchName = repo.name.toLowerCase().includes(input.toLowerCase()); //input값을 소문자로 + repo이름을 소문자로 만듦
 
     //언어별 필터
     const matchLanguage = language === "" ? true : repo.language === language; //language가 비어 있으면 모든 레포 출력
@@ -43,6 +44,12 @@ function MyLikes() {
     //리턴
     return matchName ? matchLanguage : false; //검색어 입력안하면 항상 true, 언어 선택안하면 항상 '전체'
   });
+
+  //=====sort 한 결과 정렬=====//
+  const sortedFavorites =
+    sort === "name"
+      ? [...filteredFavorites].sort((a, b) => a.name.localeCompare(b.name)) //필터링된 결과를 기반으로 sort
+      : favorites;
 
   return (
     <div>
@@ -78,7 +85,13 @@ function MyLikes() {
           {/*정렬*/}
           <div className="like-sort">
             <label className="myLike-label">정렬:</label>
-            <select id="likeSort" className="myLike-select">
+            <select
+              id="likeSort"
+              className="myLike-select"
+              value={sort}
+              onChange={(e) => setSort(e.target.value)}
+            >
+              <option value="">전체</option>
               <option value="recent">최근 저장순</option>
               <option value="name">이름순</option>
             </select>
@@ -93,10 +106,10 @@ function MyLikes() {
           <p className="myLike-if-empty">
             아직 좋아요한 레포지토리가 없습니다.
           </p>
-        ) : filteredFavorites.length === 0 ? (
+        ) : sortedFavorites.length === 0 ? (
           <p className="myLike-if-empty">조건에 맞는 레포지토리가 없습니다.</p>
         ) : (
-          filteredFavorites.map((repo) => (
+          sortedFavorites.map((repo) => (
             <MyLikesCard key={repo.id} repo={repo} />
           ))
         )}
