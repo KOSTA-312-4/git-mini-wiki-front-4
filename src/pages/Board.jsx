@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Table, Form, Alert } from 'react-bootstrap';
 
-// 과일농장 게시판 컴포넌트
 const Board = () => {
 
     // ---------------------- 게시글 목록 상태 ----------------------
