@@ -4,8 +4,33 @@ import "../pages/GithubRepositories.css"; //기존 레포 출력 스타일 반�
 import MyLikesCard from "./MyLikesCard";
 
 function MyLikes() {
+  // TODO: 더미 데이터 삭제
+  const langs = ["Java", "JavaScript", "Python", "TypeScript", null];
+  const DUMMY_FAVORITES = Array.from({ length: 24 }, (_, i) => {
+    const n = i + 1;
+    return {
+      id: 1000 + n,
+      name: `repo-${n}`,
+      full_name: `user${n}/repo-${n}`,
+      owner: { login: `user${n}`, avatar_url: "" },
+      description: n % 7 === 0 ? null : `더미 설명 ${n}`,
+      html_url: `https://github.com/user${n}/repo-${n}`,
+      stargazers_count: n * 137,
+      forks_count: n * 11,
+      language: langs[i % langs.length],
+    };
+  });
+
   //TODO: 교체하기
-  const [favorites, setFavorites] = useState([]);
+  const [favorites, setFavorites] = useState(DUMMY_FAVORITES);
+
+  //검색
+  const [input, setInput] = useState("");
+
+  //데이터를 필터링 한 결과
+  const filteredFavorites = favorites.filter(
+    (repo) => repo.full_name.toLowerCase().includes(input.toLowerCase()), //input값을 소문자로 + repo이름을 소문자로 만듦
+  );
 
   return (
     <div>
@@ -13,10 +38,13 @@ function MyLikes() {
 
       {/*툴바영역(검색 칸, 언어별 필터, 정렬*/}
       <div className="myLike-toolbar">
+        {/*TODO: description 검색 기능 구현*/}
         <input
           type="text"
           className="form-control myLike-search"
-          placeholder="검색어를 입력하세요."
+          placeholder="레포지토리 이름을 검색하세요."
+          onChange={(e) => setInput(e.target.value.trim())}
+          value={input}
         />
         <div className="myLike-select-container">
           <div className="language-filter">
@@ -48,117 +76,13 @@ function MyLikes() {
           <p className="myLike-if-empty">
             아직 좋아요한 레포지토리가 없습니다.
           </p>
+        ) : filteredFavorites.length === 0 ? (
+          <p className="myLike-if-empty">조건에 맞는 레포지토리가 없습니다.</p>
         ) : (
-          favorites.map((repo) => <MyLikesCard key={repo.id} repo={repo} />)
+          filteredFavorites.map((repo) => (
+            <MyLikesCard key={repo.id} repo={repo} />
+          ))
         )}
-
-        {/*article1 */}
-        <article className="repo-card">
-          {/*헤더*/}
-          <div className="repo-card-header">
-            <h2 className="repo-title">레포 이름</h2>
-            <button type="button" className="favorite-button is-favorite">
-              ♥
-            </button>
-          </div>
-
-          {/*프로필*/}
-          <img className="repo-avatar" src="" alt="프로필" />
-          <p className="repo-description">설명 문구</p>
-
-          {/*본문*/}
-          <div className="repo-details">
-            {/*포크수, 스크랩 수 등*/}
-            <div className="repo-stats">
-              <p className="repo-stat">
-                <strong>Stars:</strong> 0
-              </p>
-              <p className="repo-stat">
-                <strong>Forks:</strong> 0
-              </p>
-              <p className="repo-stat">
-                <strong>Language:</strong> 0
-              </p>
-            </div>
-
-            {/*링크*/}
-            <a className="repo-link" href="#">
-              View on GitHub
-            </a>
-          </div>
-        </article>
-
-        {/* 세개의 열 확인용 : article3*/}
-        <article className="repo-card">
-          {/*헤더*/}
-          <div className="repo-card-header">
-            <h2 className="repo-title">레포 이름</h2>
-            <button type="button" className="favorite-button is-favorite">
-              ♥
-            </button>
-          </div>
-
-          {/*프로필*/}
-          <img className="repo-avatar" src="" alt="프로필" />
-          <p className="repo-description">설명 문구</p>
-
-          {/*본문*/}
-          <div className="repo-details">
-            {/*포크수, 스크랩 수 등*/}
-            <div className="repo-stats">
-              <p className="repo-stat">
-                <strong>Stars:</strong> 0
-              </p>
-              <p className="repo-stat">
-                <strong>Forks:</strong> 0
-              </p>
-              <p className="repo-stat">
-                <strong>Language:</strong> 0
-              </p>
-            </div>
-
-            {/*링크*/}
-            <a className="repo-link" href="#">
-              View on GitHub
-            </a>
-          </div>
-        </article>
-
-        {/* 세개의 열 확인용 : article2*/}
-        <article className="repo-card">
-          {/*헤더*/}
-          <div className="repo-card-header">
-            <h2 className="repo-title">레포 이름</h2>
-            <button type="button" className="favorite-button is-favorite">
-              ♥
-            </button>
-          </div>
-
-          {/*프로필*/}
-          <img className="repo-avatar" src="" alt="프로필" />
-          <p className="repo-description">설명 문구</p>
-
-          {/*본문*/}
-          <div className="repo-details">
-            {/*포크수, 스크랩 수 등*/}
-            <div className="repo-stats">
-              <p className="repo-stat">
-                <strong>Stars:</strong> 0
-              </p>
-              <p className="repo-stat">
-                <strong>Forks:</strong> 0
-              </p>
-              <p className="repo-stat">
-                <strong>Language:</strong> 0
-              </p>
-            </div>
-
-            {/*링크*/}
-            <a className="repo-link" href="#">
-              View on GitHub
-            </a>
-          </div>
-        </article>
       </div>
     </div>
   );
