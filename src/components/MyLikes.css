@@ -53,3 +53,37 @@
   font-size: 14px;
   color: #868e96;
 }
+
+/* 페이지네이션 */
+.myLike-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.myLike-page-button {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #d1d5db;
+  color: #333333;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.myLike-page-button:hover:not(:disabled) {
+  background-color: #bfc5ce;
+}
+
+.myLike-page-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* 현재 페이지 번호 */
+.myLike-page-number {
+  color: #555555;
+  font-size: 14px;
+}

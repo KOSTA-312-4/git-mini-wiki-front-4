@@ -21,6 +21,11 @@ function MyLikes() {
     };
   });
 
+  //=====페이지네이션====//
+  const PAGE = 9; //한페이지에 9개만
+
+  const [page, setPage] = useState(1); //1페이지 기본
+
   //TODO: 교체하기
   const [favorites, setFavorites] = useState(DUMMY_FAVORITES);
 
@@ -50,6 +55,11 @@ function MyLikes() {
     sort === "name"
       ? [...filteredFavorites].sort((a, b) => a.name.localeCompare(b.name)) //필터링된 결과를 기반으로 sort
       : favorites;
+
+  //=====페이지 계산하기====//
+  const totalPage = Math.ceil(sortedFavorites.length / PAGE);
+  const start = (page - 1) * PAGE;
+  const pageFavorites = sortedFavorites.slice(start, start + PAGE);
 
   return (
     <div>
@@ -106,13 +116,34 @@ function MyLikes() {
           <p className="myLike-if-empty">
             아직 좋아요한 레포지토리가 없습니다.
           </p>
-        ) : sortedFavorites.length === 0 ? (
+        ) : pageFavorites.length === 0 ? (
           <p className="myLike-if-empty">조건에 맞는 레포지토리가 없습니다.</p>
         ) : (
-          sortedFavorites.map((repo) => (
-            <MyLikesCard key={repo.id} repo={repo} />
-          ))
+          pageFavorites.map((repo) => <MyLikesCard key={repo.id} repo={repo} />)
         )}
+      </div>
+
+      {/*페이지네이션*/}
+      <div className="myLike-pagination">
+        <button
+          className="myLike-page-button"
+          disabled={page === 1}
+          onClick={() => setPage(page - 1)}
+        >
+          이전
+        </button>
+
+        <span className="myLike-page-number">
+          {page} / {totalPage}
+        </span>
+
+        <button
+          className="myLike-page-button"
+          disabled={page === totalPage || totalPage === 0}
+          onClick={() => setPage(page + 1)}
+        >
+          다음
+        </button>
       </div>
     </div>
   );
