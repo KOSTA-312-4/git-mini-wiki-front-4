@@ -27,10 +27,22 @@ function MyLikes() {
   //검색
   const [input, setInput] = useState("");
 
+  //언어별 필터
+  const [language, setLanguage] = useState("");
+
   //데이터를 필터링 한 결과
-  const filteredFavorites = favorites.filter(
-    (repo) => repo.full_name.toLowerCase().includes(input.toLowerCase()), //input값을 소문자로 + repo이름을 소문자로 만듦
-  );
+  const filteredFavorites = favorites.filter((repo) => {
+    //검색
+    const matchName = repo.full_name
+      .toLowerCase()
+      .includes(input.toLowerCase()); //input값을 소문자로 + repo이름을 소문자로 만듦
+
+    //언어별 필터
+    const matchLanguage = language === "" ? true : repo.language === language; //language가 비어 있으면 모든 레포 출력
+
+    //리턴
+    return matchName ? matchLanguage : false; //검색어 입력안하면 항상 true, 언어 선택안하면 항상 '전체'
+  });
 
   return (
     <div>
@@ -50,7 +62,12 @@ function MyLikes() {
           <div className="language-filter">
             {/*언어별 필터*/}
             <label className="myLike-label">언어:</label>
-            <select id="likeLanguage" className="myLike-select">
+            <select
+              id="likeLanguage"
+              className="myLike-select"
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+            >
               <option value="">전체</option>
               <option value="Java">Java</option>
               <option value="JavaScript">JavaScript</option>
