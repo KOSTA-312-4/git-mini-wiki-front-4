@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
-import MyMemo from "../components/MyMemo";
 import {
   logoutSuccess,
   clearDemoSession,
@@ -9,7 +8,9 @@ import {
   saveDemoProfile,
 } from "../store/authSlice";
 
-const MAX_IMAGE_SIZE = 1024 * 1024; // 1 MB
+import MyMemo from "../components/MyMemo";
+
+const MAX_IMAGE_SIZE = 1024 * 1024; // 1MB
 
 const ALLOWED_IMAGE_TYPES = [
   "image/png",
@@ -104,7 +105,6 @@ export default function MyPage() {
   const handleAvatarChange = (event) => {
     const file = event.target.files?.[0];
 
-    // Allow the same file to be selected again.
     event.target.value = "";
 
     if (!file) return;
@@ -171,7 +171,6 @@ export default function MyPage() {
       <div className="card shadow-sm">
         <div className="card-body p-4">
           <h1 className="mb-4">마이페이지</h1>
-          <MyMemo userId={user.id} />
 
           <div className="d-flex align-items-center gap-4 mb-4">
             <div
@@ -226,9 +225,13 @@ export default function MyPage() {
                   type="button"
                   className="btn btn-outline-primary btn-sm"
                   disabled={isUploading}
-                  onClick={() => fileInputRef.current?.click()}
+                  onClick={() =>
+                    fileInputRef.current?.click()
+                  }
                 >
-                  {isUploading ? "업로드 중..." : "사진 변경"}
+                  {isUploading
+                    ? "업로드 중..."
+                    : "사진 변경"}
                 </button>
 
                 {user.avatar && (
@@ -354,7 +357,8 @@ export default function MyPage() {
 
                 <p>
                   <strong>자기소개:</strong>{" "}
-                  {user.bio || "아직 자기소개가 없습니다."}
+                  {user.bio ||
+                    "아직 자기소개가 없습니다."}
                 </p>
               </div>
             )}
@@ -362,26 +366,29 @@ export default function MyPage() {
 
           <hr />
 
-          <section className="mb-4">
-            <h4>내 메모</h4>
-            <p>
-              메모 작성, 수정, 삭제 기능은 추후 구현됩니다.
-            </p>
-          </section>
+          <MyMemo userId={user.id ?? user.email} />
+
+          <hr />
 
           <section className="mb-4">
             <h4>즐겨찾기 저장소</h4>
             <p>
-              저장한 GitHub 저장소를 관리하는 기능은 추후 구현됩니다.
+              저장한 GitHub 저장소를 관리하는 기능은
+              추후 구현됩니다.
             </p>
           </section>
+
+          <hr />
 
           <section className="mb-4">
             <h4>나의 XP</h4>
             <p>
-              활동 점수 및 잔디 성장 기능은 추후 구현됩니다.
+              활동 점수 및 잔디 성장 기능은
+              추후 구현됩니다.
             </p>
           </section>
+
+          <hr />
 
           <button
             type="button"
