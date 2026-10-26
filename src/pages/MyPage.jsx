@@ -9,45 +9,44 @@ import {
 } from "../store/authSlice";
 import MyMemo from "../components/MyMemo";
 import MyRepositories from "../components/MyRepositories";
+import { downloadUserExport } from "../utils/exportUserData";
 
-const MAX_IMAGE_SIZE = 1024 * 1024; // 1MB
+const MAX_IMAGE_SIZE = 1024 * 1024;
 
-const ALLOWED_IMAGE_TYPES = [
-  "image/png",
-  "image/jpeg",
-  "image/webp",
-];
+const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
 
 export default function MyPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
-  const { user, isLoggedIn } = useSelector(
-    (state) => state.auth
-  );
+  const { user, isLoggedIn } = useSelector((state) => state.auth);
 
   const [isEditing, setIsEditing] = useState(false);
   const [draftName, setDraftName] = useState(user?.name ?? "");
   const [draftBio, setDraftBio] = useState(user?.bio ?? "");
   const [error, setError] = useState("");
   const [avatarError, setAvatarError] = useState("");
+  const [exportError, setExportError] = useState("");
   const [isUploading, setIsUploading] = useState(false);
 
+  // Edit profile
   const handleEdit = () => {
-    setDraftName(user.name);
+    setDraftName(user.name ?? "");
     setDraftBio(user.bio ?? "");
     setError("");
     setIsEditing(true);
   };
 
+  // Cancel profile editing
   const handleCancel = () => {
-    setDraftName(user.name);
+    setDraftName(user.name ?? "");
     setDraftBio(user.bio ?? "");
     setError("");
     setIsEditing(false);
   };
 
+  // Save profile
   const handleSave = (event) => {
     event.preventDefault();
 
@@ -81,10 +80,12 @@ export default function MyPage() {
     }
 
     dispatch(updateProfile(updatedProfile));
+
     setIsEditing(false);
     setError("");
   };
 
+  // Save avatar
   const saveAvatar = (avatar) => {
     const updatedProfile = {
       name: user.name,
@@ -99,12 +100,13 @@ export default function MyPage() {
 
     dispatch(updateProfile({ avatar }));
     setAvatarError("");
+
     return true;
   };
 
+  // Upload avatar
   const handleAvatarChange = (event) => {
     const file = event.target.files?.[0];
-
     event.target.value = "";
 
     if (!file) return;
@@ -112,9 +114,7 @@ export default function MyPage() {
     setAvatarError("");
 
     if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-      setAvatarError(
-        "PNG, JPG, WEBP 이미지 파일만 업로드할 수 있습니다."
-      );
+      setAvatarError("PNG, JPG, WEBP 이미지 파일만 업로드할 수 있습니다.");
       return;
     }
 
@@ -148,18 +148,32 @@ export default function MyPage() {
     reader.readAsDataURL(file);
   };
 
+  // Remove avatar
   const handleRemoveAvatar = () => {
-    saveAvatar(null);
-
-    if (fileInputRef.current) {
+    if (saveAvatar(null) && fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
+  // Export user data as JSON (development only)
+  const handleExportUserData = () => {
+    setExportError("");
+
+    try {
+      downloadUserExport();
+    } catch {
+      setExportError("사용자 데이터를 내보내지 못했습니다.");
+    }
+  };
+
+  // Logout
   const handleLogout = () => {
     clearDemoSession();
     dispatch(logoutSuccess());
-    navigate("/login", { replace: true });
+
+    navigate("/login", {
+      replace: true,
+    });
   };
 
   if (!isLoggedIn || !user) {
@@ -172,6 +186,7 @@ export default function MyPage() {
         <div className="card-body p-4">
           <h1 className="mb-4">마이페이지</h1>
 
+          {/* User Profile Header */}
           <div className="d-flex align-items-center gap-4 mb-4">
             <div
               className="rounded-circle overflow-hidden d-flex align-items-center justify-content-center border bg-light"
@@ -205,9 +220,9 @@ export default function MyPage() {
             <div>
               <h3>안녕하세요, {user.name}님!</h3>
 
-              <p className="text-muted mb-2">
-                이메일: {user.email}
-              </p>
+              <p className="text-muted mb-1">아이디: {user.id}</p>
+
+              <p className="text-muted mb-2">이메일: {user.email}</p>
 
               <input
                 ref={fileInputRef}
@@ -225,13 +240,9 @@ export default function MyPage() {
                   type="button"
                   className="btn btn-outline-primary btn-sm"
                   disabled={isUploading}
-                  onClick={() =>
-                    fileInputRef.current?.click()
-                  }
+                  onClick={() => fileInputRef.current?.click()}
                 >
-                  {isUploading
-                    ? "업로드 중..."
-                    : "사진 변경"}
+                  {isUploading ? "업로드 중..." : "사진 변경"}
                 </button>
 
                 {user.avatar && (
@@ -251,10 +262,7 @@ export default function MyPage() {
               </small>
 
               {avatarError && (
-                <p
-                  className="text-danger mt-2 mb-0"
-                  role="alert"
-                >
+                <p className="text-danger mt-2 mb-0" role="alert">
                   {avatarError}
                 </p>
               )}
@@ -263,6 +271,7 @@ export default function MyPage() {
 
           <hr />
 
+          {/* Profile Editing */}
           <section className="mb-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
               <h4 className="mb-0">내 프로필</h4>
@@ -281,10 +290,7 @@ export default function MyPage() {
             {isEditing ? (
               <form onSubmit={handleSave}>
                 <div className="mb-3">
-                  <label
-                    htmlFor="profile-name"
-                    className="form-label"
-                  >
+                  <label htmlFor="profile-name" className="form-label">
                     이름
                   </label>
 
@@ -294,18 +300,13 @@ export default function MyPage() {
                     className="form-control"
                     value={draftName}
                     maxLength={30}
-                    onChange={(event) =>
-                      setDraftName(event.target.value)
-                    }
+                    onChange={(event) => setDraftName(event.target.value)}
                     placeholder="이름을 입력하세요"
                   />
                 </div>
 
                 <div className="mb-3">
-                  <label
-                    htmlFor="profile-bio"
-                    className="form-label"
-                  >
+                  <label htmlFor="profile-bio" className="form-label">
                     자기소개
                   </label>
 
@@ -315,15 +316,11 @@ export default function MyPage() {
                     rows={4}
                     maxLength={200}
                     value={draftBio}
-                    onChange={(event) =>
-                      setDraftBio(event.target.value)
-                    }
+                    onChange={(event) => setDraftBio(event.target.value)}
                     placeholder="자신을 소개해주세요."
                   />
 
-                  <div className="form-text">
-                    {draftBio.length}/200자
-                  </div>
+                  <div className="form-text">{draftBio.length}/200자</div>
                 </div>
 
                 {error && (
@@ -333,10 +330,7 @@ export default function MyPage() {
                 )}
 
                 <div className="d-flex gap-2">
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                  >
+                  <button type="submit" className="btn btn-primary">
                     저장
                   </button>
 
@@ -357,43 +351,63 @@ export default function MyPage() {
 
                 <p>
                   <strong>자기소개:</strong>{" "}
-                  {user.bio ||
-                    "아직 자기소개가 없습니다."}
+                  {user.bio || "아직 자기소개가 없습니다."}
                 </p>
               </div>
             )}
           </section>
 
+          {/* Compact JSON Export Button */}
+          {import.meta.env.DEV && (
+            <div className="d-flex justify-content-end mb-3">
+              <button
+                type="button"
+                className="btn btn-outline-secondary btn-sm"
+                onClick={handleExportUserData}
+                title="사용자 정보 JSON 파일 내보내기"
+              >
+                JSON 내보내기
+              </button>
+            </div>
+          )}
+
+          {exportError && (
+            <p className="text-danger small" role="alert">
+              {exportError}
+            </p>
+          )}
+
           <hr />
 
-          <MyMemo userId={user.id ?? user.email} />
+          {/* Memo Management */}
+          <MyMemo key={user.id} userId={user.id} />
 
           <hr />
 
-          <MyRepositories userId={user.id ?? user.email} />
+          {/* GitHub Repository Management */}
+          <MyRepositories key={user.id} userId={user.id} />
 
           <hr />
 
+          {/* Favorites */}
           <section className="mb-4">
             <h4>즐겨찾기 저장소</h4>
-            <p>
-              저장한 GitHub 저장소를 관리하는 기능은
-              추후 구현됩니다.
-            </p>
+
+            <p>저장한 GitHub 저장소를 관리하는 기능은 추후 구현됩니다.</p>
           </section>
 
           <hr />
 
+          {/* XP */}
           <section className="mb-4">
             <h4>나의 XP</h4>
-            <p>
-              활동 점수 및 잔디 성장 기능은
-              추후 구현됩니다.
-            </p>
+
+            <p>활동 점수 및 잔디 성장 기능은 추후 구현됩니다.</p>
           </section>
 
           <hr />
 
+          {/* Logout */}
           <button
             type="button"
             className="btn btn-danger"

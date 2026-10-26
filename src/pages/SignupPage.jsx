@@ -2,9 +2,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerDemoAccount } from "../utils/demoAccounts";
 import "./LoginPage.css";
+import { useDispatch } from "react-redux";
+import { syncUsers } from "../store/authSlice";
+import { getAllUserData } from "../utils/userData";
 
 export default function SignupPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [email, setEmail] = useState("");
   const [userId, setUserId] = useState("");
@@ -21,12 +25,7 @@ export default function SignupPage() {
     const normalizedEmail = email.trim().toLowerCase();
     const normalizedId = userId.trim().toLowerCase();
 
-    if (
-      !normalizedEmail ||
-      !normalizedId ||
-      !password ||
-      !confirmPassword
-    ) {
+    if (!normalizedEmail || !normalizedId || !password || !confirmPassword) {
       setError("모든 항목을 입력해주세요.");
       return;
     }
@@ -37,9 +36,7 @@ export default function SignupPage() {
     }
 
     if (!/^[a-z0-9_]{4,20}$/.test(normalizedId)) {
-      setError(
-        "아이디는 영문 소문자, 숫자, 밑줄(_) 4~20자로 입력해주세요."
-      );
+      setError("아이디는 영문 소문자, 숫자, 밑줄(_) 4~20자로 입력해주세요.");
       return;
     }
 
@@ -62,6 +59,7 @@ export default function SignupPage() {
         password,
       });
 
+      dispatch(syncUsers(getAllUserData()));
       navigate("/login", {
         replace: true,
         state: {
@@ -69,38 +67,24 @@ export default function SignupPage() {
         },
       });
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "회원가입에 실패했습니다."
-      );
+      setError(err instanceof Error ? err.message : "회원가입에 실패했습니다.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div
-      className="container py-5"
-      style={{ maxWidth: 480 }}
-    >
+    <div className="container py-5" style={{ maxWidth: 480 }}>
       <div className="card shadow-sm">
         <div className="card-body p-4">
-          <h2 className="text-center mb-2">
-            Git Nyang
-          </h2>
+          <h2 className="text-center mb-2">Git Nyang</h2>
 
-          <h4 className="text-center mb-4">
-            회원가입
-          </h4>
+          <h4 className="text-center mb-4">회원가입</h4>
 
           <form onSubmit={handleSubmit}>
             {/* Email */}
             <div className="mb-3">
-              <label
-                htmlFor="signup-email"
-                className="form-label"
-              >
+              <label htmlFor="signup-email" className="form-label">
                 이메일
               </label>
 
@@ -118,10 +102,7 @@ export default function SignupPage() {
 
             {/* User ID */}
             <div className="mb-3">
-              <label
-                htmlFor="signup-id"
-                className="form-label"
-              >
+              <label htmlFor="signup-id" className="form-label">
                 아이디
               </label>
 
@@ -145,10 +126,7 @@ export default function SignupPage() {
 
             {/* Password */}
             <div className="mb-3">
-              <label
-                htmlFor="signup-password"
-                className="form-label"
-              >
+              <label htmlFor="signup-password" className="form-label">
                 비밀번호
               </label>
 
@@ -167,10 +145,7 @@ export default function SignupPage() {
 
             {/* Confirm Password */}
             <div className="mb-3">
-              <label
-                htmlFor="signup-confirm"
-                className="form-label"
-              >
+              <label htmlFor="signup-confirm" className="form-label">
                 비밀번호 확인
               </label>
 
@@ -180,9 +155,7 @@ export default function SignupPage() {
                 className="form-control"
                 placeholder="비밀번호 다시 입력"
                 value={confirmPassword}
-                onChange={(e) =>
-                  setConfirmPassword(e.target.value)
-                }
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 autoComplete="new-password"
                 required
               />
@@ -195,9 +168,7 @@ export default function SignupPage() {
                 type="checkbox"
                 className="form-check-input"
                 checked={showPassword}
-                onChange={(e) =>
-                  setShowPassword(e.target.checked)
-                }
+                onChange={(e) => setShowPassword(e.target.checked)}
               />
 
               <label
@@ -210,10 +181,7 @@ export default function SignupPage() {
 
             {/* Error Message */}
             {error && (
-              <div
-                className="alert alert-danger"
-                role="alert"
-              >
+              <div className="alert alert-danger" role="alert">
                 {error}
               </div>
             )}
@@ -224,18 +192,13 @@ export default function SignupPage() {
               className="btn btn-primary w-100"
               disabled={isSubmitting}
             >
-              {isSubmitting
-                ? "가입 중..."
-                : "회원가입"}
+              {isSubmitting ? "가입 중..." : "회원가입"}
             </button>
           </form>
 
           {/* Login Link */}
           <p className="text-center mt-3 mb-0">
-            이미 계정이 있으신가요?{" "}
-            <Link to="/login">
-              로그인
-            </Link>
+            이미 계정이 있으신가요? <Link to="/login">로그인</Link>
           </p>
         </div>
       </div>

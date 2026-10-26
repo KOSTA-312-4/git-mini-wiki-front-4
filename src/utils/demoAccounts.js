@@ -159,3 +159,7 @@ export async function loginDemoAccount(userId, password) {
     avatar: null,
   };
 }
+
+export function getDemoAccounts() {
+  return readAccounts();
+}
