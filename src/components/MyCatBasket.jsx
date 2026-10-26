@@ -45,12 +45,16 @@ function MyCatBasket() {
   //새 냥바구니 버튼 감지
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
+  //냥바구니에 저장
+  const saveBaskets = (next) => setBaskets(next);
+
   //새 냥바구니 만들기
-  const handleCreate = (data) => {
-    //data: 새로 생성할 컬렉션 정보
-    //현재 시간을 id로 (나열을 생성순으로 함)
-    setBaskets((prev) => [...prev, { id: Date.now(), ...data }]);
-    setIsCreateOpen(false); //생성 완료되면 모달 닫기
+  //name, description, repoIds(바구니에 담기로한 레포)는 모달을 통해 전달 받은 정보
+  const handleCreate = ({ name, description, repoIds }) => {
+    saveBaskets([...baskets, { id: Date.now(), name, description, repoIds }]); //기존 바구니 목록에서 새로운 냥바구니(컬렉션) 추가
+
+    //모달 닫기
+    setIsCreateOpen(false);
   };
 
   return (

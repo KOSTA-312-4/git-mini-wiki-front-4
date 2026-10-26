@@ -1,19 +1,27 @@
 .catBasket-modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background-color: rgba(0, 0, 0, 0.45);
+}
+
+.catBasket-total-modal {
+  background-color: #ffffff;
+}
+
+.catBasket-modal-head {
+  background-color: black;
+}
+
+.catBasket-modal-title {
+  margin: 0;
+  font-weight: 600;
+  background-color: blue;
 }
 
 .catBasket-modal-body {
   padding: 16px;
   overflow-y: auto;
+  background-color: yellow;
 }
 
-/* 모달 안 공통 요소 */
 .catBasket-field-label {
   display: block;
   margin: 10px 0 4px;
@@ -28,4 +36,10 @@
   border: 1px solid #dedede;
   border-radius: 6px;
   font-size: 13px;
+}
+
+.catBasket-modal-close {
+  border: none;
+  background: none;
+  cursor: pointer;
 }

@@ -1,49 +1,57 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import "./NewCatBasketModal.css";
 
 function NewCatBasketModal({ likes, onClose, onCreate }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [selectIds, setSelectIds] = useState([]); //여러 id들이 들어올 수 있으므로 배열
 
-  //저장
+  //입력 내역 제출
   const handleSubmit = (e) => {
-    e.preventDefault(); //기본 제출 동작 차단하기
+    e.preventDefault();
+    const trimName = name.trim();
 
     onCreate({
-      name: name.trim(),
+      name: trimName,
       description: description.trim(),
+      repoIds: selectIds,
     });
   };
 
   return (
     <div className="catBasket-modal-overlay">
-      <div className="create-modal-body">
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="basketName" className="catBasket-field-label">
-            이름
-          </label>
-          <input
-            id="basketName"
-            type="text"
-            className="catBasket-field-input"
-            value={name}
-            placeholder="프론트엔드"
-          />
-
-          <label htmlFor="basketDescription" className="catBasket-field-label">
-            한줄 설명
-          </label>
-          <input
-            id="basketDescription"
-            className="catBasket-field-label"
-            type="text"
-            value={description}
-            placeholder="화면 만들때 보는 레포지토리 모음"
-          />
-
-          <p className="catBasket-field-label">담을 레포지토리</p>
-        </form>
+      <div className="catBasket-total-modal">
+        <div className="catBasket-modal-head">
+          <h6 className="catBasket-modal-title">새 냥바구니</h6>
+        </div>
+        <button
+          type="button"
+          className="catBasket-modal-close"
+          onClick={onClose}
+        >
+          x
+        </button>
       </div>
+      <form className="catBasket-modal-body" onSubmit={handleSubmit}>
+        <label htmlFor="basketName" className="catBasket-field-label">
+          이름
+        </label>
+        <input
+          id="basketName"
+          className="catBasket-field-input"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <label htmlFor="basketDescription" className="catBasket-field-label">
+          한줄 설명
+        </label>
+        <input
+          id="basketDescription"
+          className="catBasket-field-input"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+      </form>
     </div>
   );
 }
