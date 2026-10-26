@@ -26,7 +26,7 @@ function loadFavorites() {
 function GithubRepositories() {
   let selectUser = useSelector(s=>s.auth);
 
-  const /*[params, setParams]*/[params] = useSearchParams();
+  const [params] = useSearchParams();
   const initKeyword = params.get('q') + (params.get('lang') != ''? ' language:' + params.get('lang') : '');
 
   const [repositories, setRepositories] = useState([]);
@@ -133,6 +133,11 @@ function GithubRepositories() {
           stargazers_count: repo.stargazers_count,
           forks_count: repo.forks_count,
           language: repo.language,
+          userId:selectUser.user.email, // 로그인 한 유저의 email
+          tag:'', // 5 ~ 6가지 태그 내용으로, 메인 페이지에서 비로그인 유저들에게 각 태그별 인기 repo 표시 위함. 
+          sortedByNyang:'', // collection 분류 시, 유저가 작성한 collection 이름으로 분류
+          isSelected:false, // 좋아요 페이지에서 repo 좋아요 삭제하면 boolean값 변경으로 저장 내역에서 제거
+          savedTime:new Date().getTime(), // 파싱할 때 => new Date(savedTime).toLocaleString()
         },
       ];
     });
