@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
+import MyMemo from "../components/MyMemo";
 import {
   logoutSuccess,
   clearDemoSession,
@@ -170,6 +171,7 @@ export default function MyPage() {
       <div className="card shadow-sm">
         <div className="card-body p-4">
           <h1 className="mb-4">마이페이지</h1>
+          <MyMemo userId={user.id} />
 
           <div className="d-flex align-items-center gap-4 mb-4">
             <div
