@@ -1,13 +1,68 @@
-import React from "react";
+import React, { useState } from "react";
 import "./MyCatBasket.css";
+import NewCatBasketModal from "./NewCatBasketModal";
+
+//목 데이터
+const MOCK_LIKES = [
+  { id: 1001, name: "repo-1", full_name: "user1/repo-1", language: "Java" },
+  {
+    id: 1002,
+    name: "repo-2",
+    full_name: "user2/repo-2",
+    language: "JavaScript",
+  },
+  { id: 1003, name: "repo-3", full_name: "user3/repo-3", language: "Python" },
+  {
+    id: 1004,
+    name: "repo-4",
+    full_name: "user4/repo-4",
+    language: "TypeScript",
+  },
+  { id: 1005, name: "repo-5", full_name: "user5/repo-5", language: null },
+  { id: 1006, name: "repo-6", full_name: "user6/repo-6", language: "Java" },
+];
+
+const MOCK_BASKETS = [
+  {
+    id: 1,
+    name: "프론트엔드",
+    description: "화면 만들 때 보는 레포",
+    repoIds: [1002, 1004],
+  },
+  {
+    id: 2,
+    name: "백엔드",
+    description: "서버 관련",
+    repoIds: [1001, 1006, 1003],
+  },
+];
 
 function MyCatBasket() {
+  //TODO: 실제 데이터로 교체해야 함
+  const [likes, setLikes] = useState(MOCK_LIKES);
+  const [baskets, setBaskets] = useState(MOCK_BASKETS);
+
+  //새 냥바구니 버튼 감지
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+  //새 냥바구니 만들기
+  const handleCreate = (data) => {
+    //data: 새로 생성할 컬렉션 정보
+    //현재 시간을 id로 (나열을 생성순으로 함)
+    setBaskets((prev) => [...prev, { id: Date.now(), ...data }]);
+    setIsCreateOpen(false); //생성 완료되면 모달 닫기
+  };
+
   return (
     <div>
       {/*툴바*/}
       <div className="catBasket-toolbar">
         <h5>냥바구니</h5>
-        <button type="button" className="catBasket-add-button">
+        <button
+          type="button"
+          className="catBasket-add-button"
+          onClick={() => setIsCreateOpen(true)}
+        >
           + 새 냥바구니
         </button>
       </div>
@@ -31,6 +86,16 @@ function MyCatBasket() {
           <i className="bi bi-plus-lg"></i>
         </div>
       </div>
+
+      {/*냥바구니 만들기*/}
+      {/*true이면 새 모달 열기*/}
+      {isCreateOpen && (
+        <NewCatBasketModal
+          likes={likes}
+          onClose={() => setIsCreateOpen(false)}
+          onCreate={handleCreate}
+        />
+      )}
     </div>
   );
 }
