@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { syncUsers } from "../store/authSlice";
+import { getAllUserData } from "../utils/userData";
 
 const STORAGE_PREFIX = "gitnyang-my-repositories-";
 
@@ -11,7 +14,7 @@ function loadRepositories(userId) {
 
   try {
     const saved = JSON.parse(
-      localStorage.getItem(getStorageKey(userId)) || "[]"
+      localStorage.getItem(getStorageKey(userId)) || "[]",
     );
 
     if (!Array.isArray(saved)) return [];
@@ -21,7 +24,7 @@ function loadRepositories(userId) {
         repo &&
         typeof repo.id === "string" &&
         typeof repo.url === "string" &&
-        typeof repo.name === "string"
+        typeof repo.name === "string",
     );
   } catch {
     return [];
@@ -44,9 +47,7 @@ function parseGitHubUrl(input) {
       return null;
     }
 
-    const parts = url.pathname
-      .split("/")
-      .filter(Boolean);
+    const parts = url.pathname.split("/").filter(Boolean);
 
     if (parts.length !== 2) return null;
 
@@ -76,26 +77,24 @@ function parseGitHubUrl(input) {
 }
 
 export default function MyRepositories({ userId }) {
-  const [repositories, setRepositories] = useState(
-    () => loadRepositories(userId)
+  const [repositories, setRepositories] = useState(() =>
+    loadRepositories(userId),
   );
   const [loadedUserId, setLoadedUserId] = useState(userId);
   const [inputUrl, setInputUrl] = useState("");
   const [error, setError] = useState("");
-
+  const dispatch = useDispatch();
   // 계정이 변경될 때 각 사용자의 저장소가 섞이지 않도록 합니다.
   const visibleRepositories =
-    loadedUserId === userId
-      ? repositories
-      : loadRepositories(userId);
+    loadedUserId === userId ? repositories : loadRepositories(userId);
 
   const updateRepositories = (nextRepositories) => {
     try {
       localStorage.setItem(
         getStorageKey(userId),
-        JSON.stringify(nextRepositories)
+        JSON.stringify(nextRepositories),
       );
-
+      dispatch(syncUsers(getAllUserData()));
       setRepositories(nextRepositories);
       setLoadedUserId(userId);
 
@@ -119,14 +118,13 @@ export default function MyRepositories({ userId }) {
 
     if (!parsed) {
       setError(
-        "올바른 GitHub 저장소 주소를 입력해주세요. 예: https://github.com/facebook/react"
+        "올바른 GitHub 저장소 주소를 입력해주세요. 예: https://github.com/facebook/react",
       );
       return;
     }
 
     const exists = visibleRepositories.some(
-      (repo) =>
-        repo.url.toLowerCase() === parsed.url.toLowerCase()
+      (repo) => repo.url.toLowerCase() === parsed.url.toLowerCase(),
     );
 
     if (exists) {
@@ -141,10 +139,7 @@ export default function MyRepositories({ userId }) {
       createdAt: new Date().toISOString(),
     };
 
-    const saved = updateRepositories([
-      newRepository,
-      ...visibleRepositories,
-    ]);
+    const saved = updateRepositories([newRepository, ...visibleRepositories]);
 
     if (saved) {
       setInputUrl("");
@@ -155,7 +150,7 @@ export default function MyRepositories({ userId }) {
     setError("");
 
     const nextRepositories = visibleRepositories.filter(
-      (repo) => repo.id !== repositoryId
+      (repo) => repo.id !== repositoryId,
     );
 
     updateRepositories(nextRepositories);
@@ -170,10 +165,7 @@ export default function MyRepositories({ userId }) {
       </p>
 
       <form onSubmit={handleAdd} className="mb-3">
-        <label
-          htmlFor="my-repository-url"
-          className="form-label"
-        >
+        <label htmlFor="my-repository-url" className="form-label">
           GitHub 저장소 URL
         </label>
 
@@ -184,17 +176,11 @@ export default function MyRepositories({ userId }) {
             className="form-control"
             placeholder="https://github.com/owner/repository"
             value={inputUrl}
-            onChange={(event) =>
-              setInputUrl(event.target.value)
-            }
+            onChange={(event) => setInputUrl(event.target.value)}
             required
           />
 
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={!userId}
-          >
+          <button type="submit" className="btn btn-primary" disabled={!userId}>
             등록
           </button>
         </div>
@@ -207,9 +193,7 @@ export default function MyRepositories({ userId }) {
       )}
 
       {visibleRepositories.length === 0 ? (
-        <p className="text-muted">
-          아직 등록한 GitHub 저장소가 없습니다.
-        </p>
+        <p className="text-muted">아직 등록한 GitHub 저장소가 없습니다.</p>
       ) : (
         <div className="list-group">
           {visibleRepositories.map((repo) => (
@@ -221,11 +205,7 @@ export default function MyRepositories({ userId }) {
                 <strong>{repo.name}</strong>
 
                 <div>
-                  <a
-                    href={repo.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  <a href={repo.url} target="_blank" rel="noopener noreferrer">
                     {repo.url}
                   </a>
                 </div>

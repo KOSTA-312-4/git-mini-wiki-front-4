@@ -1,10 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getAllUserData } from "../utils/userData";
 
 const SESSION_KEY = "gitnyang-demo-user";
 const PROFILE_PREFIX = "gitnyang-profile-";
-
-export const DEMO_EMAIL = "demo@gitnyang.com";
-export const DEMO_PASSWORD = "1234";
 
 function readSession() {
   try {
@@ -15,14 +13,17 @@ function readSession() {
 
     if (
       !user ||
-      typeof user !== "object" ||
       typeof user.id !== "string" ||
       typeof user.email !== "string"
     ) {
       return null;
     }
 
-    return user;
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    };
   } catch {
     return null;
   }
@@ -30,9 +31,7 @@ function readSession() {
 
 function readProfile(userId) {
   try {
-    const raw = localStorage.getItem(
-      `${PROFILE_PREFIX}${userId}`
-    );
+    const raw = localStorage.getItem(`${PROFILE_PREFIX}${userId}`);
 
     if (!raw) return {};
 
@@ -43,19 +42,11 @@ function readProfile(userId) {
     }
 
     return {
-      name:
-        typeof profile.name === "string"
-          ? profile.name
-          : "",
-      bio:
-        typeof profile.bio === "string"
-          ? profile.bio
-          : "",
+      name: typeof profile.name === "string" ? profile.name : undefined,
+      bio: typeof profile.bio === "string" ? profile.bio : "",
       avatar:
         typeof profile.avatar === "string" &&
-        /^data:image\/(png|jpeg|webp);base64,/.test(
-          profile.avatar
-        )
+        /^data:image\/(png|jpeg|webp);base64,/.test(profile.avatar)
           ? profile.avatar
           : null,
     };
@@ -65,8 +56,16 @@ function readProfile(userId) {
 }
 
 const sessionUser = readSession();
+const initialUsers = getAllUserData();
 
-const initialUser = sessionUser
+const accountExists = sessionUser
+  ? initialUsers.some(
+      (account) =>
+        account.id === sessionUser.id && account.email === sessionUser.email,
+    )
+  : false;
+
+const initialUser = accountExists
   ? {
       ...sessionUser,
       ...readProfile(sessionUser.id),
@@ -77,17 +76,20 @@ const authSlice = createSlice({
   name: "auth",
 
   initialState: {
+    users: initialUsers,
     user: initialUser,
     isLoggedIn: Boolean(initialUser),
   },
 
   reducers: {
+    syncUsers: (state, action) => {
+      state.users = action.payload;
+    },
+
     loginSuccess: (state, action) => {
       const user = action.payload;
 
-      if (!user || !user.id || !user.email) {
-        return;
-      }
+      if (!user?.id || !user?.email) return;
 
       state.user = {
         ...user,
@@ -103,9 +105,7 @@ const authSlice = createSlice({
     },
 
     updateProfile: (state, action) => {
-      if (!state.isLoggedIn || !state.user) {
-        return;
-      }
+      if (!state.user || !state.isLoggedIn) return;
 
       const { name, bio, avatar } = action.payload;
 
@@ -120,15 +120,20 @@ const authSlice = createSlice({
       if (avatar !== undefined) {
         state.user.avatar = avatar;
       }
+
+      const account = state.users.find((item) => item.id === state.user.id);
+
+      if (account) {
+        if (name !== undefined) account.name = name;
+        if (bio !== undefined) account.bio = bio;
+        if (avatar !== undefined) account.avatar = avatar;
+      }
     },
   },
 });
 
-export const {
-  loginSuccess,
-  logoutSuccess,
-  updateProfile,
-} = authSlice.actions;
+export const { syncUsers, loginSuccess, logoutSuccess, updateProfile } =
+  authSlice.actions;
 
 export function saveDemoSession(user) {
   try {
@@ -138,9 +143,7 @@ export function saveDemoSession(user) {
         id: user.id,
         email: user.email,
         name: user.name,
-        bio: user.bio ?? "",
-        avatar: null,
-      })
+      }),
     );
 
     return true;
@@ -167,7 +170,7 @@ export function saveDemoProfile(profile, userId) {
         name: profile.name,
         bio: profile.bio,
         avatar: profile.avatar ?? null,
-      })
+      }),
     );
 
     return true;
