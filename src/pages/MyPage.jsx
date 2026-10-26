@@ -7,8 +7,8 @@ import {
   updateProfile,
   saveDemoProfile,
 } from "../store/authSlice";
-
 import MyMemo from "../components/MyMemo";
+import MyRepositories from "../components/MyRepositories";
 
 const MAX_IMAGE_SIZE = 1024 * 1024; // 1MB
 
@@ -75,7 +75,7 @@ export default function MyPage() {
       avatar: user.avatar ?? null,
     };
 
-    if (!saveDemoProfile(updatedProfile)) {
+    if (!saveDemoProfile(updatedProfile, user.id)) {
       setError("프로필 저장에 실패했습니다.");
       return;
     }
@@ -92,7 +92,7 @@ export default function MyPage() {
       avatar,
     };
 
-    if (!saveDemoProfile(updatedProfile)) {
+    if (!saveDemoProfile(updatedProfile, user.id)) {
       setAvatarError("프로필 사진 저장에 실패했습니다.");
       return false;
     }
@@ -367,6 +367,10 @@ export default function MyPage() {
           <hr />
 
           <MyMemo userId={user.id ?? user.email} />
+
+          <hr />
+
+          <MyRepositories userId={user.id ?? user.email} />
 
           <hr />
 

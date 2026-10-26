@@ -1,43 +1,56 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const SESSION_KEY = "gitnyang-demo-user";
-const PROFILE_KEY = "gitnyang-demo-profile";
-const DEMO_USER = {
-  id: 1,
-  name: "Demo User",
-  email: "demo@gitnyang.com",
-  bio: "",
-  avatar: null,
-};
+const PROFILE_PREFIX = "gitnyang-profile-";
 
-function getSavedProfile() {
+export const DEMO_EMAIL = "demo@gitnyang.com";
+export const DEMO_PASSWORD = "1234";
+
+function readSession() {
   try {
-    const saved = localStorage.getItem(PROFILE_KEY);
+    const raw = sessionStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
 
-    if (!saved) return {};
-
-    const profile = JSON.parse(saved);
+    const user = JSON.parse(raw);
 
     if (
-      !profile ||
-      typeof profile !== "object" ||
-      Array.isArray(profile)
+      !user ||
+      typeof user !== "object" ||
+      typeof user.id !== "string" ||
+      typeof user.email !== "string"
     ) {
+      return null;
+    }
+
+    return user;
+  } catch {
+    return null;
+  }
+}
+
+function readProfile(userId) {
+  try {
+    const raw = localStorage.getItem(
+      `${PROFILE_PREFIX}${userId}`
+    );
+
+    if (!raw) return {};
+
+    const profile = JSON.parse(raw);
+
+    if (!profile || typeof profile !== "object") {
       return {};
     }
 
     return {
       name:
-        typeof profile.name === "string" &&
-        profile.name.trim()
-          ? profile.name.trim()
-          : DEMO_USER.name,
-
+        typeof profile.name === "string"
+          ? profile.name
+          : "",
       bio:
         typeof profile.bio === "string"
           ? profile.bio
           : "",
-
       avatar:
         typeof profile.avatar === "string" &&
         /^data:image\/(png|jpeg|webp);base64,/.test(
@@ -51,51 +64,48 @@ function getSavedProfile() {
   }
 }
 
-function getDemoUser() {
-  return {
-    ...DEMO_USER,
-    ...getSavedProfile(),
-  };
-}
+const sessionUser = readSession();
 
-function getSavedUser() {
-  try {
-    const saved = sessionStorage.getItem(SESSION_KEY);
-
-    return saved === DEMO_USER.email
-      ? getDemoUser()
-      : null;
-  } catch {
-    return null;
-  }
-}
-
-const savedUser = getSavedUser();
+const initialUser = sessionUser
+  ? {
+      ...sessionUser,
+      ...readProfile(sessionUser.id),
+    }
+  : null;
 
 const authSlice = createSlice({
   name: "auth",
 
   initialState: {
-    user: savedUser,
-    isLoggedIn: Boolean(savedUser),
+    user: initialUser,
+    isLoggedIn: Boolean(initialUser),
   },
 
   reducers: {
-    // Login
-    loginSuccess: (state) => {
-      state.user = getDemoUser();
+    loginSuccess: (state, action) => {
+      const user = action.payload;
+
+      if (!user || !user.id || !user.email) {
+        return;
+      }
+
+      state.user = {
+        ...user,
+        ...readProfile(user.id),
+      };
+
       state.isLoggedIn = true;
     },
 
-    // Logout
     logoutSuccess: (state) => {
       state.user = null;
       state.isLoggedIn = false;
     },
 
-    // Update profile
     updateProfile: (state, action) => {
-      if (!state.isLoggedIn || !state.user) return;
+      if (!state.isLoggedIn || !state.user) {
+        return;
+      }
 
       const { name, bio, avatar } = action.payload;
 
@@ -120,17 +130,22 @@ export const {
   updateProfile,
 } = authSlice.actions;
 
-export const DEMO_EMAIL = DEMO_USER.email;
-export const DEMO_PASSWORD = "1234";
-
-export function saveDemoSession() {
+export function saveDemoSession(user) {
   try {
     sessionStorage.setItem(
       SESSION_KEY,
-      DEMO_USER.email
+      JSON.stringify({
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        bio: user.bio ?? "",
+        avatar: null,
+      })
     );
+
+    return true;
   } catch {
-    // Browser storage may be unavailable.
+    return false;
   }
 }
 
@@ -138,14 +153,16 @@ export function clearDemoSession() {
   try {
     sessionStorage.removeItem(SESSION_KEY);
   } catch {
-    // Redux logout can still proceed.
+    // Redux logout still works.
   }
 }
 
-export function saveDemoProfile(profile) {
+export function saveDemoProfile(profile, userId) {
+  if (!userId) return false;
+
   try {
     localStorage.setItem(
-      PROFILE_KEY,
+      `${PROFILE_PREFIX}${userId}`,
       JSON.stringify({
         name: profile.name,
         bio: profile.bio,
