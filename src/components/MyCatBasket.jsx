@@ -77,14 +77,30 @@ function MyCatBasket() {
         <div className="catBasket-card">
           <div className="catBasket-card-top">
             <i className="bi bi-folder"></i> {/*아이콘(부트스트랩)*/}
-            <span className="catBasket-card-count">0</span>
+            <span className="catBasket-card-count">ALL</span>
             {/*컬렉션 몇개 있는지 count*/}
           </div>
           <h6 className="catBasket-card-name">전체</h6>
-          <p className="catBasket-card-description">
-            좋아요한 모든 레포(카드 한줄 설명)
-          </p>
+          <p className="catBasket-card-description">좋아요한 모든 레포지토리</p>
         </div>
+
+        {/*만든 냥바구니 보기*/}
+        {baskets.map((basket) => (
+          <div
+            key={basket.id}
+            className="catBasket-card catBasket-card-click"
+            onClick={() => setDetailId(basket.id)}
+          >
+            <div className="catBasket-card-top">
+              <i className="bi bi-folder"></i>
+            </div>
+            <h6 className="catBasket-card-name">{basket.name}</h6>
+            <p className="catBasket-card-description">
+              {basket.description || "설명 없음"}
+            </p>
+          </div>
+        ))}
+
         {/*만약 냥바구니가 하나도 없을경우 보임*/}
         <div className="catBasket-card catBasket-card-empty">
           <i className="bi bi-plus-lg"></i>
