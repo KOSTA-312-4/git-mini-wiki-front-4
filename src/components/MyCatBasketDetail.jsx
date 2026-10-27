@@ -3,19 +3,19 @@ import "./NewCatBasketModal.css";
 
 function MyCatBasketDetail({
   basket,
-  likes,
+  favorites,
   onClose,
   onRemoveRepo,
   onAddRepository,
   onDelete,
 }) {
   //좋아요 누른 레포지토리 중 바구니(컬렉션) 하나에 담긴 레포지토리 들
-  const inBasket = likes.filter((repository) =>
+  const inBasket = favorites.filter((repository) =>
     basket.repoIds.includes(repository.id),
   );
 
   //좋아요 누른 레포지토리 중 바구니에 담기지 않은 레포지토리 들
-  const notInBasket = likes.filter(
+  const notInBasket = favorites.filter(
     (repository) => !basket.repoIds.includes(repository.id),
   );
 

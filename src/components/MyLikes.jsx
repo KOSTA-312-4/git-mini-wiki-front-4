@@ -2,32 +2,26 @@ import React, { useState } from "react";
 import "./MyLikes.css";
 import "../pages/GithubRepositories.css"; //기존 레포 출력 스타일 반영
 import MyLikesCard from "./MyLikesCard";
+import { useSelector } from "react-redux";
 
 function MyLikes() {
-  // TODO: 더미 데이터 삭제
-  const langs = ["Java", "JavaScript", "Python", "TypeScript", null];
-  const DUMMY_FAVORITES = Array.from({ length: 24 }, (_, i) => {
-    const n = i + 1;
-    return {
-      id: 1000 + n,
-      name: `repo-${n}`,
-      full_name: `user${n}/repo-${n}`,
-      owner: { login: `user${n}`, avatar_url: "" },
-      description: n % 7 === 0 ? null : `더미 설명 ${n}`,
-      html_url: `https://github.com/user${n}/repo-${n}`,
-      stargazers_count: n * 137,
-      forks_count: n * 11,
-      language: langs[i % langs.length],
-    };
+  //좋아요 정보, email 정보 가져오기
+  const userEmail = useSelector((s) => {
+    if (s.loginUser === null || s.loginUser === undefined) {
+      return undefined;
+    }
+
+    return s.loginUser.email;
   });
+
+  const favorites = useSelector((s) => s.favorites).filter(
+    (f) => f.userId === userEmail,
+  );
 
   //=====페이지네이션====//
   const PAGE = 9; //한페이지에 9개만
 
   const [page, setPage] = useState(1); //1페이지 기본
-
-  //TODO: 교체하기
-  const [favorites, setFavorites] = useState(DUMMY_FAVORITES);
 
   //====검색====
   const [input, setInput] = useState("");
@@ -51,10 +45,16 @@ function MyLikes() {
   });
 
   //=====sort 한 결과 정렬=====//
-  const sortedFavorites =
-    sort === "name"
-      ? [...filteredFavorites].sort((a, b) => a.name.localeCompare(b.name)) //필터링된 결과를 기반으로 sort
-      : favorites;
+  let sortedFavorites = filteredFavorites;
+  if (sort === "name") {
+    sortedFavorites = [...filteredFavorites].sort((a, b) =>
+      a.name.localeCompare(b.name),
+    );
+  } else if (sort === "recent") {
+    sortedFavorites = [...filteredFavorites].sort(
+      (a, b) => b.savedTime - a.savedTime, //최근에 저장한 순
+    );
+  }
 
   //=====페이지 계산하기====//
   const totalPage = Math.ceil(sortedFavorites.length / PAGE);

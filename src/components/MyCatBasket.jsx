@@ -2,46 +2,23 @@ import React, { useState } from "react";
 import "./MyCatBasket.css";
 import NewCatBasketModal from "./NewCatBasketModal";
 import MyCatBasketDetail from "./MyCatBasketDetail";
-
-//목 데이터
-const MOCK_LIKES = [
-  { id: 1001, name: "repo-1", full_name: "user1/repo-1", language: "Java" },
-  {
-    id: 1002,
-    name: "repo-2",
-    full_name: "user2/repo-2",
-    language: "JavaScript",
-  },
-  { id: 1003, name: "repo-3", full_name: "user3/repo-3", language: "Python" },
-  {
-    id: 1004,
-    name: "repo-4",
-    full_name: "user4/repo-4",
-    language: "TypeScript",
-  },
-  { id: 1005, name: "repo-5", full_name: "user5/repo-5", language: null },
-  { id: 1006, name: "repo-6", full_name: "user6/repo-6", language: "Java" },
-];
-
-const MOCK_BASKETS = [
-  {
-    id: 1,
-    name: "프론트엔드",
-    description: "화면 만들 때 보는 레포",
-    repoIds: [1002, 1004],
-  },
-  {
-    id: 2,
-    name: "백엔드",
-    description: "서버 관련",
-    repoIds: [1001, 1006, 1003],
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addBasket,
+  addRepoToBasket,
+  deleteBasket,
+  removeRepoFromBasket,
+} from "../store/store.js";
 
 function MyCatBasket() {
-  //TODO: 실제 데이터로 교체해야 함
-  const [likes, setLikes] = useState(MOCK_LIKES);
-  const [baskets, setBaskets] = useState(MOCK_BASKETS);
+  const dispatch = useDispatch();
+  const userEmail = useSelector((s) => {
+    if (s.loginUser === null || s.loginUser === undefined) {
+      return undefined;
+    }
+
+    return s.loginUser.email;
+  });
 
   //새 냥바구니 버튼 감지
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -49,8 +26,16 @@ function MyCatBasket() {
   //생성된 냥바구니 중 사용자가 현재 선택하고 있는 컬렉션(즉 열려 있는 컬렉션)에 대한 id 값
   const [detailId, setDetailId] = useState(null);
 
-  //냥바구니에 저장
-  const saveBaskets = (next) => setBaskets(next);
+  // //냥바구니에 저장
+  // const saveBaskets = (next) => setBaskets(next);
+
+  //로그인한 사용자의 favorites과 baskets
+  const favorites = useSelector((s) => s.favorites).filter(
+    (f) => f.userId === userEmail,
+  );
+  const baskets = useSelector((s) => s.baskets).filter(
+    (b) => b.userId === userEmail,
+  ); //basket의 userId와 userEmail이 일치하는 바구니만
 
   //냥바구니에 있는 레포지토리
   //만약 레포지토리가 없으면 undefined로 저장됨(undefined인지 확인하는 로직 필요)
@@ -61,7 +46,17 @@ function MyCatBasket() {
   //새 냥바구니 만들기
   //name, description, repoIds(바구니에 담기로한 레포)는 모달을 통해 전달 받은 정보
   const handleCreate = ({ name, description, repoIds }) => {
-    saveBaskets([...baskets, { id: Date.now(), name, description, repoIds }]); //기존 바구니 목록에서 새로운 냥바구니(컬렉션) 추가
+    // saveBaskets([...baskets, { id: Date.now(), name, description, repoIds }]); //기존 바구니 목록에서 새로운 냥바구니(컬렉션) 추가
+
+    dispatch(
+      addBasket({
+        id: Date.now(),
+        userId: userEmail,
+        name,
+        description,
+        repoIds,
+      }),
+    );
 
     //모달 닫기
     setIsCreateOpen(false);
@@ -78,35 +73,39 @@ function MyCatBasket() {
       repoIds: [1001,1002]
     */
     }
-    setBaskets((prev) =>
-      prev.map((basket) =>
-        basket.id === basketId
-          ? { ...basket, repoIds: [...basket.repoIds, newRepoId] }
-          : basket,
-      ),
-    );
+
+    dispatch(addRepoToBasket({ basketId, repoId: newRepoId }));
+    // setBaskets((prev) =>
+    //   prev.map((basket) =>
+    //     basket.id === basketId
+    //       ? { ...basket, repoIds: [...basket.repoIds, newRepoId] }
+    //       : basket,
+    //   ),
+    // );
   };
 
   //냥바구니에 레포지토리 빼기
   const handleRemoveRepo = (basketId, repoId) => {
-    setBaskets((prev) =>
-      prev.map(
-        (
-          basket, //새 뱌열을 만듦
-        ) =>
-          basket.id === basketId //냥바구니 id 값이 일치하면
-            ? {
-                ...basket,
-                repoIds: basket.repoIds.filter((id) => id !== repoId),
-              } //필터로 repoId를 제외하고 새 배열을 반환한다
-            : basket,
-      ),
-    );
+    // setBaskets((prev) =>
+    //   prev.map(
+    //     (
+    //       basket, //새 뱌열을 만듦
+    //     ) =>
+    //       basket.id === basketId //냥바구니 id 값이 일치하면
+    //         ? {
+    //             ...basket,
+    //             repoIds: basket.repoIds.filter((id) => id !== repoId),
+    //           } //필터로 repoId를 제외하고 새 배열을 반환한다
+    //         : basket,
+    //   ),
+    // );
+    dispatch(removeRepoFromBasket({ basketId, repoId }));
   };
 
   //냥바구니 삭제
   const handleDeleteBasket = (basket) => {
-    saveBaskets(baskets.filter((b) => b.id !== basket.id));
+    // saveBaskets(baskets.filter((b) => b.id !== basket.id));
+    dispatch(deleteBasket(basket.id));
     setDetailId(null);
   };
 
@@ -156,7 +155,13 @@ function MyCatBasket() {
 
         {/*만약 냥바구니가 하나도 없을경우 보임*/}
         <div className="catBasket-card catBasket-card-empty">
-          <i className="bi bi-plus-lg"></i>
+          <button
+            className="plus-button"
+            type="button"
+            onClick={() => setIsCreateOpen(true)}
+          >
+            +
+          </button>
         </div>
       </div>
 
@@ -164,7 +169,7 @@ function MyCatBasket() {
       {/*true이면 새 모달 열기*/}
       {isCreateOpen && (
         <NewCatBasketModal
-          likes={likes}
+          favorites={favorites}
           onClose={() => setIsCreateOpen(false)}
           onCreate={handleCreate}
         />
@@ -175,7 +180,7 @@ function MyCatBasket() {
       {selectedBasket && (
         <MyCatBasketDetail
           basket={selectedBasket}
-          likes={likes}
+          favorites={favorites}
           onClose={() => setDetailId(null)}
           onAddRepository={(repoId) => handleAddRepo(selectedBasket.id, repoId)}
           onRemoveRepo={(repoId) => handleRemoveRepo(selectedBasket.id, repoId)}

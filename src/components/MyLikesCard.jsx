@@ -1,13 +1,28 @@
 import React from "react";
 import "../pages/GithubRepositories.css"; //기존 레포 출력 스타일 반영
+import { toggleFavorite } from "../store/store";
+import { useDispatch, useSelector } from "react-redux";
 
 function MyLikesCard({ repo }) {
+  const dispatch = useDispatch();
+  const userEmail = useSelector((s) => {
+    if (s.loginUser === null || s.loginUser === undefined) {
+      return undefined;
+    }
+
+    return s.loginUser.email;
+  });
+
   return (
     <article className="repo-card">
       {/*헤더*/}
       <div className="repo-card-header">
         <h2 className="repo-title">{repo.name}</h2>
-        <button type="button" className="favorite-button is-favorite">
+        <button
+          type="button"
+          className="favorite-button is-favorite"
+          onClick={() => dispatch(toggleFavorite({ repo, userEmail }))}
+        >
           ♥
         </button>
       </div>
