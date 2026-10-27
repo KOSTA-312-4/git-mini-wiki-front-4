@@ -1,7 +1,7 @@
 import React, { use, useState } from "react";
 import "./NewCatBasketModal.css";
 
-function NewCatBasketModal({ likes, onClose, onCreate }) {
+function NewCatBasketModal({ favorites, onClose, onCreate }) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [selectIds, setSelectIds] = useState([]); //여러 id들이 들어올 수 있으므로 배열
@@ -64,13 +64,13 @@ function NewCatBasketModal({ likes, onClose, onCreate }) {
           {/*좋아요한 레포지토리 목록들 중에서 확인*/}
           <p className="catBasket-field-label">레포지토리 목록</p>
           {/*삼항연산자 이용*/}
-          {likes.length === 0 ? (
+          {favorites.length === 0 ? (
             <p className="catBasket-empty-text">
               담을 수 있는 레포지토리가 없습니다.
             </p>
           ) : (
             <ul className="catBasket-repo-list">
-              {likes.map((repository) => (
+              {favorites.map((repository) => (
                 <li key={repository.id} className="catBasket-repo-item">
                   {/*checkbox로 냥바구니에 추가할 레포지토리 검색*/}
                   <label>
