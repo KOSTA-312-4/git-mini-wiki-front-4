@@ -77,6 +77,14 @@ export default function Header() {
             <Link className="nav-link header-link" to="/board">
               커뮤니티
             </Link>
+
+            <Link className="nav-link header-link" to="/login">
+              로그인
+            </Link>
+
+            <Link className="nav-link header-link" to="/signup">
+              회원가입
+            </Link>
           </div>
         </div>
       </nav>
