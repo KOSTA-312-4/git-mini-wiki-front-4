@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, createSlice } from "@reduxjs/toolkit";
 import { usersReducer, loginUserReducer, saveUserState } from "./users";
 
 const FAVORITES_KEY = "github-repository-favorites";
@@ -66,7 +66,6 @@ export const { toggleFavorite } =
 
 export const store = configureStore({
   reducer: {
-    auth: authReducer,
     favorites: favoritesSlice.reducer,
     users: usersReducer,
     loginUser: loginUserReducer,
