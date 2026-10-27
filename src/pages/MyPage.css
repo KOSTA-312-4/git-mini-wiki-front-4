@@ -1,0 +1,161 @@
+/* Header/Footer 와 같은 차콜 그레이(#343a40) 색상을 사용합니다. */
+.MyPage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.mypage-login-needed {
+  margin: 0;
+  color: #6c757d;
+}
+
+.mypage-login-needed a {
+  color: #343a40;
+  font-weight: 600;
+}
+
+/* 페이지 상단의 작은 프로필 카드 */
+.mypage-profile {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.mypage-avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.mypage-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* 프로필 사진이 없을 때 보여주는 기본 고양이 이모지 */
+.mypage-avatar-default {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #f1f3f5;
+  font-size: 36px;
+  line-height: 1;
+}
+
+.mypage-avatar input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.mypage-avatar-edit {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  background-color: #343a40;
+  font-size: 0.75rem;
+}
+
+.mypage-avatar:hover .mypage-avatar-edit,
+.mypage-avatar:focus-within .mypage-avatar-edit {
+  background-color: #23272b;
+}
+
+.mypage-avatar:focus-within {
+  outline: 2px solid #343a40;
+  outline-offset: 2px;
+}
+
+.mypage-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mypage-welcome {
+  margin: 0;
+  color: #343a40;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.mypage-email {
+  margin: 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.mypage-repo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 420px;
+  margin-top: 6px;
+}
+
+.mypage-repo .bi-github {
+  color: #343a40;
+}
+
+.mypage-repo .form-control:focus {
+  border-color: #343a40;
+  box-shadow: 0 0 0 0.2rem rgb(52 58 64 / 15%);
+}
+
+.mypage-repo-save {
+  flex-shrink: 0;
+  color: #fff;
+  background-color: #343a40;
+  border: 1px solid #343a40;
+}
+
+.mypage-repo-save:hover,
+.mypage-repo-save:focus {
+  color: #fff;
+  background-color: #23272b;
+}
+
+.mypage-repo-link {
+  overflow: hidden;
+  color: #343a40;
+  font-size: 0.85rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .mypage-profile {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .mypage-repo {
+    max-width: none;
+  }
+}
