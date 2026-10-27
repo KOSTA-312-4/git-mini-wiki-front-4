@@ -12,7 +12,7 @@ const API_URL = "https://api.github.com/search/repositories";
 const DISPLAY_PER_PAGE = 9;
 
 function GithubRepositories() {
-  let selectUser = useSelector(s=>s.auth);
+  let selectUser = useSelector(s=>s.loginUser);
 
   const [params] = useSearchParams();
   const initKeyword = params.get('q') + (params.get('lang') != ''? ' language:' + params.get('lang') : '');
@@ -160,7 +160,7 @@ function GithubRepositories() {
                     className={`favorite-button ${
                       isFavorite ? "is-favorite" : ""
                     }`}
-                    onClick={() => dispatch(toggleFavorite({repo, userEmail:selectUser.user.email}))}
+                    onClick={() => dispatch(toggleFavorite({repo, userEmail:selectUser.email}))}
                     aria-label={
                       isFavorite
                         ? "즐겨찾기 해제"
