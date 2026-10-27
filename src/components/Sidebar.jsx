@@ -9,6 +9,7 @@ const menuItems = [
 ];
 
 export default function Sidebar() {
+  
   return (
     <aside className="side-area" aria-label="사이드바">
       <div className="side-bar">

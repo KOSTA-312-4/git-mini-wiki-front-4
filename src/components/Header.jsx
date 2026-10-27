@@ -6,6 +6,10 @@ export default function Header() {
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const detailRef = useRef("");
+  
+  // Redux에서 로그인 상태 가져오기
+  // 유저 reducer 또는 백엔드 - sql 연동 시 유저 객체 내에 xp 추가
+  // -> xp 수치에 따른 성장 레벨 이미지 변경 표시
 
   function handleSearch(event) {
     event.preventDefault();
