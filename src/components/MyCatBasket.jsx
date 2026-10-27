@@ -156,7 +156,13 @@ function MyCatBasket() {
 
         {/*만약 냥바구니가 하나도 없을경우 보임*/}
         <div className="catBasket-card catBasket-card-empty">
-          <i className="bi bi-plus-lg"></i>
+          <button
+            className="plus-button"
+            type="button"
+            onClick={() => setIsCreateOpen(true)}
+          >
+            +
+          </button>
         </div>
       </div>
 
