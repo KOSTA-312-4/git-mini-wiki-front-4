@@ -13,6 +13,7 @@ const DISPLAY_PER_PAGE = 9;
 
 function GithubRepositories() {
   let selectUser = useSelector(s=>s.loginUser);
+  console.log(selectUser);
 
   const [params] = useSearchParams();
   const initKeyword = params.get('q') + (params.get('lang') != ''? ' language:' + params.get('lang') : '');
@@ -147,7 +148,7 @@ function GithubRepositories() {
           !error &&
           visibleRepositories.map((repo) => {
             const isFavorite = favorites.some(
-              (favorite) => favorite.id === repo.id
+              (favorite) => favorite.id === repo.id && favorite.userId == selectUser.email
             );
 
             return (
@@ -173,7 +174,7 @@ function GithubRepositories() {
                         : "즐겨찾기 추가"
                     }
                     // 로그인 유저 판별 후 버튼 표시
-                    hidden={false}
+                    hidden={selectUser==null?true:false}
                   >
                     {isFavorite ? "♥" : "♡"}
                   </button>

@@ -37,7 +37,7 @@ const basketsSlice = createSlice({
       {
         id:1
         userId: email값
-        name : 레포 이름
+        name : 냥바구니 이름
         description: 레포 설명
         repoId: [1,2,3, ... ]
       }
