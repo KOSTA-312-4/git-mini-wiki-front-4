@@ -88,8 +88,20 @@ function MyCatBasket() {
   };
 
   //냥바구니에 레포지토리 빼기
-  const handleRemoveRepo = (repoId) => {
-    baskets.filter((basket) => basket.repoIds.includes(repoId));
+  const handleRemoveRepo = (basketId, repoId) => {
+    setBaskets((prev) =>
+      prev.map(
+        (
+          basket, //새 뱌열을 만듦
+        ) =>
+          basket.id === basketId //냥바구니 id 값이 일치하면
+            ? {
+                ...basket,
+                repoIds: basket.repoIds.filter((id) => id !== repoId),
+              } //필터로 repoId를 제외하고 새 배열을 반환한다
+            : basket,
+      ),
+    );
   };
 
   //냥바구니 삭제
@@ -165,8 +177,8 @@ function MyCatBasket() {
           basket={selectedBasket}
           likes={likes}
           onClose={() => setDetailId(null)}
-          onAddRepository={(repoId) => handleAddRepo(baskets.basketId, repoId)}
-          onRemoveRepo={handleRemoveRepo}
+          onAddRepository={(repoId) => handleAddRepo(selectedBasket.id, repoId)}
+          onRemoveRepo={(repoId) => handleRemoveRepo(selectedBasket.id, repoId)}
           onDelete={() => handleDeleteBasket(selectedBasket)}
         />
       )}
