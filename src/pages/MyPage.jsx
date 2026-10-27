@@ -1,7 +1,7 @@
 import { useReducer, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { changePassword, updateProfile } from "../store/users.js";
+import { Link, useNavigate } from "react-router-dom";
+import { changePassword, logout, updateProfile } from "../store/users.js";
 import "./MyPage.css";
 
 // 프로필 사진은 localStorage 에 저장되므로 크기를 제한합니다.
@@ -33,6 +33,7 @@ const MyPage = () => {
   // 비밀번호는 로그인 상태에 없으므로 회원 목록에서 확인
   const users = useSelector((state) => state.users);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [repoInput, setRepoInput] = useState(loginUser?.githubRepo ?? "");
   // "프로필 수정" 을 눌렀을 때만 폼을 보여줌
   const [showEditForm, setShowEditForm] = useState(false);
@@ -138,6 +139,15 @@ const MyPage = () => {
     passwordDispatch({ type: "RESET" });
     setShowEditForm(false);
     alert("프로필이 수정되었습니다.");
+  };
+
+  // 로그아웃 (sessionStorage 의 로그인 정보도 store.js 에서 함께 삭제됨)
+  const submitLogout = () => {
+    if (!confirm("로그아웃 하시겠습니까?")) return;
+
+    dispatch(logout());
+    alert("로그아웃 되었습니다.");
+    navigate("/");
   };
 
   return (
@@ -257,6 +267,13 @@ const MyPage = () => {
           )}
         </div>
       </section>
+
+      <div className="mypage-logout">
+        <button className="btn btn-sm mypage-logout-button" type="button" onClick={submitLogout}>
+          <i className="bi bi-box-arrow-right me-1" aria-hidden="true" />
+          로그아웃
+        </button>
+      </div>
     </div>
   );
 };

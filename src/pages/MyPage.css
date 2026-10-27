@@ -1,8 +1,15 @@
 /* Header/Footer 와 같은 차콜 그레이(#343a40) 색상을 사용합니다. */
 .MyPage {
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 16px;
+}
+
+/* 로그아웃 버튼을 페이지 맨 아래에 두기 위해 Main 영역 높이만큼 늘림 */
+.main-content:has(> .MyPage) {
+  display: flex;
+  flex-direction: column;
 }
 
 .mypage-login-needed {
@@ -239,4 +246,26 @@
   .mypage-edit-buttons .btn {
     flex: 1;
   }
+}
+
+/* 마이페이지 맨 아래의 로그아웃 버튼 */
+.mypage-logout {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #f1f3f5;
+}
+
+.mypage-logout-button {
+  color: #343a40;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+}
+
+.mypage-logout-button:hover,
+.mypage-logout-button:focus {
+  color: #fff;
+  background-color: #343a40;
+  border-color: #343a40;
 }
