@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./MyCatBasket.css";
 import NewCatBasketModal from "./NewCatBasketModal";
+import MyCatBasketDetail from "./MyCatBasketDetail";
 
 //목 데이터
 const MOCK_LIKES = [
@@ -45,8 +46,17 @@ function MyCatBasket() {
   //새 냥바구니 버튼 감지
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
+  //생성된 냥바구니 중 사용자가 현재 선택하고 있는 컬렉션(즉 열려 있는 컬렉션)에 대한 id 값
+  const [detailId, setDetailId] = useState(null);
+
   //냥바구니에 저장
   const saveBaskets = (next) => setBaskets(next);
+
+  //냥바구니에 있는 레포지토리
+  //만약 레포지토리가 없으면 undefined로 저장됨(undefined인지 확인하는 로직 필요)
+  const selectedBasket = baskets.find(
+    (repository) => repository.id == detailId,
+  );
 
   //새 냥바구니 만들기
   //name, description, repoIds(바구니에 담기로한 레포)는 모달을 통해 전달 받은 정보
@@ -55,6 +65,43 @@ function MyCatBasket() {
 
     //모달 닫기
     setIsCreateOpen(false);
+  };
+
+  //냥바구니에 레포지토리 추가하기
+  const handleAddRepo = (basketName, newRepoId) => {
+    setLikes((prev) =>
+      prev.map((repository) =>
+        repository.id === newRepoId
+          ? { ...repository, basketName }
+          : repository,
+      ),
+    );
+    {
+      /*냥바구니 이름이 붙은 새로운 배열을 만듦
+        {id:1, name:"repoA", basketName:"프론트"}
+    */
+    }
+  };
+
+  //냥바구니에 레포지토리 빼기
+  const handleRemoveRepo = (newRepoId) => {
+    setLikes((prev) =>
+      prev.map((repository) =>
+        repository.id === newRepoId
+          ? { ...repository, basketName: " " }
+          : repository,
+      ),
+    );
+  };
+
+  //냥바구니 삭제
+  const handleDeleteBasket = (basket) => {
+    saveBaskets(baskets.filter((b) => b.id !== basket.id));
+
+    //냥바구니에 있던 레포지토리들도 빼기
+    handleRemoveRepo(basket.id);
+
+    setDetailId(null);
   };
 
   return (
@@ -114,6 +161,21 @@ function MyCatBasket() {
           likes={likes}
           onClose={() => setIsCreateOpen(false)}
           onCreate={handleCreate}
+        />
+      )}
+
+      {/*냥바구니 선택해서 보기(들어가있는 레포 조회)*/}
+      {/*true이면 컬렉션 모달 열기*/}
+      {selectedBasket && (
+        <MyCatBasketDetail
+          basket={selectedBasket}
+          likes={likes}
+          onClose={() => setDetailId(null)}
+          onAddRepository={(repoId) =>
+            handleAddRepo(selectedBasket.name, repoId)
+          }
+          onRemoveRepo={handleRemoveRepo}
+          onDelete={() => handleDeleteBasket(selectedBasket)}
         />
       )}
     </div>

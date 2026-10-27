@@ -74,3 +74,12 @@
   font-size: 28px;
   box-shadow: none;
 }
+
+.catBasket-card-click {
+  cursor: pointer;
+}
+
+.catBasket-card-click:hover {
+  background-color: #c2deff;
+  transition: background-color 0.2s ease;
+}
