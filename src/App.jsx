@@ -8,6 +8,7 @@ import Board from "./pages/Board.jsx";
 import Favorites from "./pages/Favorites.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
+import MyPage from "./pages/MyPage.jsx";
 import "./App.css";
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
+            <Route path="/mypage" element={<MyPage />} />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
