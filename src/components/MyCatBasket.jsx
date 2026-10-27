@@ -68,39 +68,33 @@ function MyCatBasket() {
   };
 
   //냥바구니에 레포지토리 추가하기
-  const handleAddRepo = (basketName, newRepoId) => {
-    setLikes((prev) =>
-      prev.map((repository) =>
-        repository.id === newRepoId
-          ? { ...repository, basketName }
-          : repository,
-      ),
-    );
+  const handleAddRepo = (basketId, newRepoId) => {
     {
-      /*냥바구니 이름이 붙은 새로운 배열을 만듦
-        {id:1, name:"repoA", basketName:"프론트"}
+      /*
+      baskets 배열 형태
+      id : 1,
+      name : "프론트엔드",
+      description: "설명",
+      repoIds: [1001,1002]
     */
     }
+    setBaskets((prev) =>
+      prev.map((basket) =>
+        basket.id === basketId
+          ? { ...basket, repoIds: [...basket.repoIds, newRepoId] }
+          : basket,
+      ),
+    );
   };
 
   //냥바구니에 레포지토리 빼기
-  const handleRemoveRepo = (newRepoId) => {
-    setLikes((prev) =>
-      prev.map((repository) =>
-        repository.id === newRepoId
-          ? { ...repository, basketName: " " }
-          : repository,
-      ),
-    );
+  const handleRemoveRepo = (repoId) => {
+    baskets.filter((basket) => basket.repoIds.includes(repoId));
   };
 
   //냥바구니 삭제
   const handleDeleteBasket = (basket) => {
     saveBaskets(baskets.filter((b) => b.id !== basket.id));
-
-    //냥바구니에 있던 레포지토리들도 빼기
-    handleRemoveRepo(basket.id);
-
     setDetailId(null);
   };
 
@@ -171,9 +165,7 @@ function MyCatBasket() {
           basket={selectedBasket}
           likes={likes}
           onClose={() => setDetailId(null)}
-          onAddRepository={(repoId) =>
-            handleAddRepo(selectedBasket.name, repoId)
-          }
+          onAddRepository={(repoId) => handleAddRepo(baskets.basketId, repoId)}
           onRemoveRepo={handleRemoveRepo}
           onDelete={() => handleDeleteBasket(selectedBasket)}
         />
