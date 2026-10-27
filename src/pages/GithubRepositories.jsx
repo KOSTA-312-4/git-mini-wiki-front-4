@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import { toggleFavorite } from "../store/store";
 
 import "./GithubRepositories.css";
 
@@ -9,19 +10,6 @@ const API_URL = "https://api.github.com/search/repositories";
 
 // API 응답 개수와 화면 표시 개수 분리
 const DISPLAY_PER_PAGE = 9;
-
-const FAVORITES_KEY = "github-repository-favorites";
-
-function loadFavorites() {
-  try {
-    const saved = localStorage.getItem(FAVORITES_KEY);
-    const parsed = saved ? JSON.parse(saved) : [];
-
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
 
 function GithubRepositories() {
   let selectUser = useSelector(s=>s.auth);
@@ -39,7 +27,8 @@ function GithubRepositories() {
   let defaultKeyword = keyword;
   if(keyword.split(' language:').length>=2) defaultKeyword = keyword.split(' language:')[0];
 
-  const [favorites, setFavorites] = useState(loadFavorites);
+  const favorites = useSelector((s) => s.favorites);
+  const dispatch = useDispatch();
   const inputRef = useRef();
   const detailRef = useRef('');
 
@@ -92,56 +81,6 @@ function GithubRepositories() {
 
     return () => controller.abort();
   }, [keyword]);
-
-  // 즐겨찾기 변경 사항을 localStorage에 저장
-  useEffect(() => {
-    try {
-      localStorage.setItem(
-        FAVORITES_KEY,
-        JSON.stringify(favorites)
-      );
-    } catch {
-      // 브라우저 저장 공간을 사용할 수 없는 경우 무시
-    }
-  }, [favorites]);
-
-  // 즐겨찾기 추가 및 해제
-  const toggleFavorite = (repo) => {
-    setFavorites((prevFavorites) => {
-      const exists = prevFavorites.some(
-        (favorite) => favorite.id === repo.id
-      );
-
-      if (exists) {
-        return prevFavorites.filter(
-          (favorite) => favorite.id !== repo.id
-        );
-      }
-
-      return [
-        ...prevFavorites,
-        {
-          id: repo.id,
-          name: repo.name,
-          full_name: repo.full_name,
-          owner: {
-            login: repo.owner?.login,
-            avatar_url: repo.owner?.avatar_url,
-          },
-          description: repo.description,
-          html_url: repo.html_url,
-          stargazers_count: repo.stargazers_count,
-          forks_count: repo.forks_count,
-          language: repo.language,
-          userId:selectUser.user.email, // 로그인 한 유저의 email
-          tag:'', // 5 ~ 6가지 태그 내용으로, 메인 페이지에서 비로그인 유저들에게 각 태그별 인기 repo 표시 위함. 
-          sortedByNyang:'', // collection 분류 시, 유저가 작성한 collection 이름으로 분류
-          isSelected:false, // 좋아요 페이지에서 repo 좋아요 삭제하면 boolean값 변경으로 저장 내역에서 제거
-          savedTime:new Date().getTime(), // 파싱할 때 => new Date(savedTime).toLocaleString()
-        },
-      ];
-    });
-  };
 
   // GitHub Search API 검색 결과 최대 1,000개 제한
   const searchableCount = Math.min(totalCount, 1000);
@@ -221,7 +160,7 @@ function GithubRepositories() {
                     className={`favorite-button ${
                       isFavorite ? "is-favorite" : ""
                     }`}
-                    onClick={() => toggleFavorite(repo)}
+                    onClick={() => dispatch(toggleFavorite({repo, userEmail:selectUser.user.email}))}
                     aria-label={
                       isFavorite
                         ? "즐겨찾기 해제"
@@ -234,7 +173,7 @@ function GithubRepositories() {
                         : "즐겨찾기 추가"
                     }
                     // 로그인 유저 판별 후 버튼 표시
-                    hidden={selectUser.isLoggedIn? false : true}
+                    hidden={false}
                   >
                     {isFavorite ? "♥" : "♡"}
                   </button>
