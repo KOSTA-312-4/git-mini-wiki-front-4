@@ -1,5 +1,5 @@
-import { configureStore, createSlice } from "@reduxjs/toolkit";
-import authReducer from "./authSlice";
+import { configureStore } from "@reduxjs/toolkit";
+import { usersReducer, loginUserReducer, saveUserState } from "./users";
 
 const FAVORITES_KEY = "github-repository-favorites";
 
@@ -68,6 +68,8 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     favorites: favoritesSlice.reducer,
+    users: usersReducer,
+    loginUser: loginUserReducer,
   },
 });
 
@@ -88,3 +90,7 @@ store.subscribe(() => {
     // 브라우저 저장 공간을 사용할 수 없는 경우 무시
   }
 });
+    
+
+// 상태가 바뀔 때마다 회원 목록과 로그인 유저를 저장 (새로고침해도 유지)
+store.subscribe(() => saveUserState(store.getState()));

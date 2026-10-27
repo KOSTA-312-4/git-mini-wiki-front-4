@@ -1,207 +1,122 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { registerDemoAccount } from "../utils/demoAccounts";
-import "./LoginPage.css";
-import { useDispatch } from "react-redux";
-import { syncUsers } from "../store/authSlice";
-import { getAllUserData } from "../utils/userData";
+import { useReducer } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { addUser } from "../store/users.js";
+import "./SignupPage.css";
 
-export default function SignupPage() {
-  const navigate = useNavigate();
+const initialForm = {
+  email: "",
+  id: "",
+  password: "",
+};
+
+// 회원가입 입력값 상태관리를 위한 reducer 함수
+function formReducer(state, action) {
+  switch (action.type) {
+    case "CHANGE":
+      return { ...state, [action.name]: action.value };
+    case "RESET":
+      return initialForm;
+    default:
+      return state;
+  }
+}
+
+const SignupPage = () => {
+  const [form, formDispatch] = useReducer(formReducer, initialForm);
+
+  // store.js 의 users 배열
+  const users = useSelector((state) => state.users);
+  // dispatch는 store.js 로 요청보내주는 함수
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [userId, setUserId] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // input 에 값이 입력될 때 상태 값 수정
+  const changeValue = (e) => {
+    formDispatch({ type: "CHANGE", name: e.target.name, value: e.target.value });
+  };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    setError("");
+  // 회원가입
+  const submitSignup = (e) => {
+    e.preventDefault();
 
-    const normalizedEmail = email.trim().toLowerCase();
-    const normalizedId = userId.trim().toLowerCase();
-
-    if (!normalizedEmail || !normalizedId || !password || !confirmPassword) {
-      setError("모든 항목을 입력해주세요.");
+    if (!form.email || !form.id || !form.password) {
+      alert("이메일, 아이디, 비밀번호를 모두 입력해주세요.");
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
-      setError("올바른 이메일 주소를 입력해주세요.");
+    if (users.some((user) => user.id === form.id)) {
+      alert("이미 사용 중인 아이디입니다.");
       return;
     }
 
-    if (!/^[a-z0-9_]{4,20}$/.test(normalizedId)) {
-      setError("아이디는 영문 소문자, 숫자, 밑줄(_) 4~20자로 입력해주세요.");
+    if (users.some((user) => user.email === form.email)) {
+      alert("이미 가입된 이메일입니다.");
       return;
     }
 
-    if (password.length < 8) {
-      setError("비밀번호는 8자 이상이어야 합니다.");
-      return;
-    }
+    dispatch(addUser({ ...form, githubRepo: "" }));
+    alert(`${form.id}님, 회원가입이 완료되었습니다.`);
+    formDispatch({ type: "RESET" });
+    navigate("/login");
+  };
 
-    if (password !== confirmPassword) {
-      setError("비밀번호가 일치하지 않습니다.");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      await registerDemoAccount({
-        email: normalizedEmail,
-        userId: normalizedId,
-        password,
-      });
-
-      dispatch(syncUsers(getAllUserData()));
-      navigate("/login", {
-        replace: true,
-        state: {
-          message: "회원가입이 완료되었습니다. 로그인해주세요.",
-        },
-      });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "회원가입에 실패했습니다.");
-    } finally {
-      setIsSubmitting(false);
-    }
+  // 취소
+  const cancelBack = () => {
+    formDispatch({ type: "RESET" });
+    navigate(-1);
   };
 
   return (
-    <div className="container py-5" style={{ maxWidth: 480 }}>
-      <div className="card shadow-sm">
-        <div className="card-body p-4">
-          <h2 className="text-center mb-2">Git Nyang</h2>
+    <form className="SignupPage" onSubmit={submitSignup}>
+      <h1 className="signup-title">회원가입</h1>
 
-          <h4 className="text-center mb-4">회원가입</h4>
+      <label className="signup-label">
+        이메일
+        <input
+          className="form-control"
+          type="email"
+          name="email"
+          value={form.email}
+          onChange={changeValue}
+          placeholder="example@email.com"
+        />
+      </label>
 
-          <form onSubmit={handleSubmit}>
-            {/* Email */}
-            <div className="mb-3">
-              <label htmlFor="signup-email" className="form-label">
-                이메일
-              </label>
+      <label className="signup-label">
+        아이디
+        <input
+          className="form-control"
+          type="text"
+          name="id"
+          value={form.id}
+          onChange={changeValue}
+          placeholder="아이디를 입력하세요."
+        />
+      </label>
 
-              <input
-                id="signup-email"
-                type="email"
-                className="form-control"
-                placeholder="example@gmail.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                autoComplete="email"
-                required
-              />
-            </div>
+      <label className="signup-label">
+        비밀번호
+        <input
+          className="form-control"
+          type="password"
+          name="password"
+          value={form.password}
+          onChange={changeValue}
+          placeholder="비밀번호를 입력하세요."
+        />
+      </label>
 
-            {/* User ID */}
-            <div className="mb-3">
-              <label htmlFor="signup-id" className="form-label">
-                아이디
-              </label>
-
-              <input
-                id="signup-id"
-                type="text"
-                className="form-control"
-                placeholder="아이디 (4~20자)"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                autoComplete="username"
-                minLength={4}
-                maxLength={20}
-                required
-              />
-
-              <small className="text-muted">
-                영문 소문자, 숫자, 밑줄(_) 사용 가능
-              </small>
-            </div>
-
-            {/* Password */}
-            <div className="mb-3">
-              <label htmlFor="signup-password" className="form-label">
-                비밀번호
-              </label>
-
-              <input
-                id="signup-password"
-                type={showPassword ? "text" : "password"}
-                className="form-control"
-                placeholder="8자 이상 입력"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                autoComplete="new-password"
-                minLength={8}
-                required
-              />
-            </div>
-
-            {/* Confirm Password */}
-            <div className="mb-3">
-              <label htmlFor="signup-confirm" className="form-label">
-                비밀번호 확인
-              </label>
-
-              <input
-                id="signup-confirm"
-                type={showPassword ? "text" : "password"}
-                className="form-control"
-                placeholder="비밀번호 다시 입력"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                autoComplete="new-password"
-                required
-              />
-            </div>
-
-            {/* Show Password */}
-            <div className="form-check mb-3">
-              <input
-                id="signup-show-password"
-                type="checkbox"
-                className="form-check-input"
-                checked={showPassword}
-                onChange={(e) => setShowPassword(e.target.checked)}
-              />
-
-              <label
-                htmlFor="signup-show-password"
-                className="form-check-label"
-              >
-                비밀번호 표시
-              </label>
-            </div>
-
-            {/* Error Message */}
-            {error && (
-              <div className="alert alert-danger" role="alert">
-                {error}
-              </div>
-            )}
-
-            {/* Submit */}
-            <button
-              type="submit"
-              className="btn btn-primary w-100"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "가입 중..." : "회원가입"}
-            </button>
-          </form>
-
-          {/* Login Link */}
-          <p className="text-center mt-3 mb-0">
-            이미 계정이 있으신가요? <Link to="/login">로그인</Link>
-          </p>
-        </div>
+      <div className="signup-buttons">
+        <button className="btn signup-submit" type="submit">
+          회원가입
+        </button>
+        <button className="btn signup-cancel" type="button" onClick={cancelBack}>
+          취소
+        </button>
       </div>
-    </div>
+    </form>
   );
-}
+};
+
+export default SignupPage;
