@@ -7,12 +7,14 @@ export const initialUsers = [
     id: "demo",
     password: "demo1234",
     githubRepo: "https://github.com/demo/git-mini-wiki",
+    EXP: 0,
   },
   {
     email: "cat@gitnyang.com",
     id: "nyang",
     password: "nyang1234",
     githubRepo: "https://github.com/nyang/cat-basket",
+    EXP: 0,
   },
 ];
 

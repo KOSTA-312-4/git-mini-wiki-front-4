@@ -33,7 +33,11 @@ const SignupPage = () => {
 
   // input 에 값이 입력될 때 상태 값 수정
   const changeValue = (e) => {
-    formDispatch({ type: "CHANGE", name: e.target.name, value: e.target.value });
+    formDispatch({
+      type: "CHANGE",
+      name: e.target.name,
+      value: e.target.value,
+    });
   };
 
   // 회원가입
@@ -55,7 +59,7 @@ const SignupPage = () => {
       return;
     }
 
-    dispatch(addUser({ ...form, githubRepo: "" }));
+    dispatch(addUser({ ...form, githubRepo: "", EXP: 0 }));
     alert(`${form.id}님, 회원가입이 완료되었습니다.`);
     formDispatch({ type: "RESET" });
     navigate("/login");
@@ -111,7 +115,11 @@ const SignupPage = () => {
         <button className="btn signup-submit" type="submit">
           회원가입
         </button>
-        <button className="btn signup-cancel" type="button" onClick={cancelBack}>
+        <button
+          className="btn signup-cancel"
+          type="button"
+          onClick={cancelBack}
+        >
           취소
         </button>
       </div>
