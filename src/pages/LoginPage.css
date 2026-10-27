@@ -1,109 +1,83 @@
-.login-page {
-  min-height: 80vh;
+/* Header/Footer 와 같은 차콜 그레이(#343a40) 색상을 사용합니다. */
+.LoginPage {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 20px;
-  background-color: #f6f8fa;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+  margin: 0 auto;
 }
 
-.login-card {
-  width: 100%;
-  max-width: 420px;
-  padding: 36px;
-  background: #ffffff;
-  border: 1px solid #d0d7de;
-  border-radius: 14px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-}
-
-.login-header {
-  text-align: center;
-  margin-bottom: 28px;
-}
-
-.login-header h1 {
-  margin: 0;
+.login-title {
+  margin-bottom: 8px;
   color: #343a40;
-  font-size: 32px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-align: center;
 }
 
-.login-header p {
-  color: #57606a;
+.login-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #495057;
+  font-weight: 600;
+}
+
+.login-label .form-control {
+  padding: 10px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.login-label .form-control:focus {
+  border-color: #343a40;
+  box-shadow: 0 0 0 0.2rem rgb(52 58 64 / 15%);
+}
+
+.login-buttons {
+  display: flex;
+  gap: 8px;
   margin-top: 8px;
 }
 
-.login-card h2 {
-  font-size: 22px;
-  margin-bottom: 24px;
-  text-align: center;
-}
-
-.login-field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
-}
-
-.login-field label {
+.login-buttons .btn {
+  flex: 1;
+  padding: 10px;
   font-weight: 600;
-  font-size: 14px;
-}
-
-.login-field input {
-  padding: 12px;
-  border: 1px solid #d0d7de;
-  border-radius: 8px;
-  font-size: 15px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.login-field input:focus {
-  outline: 2px solid #343a40;
-  outline-offset: 1px;
-}
-
-.login-show-password {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  margin-bottom: 20px;
-}
-
-.login-error {
-  color: #cf222e;
-  font-size: 14px;
-  margin-bottom: 16px;
 }
 
 .login-submit {
-  width: 100%;
-  padding: 13px;
+  color: #fff;
   background-color: #343a40;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 16px;
-  cursor: pointer;
+  border: 1px solid #343a40;
 }
 
-.login-submit:hover {
-  background-color: #343a40;
+.login-submit:hover,
+.login-submit:focus {
+  color: #fff;
+  background-color: #23272b;
+}
+
+.login-cancel {
+  color: #343a40;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+}
+
+.login-cancel:hover,
+.login-cancel:focus {
+  background-color: #f8f9fa;
 }
 
 .login-footer {
+  margin: 8px 0 0;
+  color: #6c757d;
+  font-size: 0.9rem;
   text-align: center;
-  font-size: 13px;
-  color: #57606a;
-  margin-top: 24px;
 }
 
-@media (max-width: 480px) {
-  .login-card {
-    padding: 24px;
-  }
+.login-footer a {
+  color: #343a40;
+  font-weight: 600;
 }
