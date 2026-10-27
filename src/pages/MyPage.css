@@ -110,36 +110,6 @@
   font-size: 0.9rem;
 }
 
-.mypage-repo {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  max-width: 420px;
-  margin-top: 6px;
-}
-
-.mypage-repo .bi-github {
-  color: #343a40;
-}
-
-.mypage-repo .form-control:focus {
-  border-color: #343a40;
-  box-shadow: 0 0 0 0.2rem rgb(52 58 64 / 15%);
-}
-
-.mypage-repo-save {
-  flex-shrink: 0;
-  color: #fff;
-  background-color: #343a40;
-  border: 1px solid #343a40;
-}
-
-.mypage-repo-save:hover,
-.mypage-repo-save:focus {
-  color: #fff;
-  background-color: #23272b;
-}
-
 .mypage-repo-link {
   overflow: hidden;
   color: #343a40;
@@ -154,8 +124,119 @@
     align-items: center;
     text-align: center;
   }
+}
 
-  .mypage-repo {
+/* GitHub 레포 주소 아래의 "프로필 수정" 텍스트 버튼 */
+.mypage-edit-toggle {
+  align-self: flex-start;
+  padding: 0;
+  margin-top: 4px;
+  border: 0;
+  color: #6c757d;
+  background: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.mypage-edit-toggle:hover,
+.mypage-edit-toggle:focus-visible {
+  color: #343a40;
+  text-decoration: underline;
+}
+
+/* "프로필 수정" 을 눌렀을 때 아래에 나타나는 폼 */
+.mypage-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f3f5;
+}
+
+.mypage-edit-password {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.mypage-edit-password legend {
+  width: 100%;
+  margin-bottom: 0;
+  color: #343a40;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.mypage-edit-label {
+  display: flex;
+  flex: 1 1 160px;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 220px;
+  color: #495057;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* 세로로 쌓이는 폼 안에서는 flex-basis 가 높이가 되므로 크기를 고정하지 않음 */
+.mypage-edit-label-wide {
+  flex: none;
+  max-width: 420px;
+}
+
+.mypage-edit-label .form-control:focus {
+  border-color: #343a40;
+  box-shadow: 0 0 0 0.2rem rgb(52 58 64 / 15%);
+}
+
+.mypage-edit-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.mypage-edit-save {
+  color: #fff;
+  background-color: #343a40;
+  border: 1px solid #343a40;
+}
+
+.mypage-edit-save:hover,
+.mypage-edit-save:focus {
+  color: #fff;
+  background-color: #23272b;
+}
+
+.mypage-edit-cancel {
+  color: #343a40;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+}
+
+.mypage-edit-cancel:hover,
+.mypage-edit-cancel:focus {
+  background-color: #f8f9fa;
+}
+
+@media (max-width: 480px) {
+  .mypage-edit-toggle {
+    align-self: center;
+  }
+
+  .mypage-edit-form {
+    text-align: left;
+  }
+
+  .mypage-edit-label,
+  .mypage-edit-label-wide {
     max-width: none;
+  }
+
+  .mypage-edit-buttons .btn {
+    flex: 1;
   }
 }

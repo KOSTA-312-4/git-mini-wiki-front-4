@@ -77,10 +77,15 @@ const users = createSlice({
       const user = state.find((item) => item.id === action.payload.id);
       if (user) Object.assign(user, pickProfile(action.payload));
     },
+    // 마이페이지: 비밀번호 변경 (현재 비밀번호 확인은 MyPage 에서 처리)
+    changePassword(state, action) {
+      const user = state.find((item) => item.id === action.payload.id);
+      if (user) user.password = action.payload.password;
+    },
   },
 });
 
-export const { addUser, updateProfile } = users.actions;
+export const { addUser, updateProfile, changePassword } = users.actions;
 
 // 현재 로그인한 유저 (없으면 null)
 const loginUser = createSlice({
