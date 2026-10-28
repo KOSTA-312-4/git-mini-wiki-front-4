@@ -2,6 +2,7 @@ import { useReducer, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { changePassword, logout, updateProfile } from "../store/users.js";
+import MyStats from "../components/MyStats.jsx";
 import "./MyPage.css";
 
 // 프로필 사진은 localStorage 에 저장되므로 크기를 제한합니다.
@@ -267,6 +268,8 @@ const MyPage = () => {
           )}
         </div>
       </section>
+
+      <MyStats />
 
       <div className="mypage-logout">
         <button className="btn btn-sm mypage-logout-button" type="button" onClick={submitLogout}>
