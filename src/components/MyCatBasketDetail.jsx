@@ -68,6 +68,7 @@ function MyCatBasketDetail({
               {notInBasket.map((repository) => (
                 <li key={repository.id} className="catBasket-repo-item">
                   <span>{repository.name}</span>
+                  <span className="catBasketDetail-tag">#{repository.tag}</span>
                   <button
                     type="button"
                     className="catBasket-btn"

@@ -79,7 +79,10 @@ function NewCatBasketModal({ favorites, onClose, onCreate }) {
                       checked={selectIds.includes(repository.id)}
                       onChange={() => toggleRepo(repository.id)}
                     />{" "}
-                    {repository.name}
+                    {repository.name}{" "}
+                  </label>
+                  <label>
+                    <span className="newCatBasket-tag">#{repository.tag}</span>
                   </label>
                 </li>
               ))}
