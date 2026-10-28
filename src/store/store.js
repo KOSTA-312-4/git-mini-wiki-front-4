@@ -122,10 +122,21 @@ const favoritesSlice = createSlice({
         payload: { ...repo, savedTime: new Date().getTime() },
       }),
     },
+
+    addRepoTag: (state, action) => {
+      const { repoId, userEmail, tag } = action.payload;
+      const favorite = state.find(
+        (f) => f.id === repoId && f.userId === userEmail,
+      ); //레포id와 사용자 값이 일치하면
+
+      if (favorite) {
+        favorite.tag = tag; //태그 설정
+      }
+    },
   },
 });
 
-export const { toggleFavorite } = favoritesSlice.actions;
+export const { toggleFavorite, addRepoTag } = favoritesSlice.actions;
 
 export const store = configureStore({
   reducer: {
