@@ -1,0 +1,271 @@
+/* Header/Footer 와 같은 차콜 그레이(#343a40) 색상을 사용합니다. */
+.MyPage {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 로그아웃 버튼을 페이지 맨 아래에 두기 위해 Main 영역 높이만큼 늘림 */
+.main-content:has(> .MyPage) {
+  display: flex;
+  flex-direction: column;
+}
+
+.mypage-login-needed {
+  margin: 0;
+  color: #6c757d;
+}
+
+.mypage-login-needed a {
+  color: #343a40;
+  font-weight: 600;
+}
+
+/* 페이지 상단의 작은 프로필 카드 */
+.mypage-profile {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+.mypage-avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.mypage-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* 프로필 사진이 없을 때 보여주는 기본 고양이 이모지 */
+.mypage-avatar-default {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #f1f3f5;
+  font-size: 36px;
+  line-height: 1;
+}
+
+.mypage-avatar input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.mypage-avatar-edit {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  background-color: #343a40;
+  font-size: 0.75rem;
+}
+
+.mypage-avatar:hover .mypage-avatar-edit,
+.mypage-avatar:focus-within .mypage-avatar-edit {
+  background-color: #23272b;
+}
+
+.mypage-avatar:focus-within {
+  outline: 2px solid #343a40;
+  outline-offset: 2px;
+}
+
+.mypage-info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.mypage-welcome {
+  margin: 0;
+  color: #343a40;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.mypage-email {
+  margin: 0;
+  color: #6c757d;
+  font-size: 0.9rem;
+}
+
+.mypage-repo-link {
+  overflow: hidden;
+  color: #343a40;
+  font-size: 0.85rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .mypage-profile {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+/* GitHub 레포 주소 아래의 "프로필 수정" 텍스트 버튼 */
+.mypage-edit-toggle {
+  align-self: flex-start;
+  padding: 0;
+  margin-top: 4px;
+  border: 0;
+  color: #6c757d;
+  background: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.mypage-edit-toggle:hover,
+.mypage-edit-toggle:focus-visible {
+  color: #343a40;
+  text-decoration: underline;
+}
+
+/* "프로필 수정" 을 눌렀을 때 아래에 나타나는 폼 */
+.mypage-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f3f5;
+}
+
+.mypage-edit-password {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.mypage-edit-password legend {
+  width: 100%;
+  margin-bottom: 0;
+  color: #343a40;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.mypage-edit-label {
+  display: flex;
+  flex: 1 1 160px;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 220px;
+  color: #495057;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* 세로로 쌓이는 폼 안에서는 flex-basis 가 높이가 되므로 크기를 고정하지 않음 */
+.mypage-edit-label-wide {
+  flex: none;
+  max-width: 420px;
+}
+
+.mypage-edit-label .form-control:focus {
+  border-color: #343a40;
+  box-shadow: 0 0 0 0.2rem rgb(52 58 64 / 15%);
+}
+
+.mypage-edit-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.mypage-edit-save {
+  color: #fff;
+  background-color: #343a40;
+  border: 1px solid #343a40;
+}
+
+.mypage-edit-save:hover,
+.mypage-edit-save:focus {
+  color: #fff;
+  background-color: #23272b;
+}
+
+.mypage-edit-cancel {
+  color: #343a40;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+}
+
+.mypage-edit-cancel:hover,
+.mypage-edit-cancel:focus {
+  background-color: #f8f9fa;
+}
+
+@media (max-width: 480px) {
+  .mypage-edit-toggle {
+    align-self: center;
+  }
+
+  .mypage-edit-form {
+    text-align: left;
+  }
+
+  .mypage-edit-label,
+  .mypage-edit-label-wide {
+    max-width: none;
+  }
+
+  .mypage-edit-buttons .btn {
+    flex: 1;
+  }
+}
+
+/* 마이페이지 맨 아래의 로그아웃 버튼 */
+.mypage-logout {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid #f1f3f5;
+}
+
+.mypage-logout-button {
+  color: #343a40;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+}
+
+.mypage-logout-button:hover,
+.mypage-logout-button:focus {
+  color: #fff;
+  background-color: #343a40;
+  border-color: #343a40;
+}

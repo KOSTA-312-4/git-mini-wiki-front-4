@@ -1,0 +1,71 @@
+/* Header/Footer 와 같은 차콜 그레이(#343a40) 색상을 사용합니다. */
+.SignupPage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.signup-title {
+  margin-bottom: 8px;
+  color: #343a40;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+.signup-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #495057;
+  font-weight: 600;
+}
+
+.signup-label .form-control {
+  padding: 10px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+.signup-label .form-control:focus {
+  border-color: #343a40;
+  box-shadow: 0 0 0 0.2rem rgb(52 58 64 / 15%);
+}
+
+.signup-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.signup-buttons .btn {
+  flex: 1;
+  padding: 10px;
+  font-weight: 600;
+}
+
+.signup-submit {
+  color: #fff;
+  background-color: #343a40;
+  border: 1px solid #343a40;
+}
+
+.signup-submit:hover,
+.signup-submit:focus {
+  color: #fff;
+  background-color: #23272b;
+}
+
+.signup-cancel {
+  color: #343a40;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+}
+
+.signup-cancel:hover,
+.signup-cancel:focus {
+  background-color: #f8f9fa;
+}

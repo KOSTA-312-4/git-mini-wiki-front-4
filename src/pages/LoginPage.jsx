@@ -1,89 +1,112 @@
-import {useState} from "react";
+import { useReducer } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../store/users.js";
 import "./LoginPage.css";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
+const initialMember = {
+  id: "",
+  password: "",
+};
 
-  const handleSubmit = (e) => {
+// 인증에 필요한 id, password 상태관리를 위한 reducer 함수
+function memberReducer(state, action) {
+  switch (action.type) {
+    case "CHANGE":
+      return { ...state, [action.name]: action.value };
+    case "RESET":
+      return initialMember;
+    default:
+      return state;
+  }
+}
+
+const LoginPage = () => {
+  const [member, memberDispatch] = useReducer(memberReducer, initialMember);
+
+  // store.js 의 users 배열
+  const users = useSelector((state) => state.users);
+  // dispatch는 store.js 로 요청보내주는 함수
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // input 에 값이 입력될 때 상태 값 수정
+  const changeValue = (e) => {
+    memberDispatch({ type: "CHANGE", name: e.target.name, value: e.target.value });
+  };
+
+  // 로그인
+  const submitLogin = (e) => {
     e.preventDefault();
-    setError("");
 
-    if (!email.trim() || !password) {
-      setError("이메일과 비밀번호를 입력해주세요.");
+    if (!member.id || !member.password) {
+      alert("아이디와 비밀번호를 입력해주세요.");
       return;
     }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("올바른 이메일 주소를 입력해주세요.");
+    const user = users.find(
+      (item) => item.id === member.id && item.password === member.password,
+    );
+
+    if (!user) {
+      alert("아이디 또는 비밀번호가 올바르지 않습니다.");
       return;
     }
 
-    setError("로그인 서버 연결 전입니다.");
+    dispatch(login(user));
+    alert(`${user.id}님, 환영합니다!`);
+    memberDispatch({ type: "RESET" });
+    navigate("/");
+  };
+
+  // 취소
+  const cancelBack = () => {
+    memberDispatch({ type: "RESET" });
+    navigate(-1);
   };
 
   return (
-    <main className="login-page">
-      <form className="login-card" onSubmit={handleSubmit}>
-        <div className="login-header">
-          <h1>Git Nyang</h1>
-          <p>GitHub 저장소 탐색기</p>
-        </div>
+    <form className="LoginPage" onSubmit={submitLogin}>
+      <h1 className="login-title">로그인</h1>
 
-        <h2>로그인</h2>
+      <label className="login-label">
+        아이디
+        <input
+          className="form-control"
+          type="text"
+          name="id"
+          value={member.id}
+          onChange={changeValue}
+          placeholder="아이디를 입력하세요."
+        />
+      </label>
 
-        <div className="login-field">
-          <label htmlFor="login-email">이메일</label>
-          <input
-            id="login-email"
-            type="email"
-            placeholder="example@email.com"
-            autoComplete="username"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
+      <label className="login-label">
+        비밀번호
+        <input
+          className="form-control"
+          type="password"
+          name="password"
+          value={member.password}
+          onChange={changeValue}
+          placeholder="비밀번호를 입력하세요."
+        />
+      </label>
 
-        <div className="login-field">
-          <label htmlFor="login-password">비밀번호</label>
-          <input
-            id="login-password"
-            type={showPassword ? "text" : "password"}
-            placeholder="비밀번호를 입력하세요"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-
-        <label className="login-show-password">
-          <input
-            type="checkbox"
-            checked={showPassword}
-            onChange={(e) => setShowPassword(e.target.checked)}
-          />
-          비밀번호 표시
-        </label>
-
-        {error && (
-          <p className="login-error" role="alert">
-            {error}
-          </p>
-        )}
-
-        <button className="login-submit" type="submit">
+      <div className="login-buttons">
+        <button className="btn login-submit" type="submit">
           로그인
         </button>
+        <button className="btn login-cancel" type="button" onClick={cancelBack}>
+          취소
+        </button>
+      </div>
 
-        <div className="login-footer">
-          <span>계정이 없으신가요?</span>
-          <span> 회원가입은 추후 연결됩니다.</span>
-        </div>
-      </form>
-    </main>
+      <p className="login-footer">
+        아직 회원이 아니신가요? <Link to="/signup">회원가입</Link>
+      </p>
+    </form>
   );
-}
+};
+
+export default LoginPage;
