@@ -2,8 +2,16 @@ import React from "react";
 import "./Favorites.css";
 import MyCatBasket from "../components/MyCatBasket";
 import MyLikes from "../components/MyLikes";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 
 function Favorites() {
+  const loginUser = useSelector((s) => s.loginUser);
+
+  if (!loginUser) {
+    alert("로그인이 필요합니다.");
+    return <Navigate to="/login" replace />;
+  }
   return (
     <div>
       <div className="favorite-title">
