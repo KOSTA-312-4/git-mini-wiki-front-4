@@ -43,3 +43,19 @@ jobs:
             cd ~/react-cicd
             docker compose down
             docker compose up -d --build
+
+      - name: Send Discord Notification
+        if: always()                      # 앞 단계가 실패해도 항상 실행
+        run: |
+          STATUS="${{ job.status }}"
+          if [ "$STATUS" = "success" ]; then
+            MSG="✅ CI/CD 성공!"
+          else
+            MSG="❌ CI/CD 실패! <@&${{ secrets.DISCORD_ROLE_ID }}>"
+          fi
+
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"${MSG}\n🔗 [로그 확인하기](${RUN_URL})\"}" \
+               "${{ secrets.DISCORD_WEBHOOK_URL }}"
