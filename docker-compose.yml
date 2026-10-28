@@ -5,3 +5,14 @@ services:           # 여러 서비스(컨테이너) 정의 시작
     ports:
       - "80:80"     # 호스트 포트:컨테이너 포트 매핑
     restart: always # 컨테이너가 중지되면 항상 재시작
+    networks:
+      - gitnyang_net  # 백엔드 레포의 compose 와 공유하는 네트워크 (nginx 가 gitnyang-backend:3000 으로 /api 를 전달)
+    logging:
+      driver: json-file
+      options:        # 로그가 디스크를 채우지 않도록 크기 제한
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  gitnyang_net:
+    external: true  # 미리 만들어 둔 네트워크 (EC2 에서 최초 1회: docker network create gitnyang_net)
