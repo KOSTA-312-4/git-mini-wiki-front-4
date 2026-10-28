@@ -1,13 +1,54 @@
+/*
+ * 즐겨찾기 페이지: 제목 + 영역 패널 (냥바구니 / 나의 좋아요)
+ *
+ * 주의: 냥바구니 모달이 이 패널 안에서 position: fixed 로 화면 전체를 덮기 때문에
+ * 패널에는 backdrop-filter / transform 을 쓰지 않습니다. (쓰면 모달이 패널 안에 갇혀요)
+ */
 .favorite-title {
-  background-color: khaki;
-}
-.favorite-collection {
-  background-color: bisque;
-  border: 1px solid black;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 
+/* 코드에 인라인 style 이 있어서 !important 로 덮어씁니다 */
+.favorite-title h2 {
+  margin: 0 0 6px;
+  font-size: clamp(26px, 2.4vw, 32px);
+  font-weight: 700 !important;
+  letter-spacing: -0.8px;
+  color: var(--t);
+}
+
+.favorite-title h6 {
+  margin: 0;
+  font-size: 14px !important;
+  font-weight: 600;
+  color: var(--tsoft) !important;
+}
+
+.favorite-collection,
 .favorite-list {
-  background-color: #e8f5e9;
-  border: 1px solid black;
+  position: relative;
+  margin-bottom: 22px;
+  padding: 20px 22px 22px;
+  border: 1px solid var(--edge);
+  border-radius: 30px;
+  background: var(--panel-bg);
+  box-shadow: var(--panel-shadow);
+}
+
+/* 두 패널의 제목(냥바구니 / 나의 좋아요) */
+.favorite-collection h5,
+.favorite-list > div > h5 {
+  margin: 0 0 14px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--t);
+}
+
+@media (max-width: 600px) {
+  .favorite-collection,
+  .favorite-list {
+    padding: 16px 14px 18px;
+    border-radius: 26px;
+  }
 }

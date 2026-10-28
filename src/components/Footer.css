@@ -1,12 +1,64 @@
+/* 푸터: 어두운 색. 바로 위 콘텐츠 영역이 서서히 어두워지며 이어집니다. */
 .site-footer {
+  position: relative;
   flex-shrink: 0;
-  padding: 24px 0;
-  color: #dee2e6;
-  background: #343a40;
+  padding: 28px 0 40px;
+  font-family: var(--gn-font);
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  background: var(--dk);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 푸터 위쪽으로 번지는 그라데이션 (콘텐츠 아래 여백 270px 안에 들어가서 카드와 겹치지 않아요) */
+.site-footer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 260px;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    rgba(30, 42, 39, 0) 0%, rgba(40, 62, 56, 0.03) 8%, rgba(42, 66, 60, 0.09) 17%, rgba(40, 64, 58, 0.19) 27%, rgba(38, 58, 53, 0.33) 38%,
+    rgba(36, 54, 49, 0.5) 50%, rgba(33, 49, 45, 0.67) 62%, rgba(31, 45, 41, 0.82) 74%, rgba(30, 43, 40, 0.93) 86%, rgba(30, 42, 39, 0.98) 94%, var(--dk) 100%);
+}
+
+/* 로고(왼쪽) + 저작권(오른쪽) */
+.site-footer .container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  max-width: 1440px;
+  padding-left: 20px;
+  padding-right: 20px;
+  text-align: left !important;
+}
+
+.site-footer .container > p {
+  margin: 0 !important;
 }
 
 .footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+
+.footer-brand::before {
+  content: "";
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #fff url("/gitnyang-mark.png") center / 22px no-repeat;
+  box-shadow: 0 6px 16px rgba(30, 52, 46, 0.28), 0 0 0 3px rgba(63, 184, 163, 0.42);
 }
 
 .footer-brand:hover,

@@ -1,9 +1,15 @@
+/*
+ * 레포지토리 검색 결과 + 즐겨찾기(나의 좋아요)의 레포지토리 카드 (글라스 스타일)
+ * 검색창 한 줄 폼은 styles/skin.css 의 "form.d-flex.gap-2.mb-4" 를 사용합니다.
+ * MyLikes / MyLikesCard 에서도 이 파일의 카드 스타일을 함께 씁니다.
+ */
+
 /* 전체 페이지 */
 .repo-page {
-  width: min(1200px, calc(100% - 32px));
-  margin: 24px auto;
-  font-family: Arial, Helvetica, sans-serif;
-  color: #202124;
+  width: 100%;
+  margin: 0;
+  font-family: var(--gn-font);
+  color: var(--t);
 }
 
 /* 카드 목록: 기본 3열 */
@@ -16,16 +22,38 @@
 
 /* 저장소 카드 */
 .repo-card {
+  position: relative;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   min-width: 0;
   min-height: 390px;
-  padding: 18px;
-  border: 1px solid #dedede;
-  border-radius: 8px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+  padding: 20px;
+  border: 1px solid var(--edge);
+  border-radius: 28px;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.34) 58%, rgba(255, 255, 255, 0.5));
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: 0 26px 44px -28px rgba(30, 52, 46, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+  animation: rise 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 60ms + 120ms);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* 카드가 차례대로 떠오르는 순서 (한 페이지 9개) */
+.repo-card:nth-child(1) { --i: 0; }
+.repo-card:nth-child(2) { --i: 1; }
+.repo-card:nth-child(3) { --i: 2; }
+.repo-card:nth-child(4) { --i: 3; }
+.repo-card:nth-child(5) { --i: 4; }
+.repo-card:nth-child(6) { --i: 5; }
+.repo-card:nth-child(7) { --i: 6; }
+.repo-card:nth-child(8) { --i: 7; }
+.repo-card:nth-child(9) { --i: 8; }
+
+.repo-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 32px 50px -26px rgba(30, 52, 46, 0.55), 0 0 0 1px var(--gold), inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 /* 카드 상단 */
@@ -34,7 +62,7 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 /* 저장소 이름 */
@@ -42,64 +70,71 @@
   min-width: 0;
   margin: 0;
   font-size: 21px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.3;
+  letter-spacing: -0.4px;
   overflow-wrap: anywhere;
+  color: var(--t);
 }
 
-/* 즐겨찾기 별 버튼 */
+/* 즐겨찾기 하트 버튼 */
 .favorite-button {
   flex: 0 0 42px;
   display: grid;
   place-items: center;
   width: 42px;
   height: 42px;
-  margin-top: -6px;
+  margin-top: -4px;
   padding: 0;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.9);
   border-radius: 50%;
-  background-color: #dfe3e9;
-  color: #f80808;
-  font-size: 30px;
+  background: rgba(255, 255, 255, 0.6);
+  color: #d8574b;
+  font-size: 24px;
   line-height: 1;
   cursor: pointer;
-  transition:
-    background-color 0.2s,
-    transform 0.2s;
+  box-shadow: inset 0 1px 0 #fff, 0 6px 12px -8px rgba(30, 52, 46, 0.5);
+  transition: background 0.2s, transform 0.2s;
 }
 
 .favorite-button:hover {
-  transform: scale(1.06);
-  background-color: #ffbfbf;
+  transform: scale(1.08);
+  background: rgba(255, 214, 208, 0.85);
 }
 
 .favorite-button.is-favorite {
-  color: #f80808;
-  background-color: #ffbfbf;
+  color: #d8574b;
+  background: linear-gradient(145deg, rgba(255, 214, 208, 0.95), rgba(244, 165, 155, 0.7));
 }
 
 /* 소유자 프로필 이미지 */
 .repo-avatar {
   display: block;
-  width: 70px;
-  height: 70px;
-  margin: 0 0 12px;
+  width: 60px;
+  height: 60px;
+  margin: 0 0 14px;
+  border: 2px solid #fff;
   border-radius: 50%;
   object-fit: cover;
+  background: #fff;
+  box-shadow: 0 8px 16px -8px rgba(30, 52, 46, 0.55), 0 0 0 1px rgba(63, 184, 163, 0.3);
 }
 
 /* 저장소 설명 */
 .repo-description {
   min-height: 4.8em;
-  margin: 0 0 14px;
-  font-size: 16px;
+  margin: 0 0 16px;
+  font-size: 15px;
+  font-weight: 500;
   line-height: 1.6;
+  color: var(--t);
   overflow-wrap: anywhere;
 
   /* 설명이 너무 길면 최대 4줄까지 표시 */
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 4;
+  line-clamp: 4;
   overflow: hidden;
 }
 
@@ -110,31 +145,56 @@
 
 .repo-stats {
   margin-top: 0;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 18px;
 }
 
 .repo-stat {
-  margin: 0 0 10px;
-  font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0;
+  padding: 5px 0;
+  font-size: 14px;
+  font-weight: 700;
   line-height: 1.35;
+  color: var(--t);
   overflow-wrap: anywhere;
 }
 
+.repo-stat + .repo-stat {
+  border-top: 1px dashed rgba(70, 86, 79, 0.2);
+}
+
 .repo-stat strong {
-  font-weight: 700;
+  font-weight: 800;
+  color: var(--tsoft);
 }
 
 /* GitHub 링크 */
 .repo-link {
-  display: inline-block;
-  margin-top: 10px;
-  color: #6d8fce;
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  padding: 10px;
+  color: var(--tink);
+  font-size: 14px;
+  font-weight: 800;
   text-decoration: none;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 16px;
+  transition: background 0.25s, box-shadow 0.25s;
 }
 
 .repo-link:hover {
-  color: #3f69b2;
-  text-decoration: underline;
+  color: var(--tink);
+  text-decoration: none;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--gold);
 }
 
 /* 페이지 이동 영역 */
@@ -143,43 +203,54 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 16px;
+  margin-top: 30px;
 }
 
 .pagination-button {
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background-color: #d1d5db;
-  color: #333333;
-  font-size: 16px;
+  padding: 11px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--t);
+  font-size: 15px;
+  font-weight: 800;
   cursor: pointer;
+  box-shadow: inset 0 1px 0 #fff, 0 6px 14px -10px rgba(30, 52, 46, 0.5);
+  transition: background 0.25s, box-shadow 0.25s;
 }
 
 .pagination-button:hover:not(:disabled) {
-  background-color: #bfc5ce;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--gold);
 }
 
 .pagination-button:disabled {
-  opacity: 0.55;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 /* 현재 페이지 번호 */
 .repo-page-number {
-  color: #555555;
+  padding: 7px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  color: var(--tsoft);
   font-size: 14px;
+  font-weight: 800;
 }
 
 /* 로딩, 오류, 검색 결과 없음 */
 .repo-message {
   padding: 24px 12px;
-  color: #555555;
+  margin: 0;
+  color: var(--tsoft);
+  font-weight: 700;
   text-align: center;
 }
 
 .repo-error {
-  color: #c62828;
+  color: var(--danger);
 }
 
 /* 태블릿: 2열 */
@@ -192,11 +263,6 @@
 
 /* 모바일: 1열 */
 @media (max-width: 600px) {
-  .repo-page {
-    width: calc(100% - 24px);
-    margin: 16px auto;
-  }
-
   .repo-grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 16px;
@@ -209,5 +275,13 @@
 
   .repo-title {
     font-size: 19px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .repo-card {
+    opacity: 1 !important;
+    transform: none;
+    animation: none;
   }
 }

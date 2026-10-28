@@ -1,50 +1,101 @@
+@import "./styles/board.css";
+
 /*
+ * 페이지 틀: 부드러운 그라데이션 배경 위에 글라스 패널이 올라가고, 아래로 갈수록 푸터 색으로 이어집니다.
  * Header는 fixed이므로 문서 흐름에서 빠집니다.
  * app-shell의 padding-top으로 Header 아래에서 콘텐츠가 시작되게 합니다.
+ *
+ * 주의: 모달(냥바구니)이 position: fixed 로 화면 전체를 덮으려면 조상 요소에
+ * transform / filter / backdrop-filter / z-index(stacking context) 를 주면 안 됩니다.
+ * (.page-layout, .main-content 에는 그런 속성을 쓰지 않습니다.)
  */
 .app-shell {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-top: var(--site-header-height, 64px);
+  padding-top: var(--site-header-height, 76px);
+  font-family: var(--gn-font);
+  color: var(--t);
+  background:
+    /* 떠다니는 빛 (왼쪽 민트 / 오른쪽 라임 / 위쪽 흰색) */
+    radial-gradient(circle, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.46) 28%, rgba(255, 255, 255, 0.2) 48%, rgba(255, 255, 255, 0) 72%) 38% -200px / 560px 560px no-repeat,
+    radial-gradient(circle, rgba(185, 221, 211, 0.95) 0%, rgba(185, 221, 211, 0.6) 28%, rgba(185, 221, 211, 0.26) 48%, rgba(185, 221, 211, 0.07) 62%, rgba(185, 221, 211, 0) 72%) -200px 120px / 760px 760px no-repeat,
+    radial-gradient(circle, rgba(202, 214, 165, 0.9) 0%, rgba(202, 214, 165, 0.56) 28%, rgba(202, 214, 165, 0.24) 48%, rgba(202, 214, 165, 0.07) 62%, rgba(202, 214, 165, 0) 72%) right -240px top 180px / 820px 820px no-repeat,
+    /* 바탕 */
+    linear-gradient(180deg, #dcdedd 0%, #d6dfdd 22%, #cde0dc 48%, rgba(205, 224, 220, 0.55) 74%, rgba(205, 224, 220, 0) 100%),
+    radial-gradient(ellipse 72% 62% at 0% 100%, #b9ddd3 0%, rgba(185, 221, 211, 0.7) 26%, rgba(185, 221, 211, 0.34) 52%, rgba(185, 221, 211, 0.1) 74%, rgba(185, 221, 211, 0) 92%),
+    radial-gradient(ellipse 62% 57% at 100% 100%, #cad6a5 0%, rgba(202, 214, 165, 0.7) 26%, rgba(202, 214, 165, 0.34) 52%, rgba(202, 214, 165, 0.1) 74%, rgba(202, 214, 165, 0) 92%),
+    #c4dcd3;
 }
 
 /*
- * 데스크톱에서는 Main 오른쪽에 240px + 24px의 빈 공간을 확보합니다.
+ * 데스크톱에서는 Main 오른쪽에 300px + 24px의 빈 공간을 확보합니다.
  * Sidebar는 fixed라서 화면에 고정되지만, 이 빈 열 덕분에 Main과 겹치지 않습니다.
+ * 아래 여백(270px)은 푸터 위의 어두운 그라데이션 구간입니다.
  */
 .page-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 240px;
+  grid-template-columns: minmax(0, 1fr) 300px;
   gap: 24px;
-  align-items: stretch;
-  padding-top: 24px;
-  padding-bottom: 40px;
+  align-items: start;
+  padding-top: 28px;
+  padding-bottom: 270px;
   flex: 1 0 auto;
 }
 
+.container.page-layout {
+  max-width: 1440px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+/* 본문은 배경 위에 바로 올라가므로 흰 카드를 없앱니다 (각 화면의 패널이 글라스 모양을 가짐) */
 .main-content {
   min-width: 0;
   min-height: 60vh;
-  padding: 32px;
-  background: #fff;
-  border: 1px solid #dee2e6;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgb(33 37 41 / 3%);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
 }
 
-/* 로그인/회원가입은 Sidebar를 렌더링하지 않고 Main을 단일 열로 표시합니다. */
+/* 로그인/회원가입은 Sidebar를 렌더링하지 않고 가운데 카드 한 장으로 표시합니다. */
 .page-layout-auth {
   grid-template-columns: minmax(0, 1fr);
-  align-items: start;
+  align-items: center;
+  padding-top: 120px;
+  padding-bottom: 230px;
 }
 
 .page-layout-auth .main-content {
+  position: relative;
   width: 100%;
-  max-width: 720px;
+  max-width: 460px;
   min-height: 0;
-  margin: 24px auto;
-  padding: 40px;
+  margin: 0 auto;
+  padding: 70px 40px 34px;
+  border-radius: 36px;
+  border: 1px solid var(--edge);
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.5) 55%, rgba(255, 255, 255, 0.66));
+  box-shadow: 0 40px 70px -28px rgba(30, 52, 46, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* 카드 위쪽에 걸친 로고 오브 (로고 파일: public/gitnyang-mark.png) */
+.page-layout-auth .main-content::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -50px;
+  width: 100px;
+  height: 100px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background:
+    url("/gitnyang-mark.png") center / 54px no-repeat,
+    radial-gradient(circle at 50% 45%, #fff 0 38px, rgba(255, 255, 255, 0.7) 39px, rgba(255, 248, 224, 0.35) 40px);
+  border: 1px solid rgba(235, 199, 106, 0.7);
+  box-shadow: 0 0 26px rgba(235, 199, 106, 0.35), 0 14px 26px -12px rgba(30, 52, 46, 0.55);
 }
 
 /* Footer는 고정하지 않습니다. 모든 콘텐츠 다음에 위치합니다. */
@@ -52,20 +103,31 @@
   margin-top: auto;
 }
 
-@media (max-width: 767.98px) {
+/* 좁은 화면: 1열, Sidebar는 콘텐츠 아래로 */
+@media (max-width: 1100px) {
   .page-layout {
     grid-template-columns: minmax(0, 1fr);
     gap: 16px;
-    padding-top: 16px;
-    padding-bottom: 24px;
+    padding-bottom: 250px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .container.page-layout {
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
-  .main-content {
-    padding: 20px;
+  .page-layout {
+    padding-top: 16px;
+  }
+
+  .page-layout-auth {
+    padding-top: 110px;
   }
 
   .page-layout-auth .main-content {
-    margin: 8px auto;
-    padding: 24px 20px;
+    padding: 58px 20px 26px;
+    border-radius: 30px;
   }
 }

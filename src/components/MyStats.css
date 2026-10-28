@@ -1,8 +1,17 @@
-/* 마이페이지 프로필 아래의 통계 영역 (MyPage 와 같은 차콜 그레이 #343a40 사용) */
+/* 마이페이지 프로필 아래의 통계 영역 (글라스 스타일)
+   구성: 1행 요약(즐겨찾기 · 냥바구니) → 2행 언어 분포 도넛 + 언어 Top 10 → 3행 냥바구니별 수 → 4행 모든 언어 통계 표
+   그래프가 나타나는 애니메이션은 이 파일 맨 아래에 그대로 있어요. */
 .mystats {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding: 22px 24px 24px;
+  border: 1px solid var(--edge);
+  border-radius: 30px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: var(--panel-shadow);
 }
 
 .mystats-title {
@@ -10,19 +19,21 @@
   align-items: baseline;
   gap: 8px;
   margin: 0;
-  color: #343a40;
-  font-size: 1.1rem;
+  color: var(--t);
+  font-size: 20px;
   font-weight: 700;
+  letter-spacing: -0.4px;
 }
 
 .mystats-title small,
 .mystats-card-title small {
-  color: #6c757d;
-  font-size: 0.75rem;
-  font-weight: 400;
+  color: var(--tfaint);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
 }
 
-/* 1행: 즐겨찾기 / 냥바구니 개수 버튼 */
+/* 1행: 즐겨찾기 / 냥바구니 개수 버튼 (누르면 즐겨찾기 페이지로 가요) */
 .mystats-summary {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -32,21 +43,22 @@
 .mystats-summary-card {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  color: #343a40;
-  background-color: #fff;
+  gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 22px;
+  color: var(--t);
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
   text-decoration: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: transform 0.25s, box-shadow 0.25s;
 }
 
 .mystats-summary-card:hover,
 .mystats-summary-card:focus-visible {
-  color: #343a40;
-  border-color: #343a40;
-  box-shadow: 0 2px 8px rgb(52 58 64 / 12%);
+  color: var(--t);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 28px -16px rgba(30, 52, 46, 0.55), 0 0 0 1px var(--gold), inset 0 1px 0 #fff;
 }
 
 .mystats-summary-icon {
@@ -54,12 +66,18 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
+  border: 2px solid #fff;
   border-radius: 50%;
   color: #fff;
-  background-color: #343a40;
-  font-size: 1.1rem;
+  background: linear-gradient(145deg, #86d3c3, #2dae9a);
+  box-shadow: 0 8px 16px -8px rgba(30, 52, 46, 0.55);
+  font-size: 1.15rem;
+}
+
+.mystats-summary-card:first-child .mystats-summary-icon {
+  background: linear-gradient(145deg, #f4a59b, #d8574b);
 }
 
 .mystats-summary-text {
@@ -70,23 +88,26 @@
 }
 
 .mystats-summary-label {
-  color: #6c757d;
-  font-size: 0.85rem;
-  font-weight: 600;
+  color: var(--tsoft);
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .mystats-summary-value {
-  font-size: 1.6rem;
+  font-size: 30px;
   font-weight: 700;
-  line-height: 1.2;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
 }
 
 .mystats-summary-go {
-  color: #adb5bd;
+  color: var(--tfaint);
+  transition: transform 0.25s, color 0.25s;
 }
 
 .mystats-summary-card:hover .mystats-summary-go {
-  color: #343a40;
+  color: var(--gold-dk);
+  transform: translateX(3px);
 }
 
 /* 공통 차트 카드 */
@@ -98,10 +119,11 @@
 
 .mystats-card {
   min-width: 0;
-  padding: 16px;
-  border: 1px solid #dee2e6;
-  border-radius: 8px;
-  background-color: #fff;
+  padding: 18px 20px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 14px 24px -22px rgba(30, 52, 46, 0.5);
 }
 
 .mystats-card-title {
@@ -109,17 +131,19 @@
   flex-wrap: wrap;
   align-items: baseline;
   gap: 8px;
-  margin: 0 0 12px;
-  color: #343a40;
-  font-size: 0.95rem;
-  font-weight: 700;
+  margin: 0 0 14px;
+  color: var(--t);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
 }
 
 .mystats-empty {
   margin: 0;
-  padding: 24px 0;
-  color: #6c757d;
-  font-size: 0.85rem;
+  padding: 28px 0;
+  color: var(--tfaint);
+  font-size: 13.5px;
+  font-weight: 700;
   text-align: center;
 }
 
@@ -128,21 +152,23 @@
   flex-shrink: 0;
   width: 10px;
   height: 10px;
-  margin-right: 6px;
+  margin-right: 8px;
   border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.8);
 }
 
 /* 2행 왼쪽: 도넛 차트 + 범례 */
 .mystats-donut {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
 }
 
 .mystats-donut svg {
   flex-shrink: 0;
-  width: 160px;
-  height: 160px;
+  width: 168px;
+  height: 168px;
+  overflow: visible;
 }
 
 .mystats-donut-arc {
@@ -156,15 +182,16 @@
 }
 
 .mystats-donut-total {
-  fill: #343a40;
-  font-size: 32px;
+  fill: var(--t);
+  font-size: 34px;
   font-weight: 700;
   text-anchor: middle;
 }
 
 .mystats-donut-caption {
-  fill: #6c757d;
+  fill: var(--tsoft);
   font-size: 13px;
+  font-weight: 700;
   text-anchor: middle;
 }
 
@@ -172,29 +199,38 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   min-width: 0;
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 0.8rem;
+  font-size: 13px;
 }
 
 .mystats-legend li {
   display: flex;
   align-items: center;
+  padding: 4px 8px;
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+
+.mystats-legend li:hover {
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .mystats-legend-name {
   flex: 1;
   overflow: hidden;
-  color: #343a40;
+  color: var(--t);
+  font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .mystats-legend-value {
-  color: #6c757d;
+  color: var(--tsoft);
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
 
@@ -202,100 +238,131 @@
 .mystats-hbar {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 0.8rem;
+  font-size: 13px;
 }
 
 .mystats-hbar li {
   display: grid;
-  grid-template-columns: 18px 84px 1fr 28px;
+  grid-template-columns: 22px 92px minmax(0, 1fr) 30px;
   align-items: center;
-  gap: 6px;
-  border-radius: 4px;
+  gap: 8px;
+  padding: 4px 6px;
+  border-radius: 10px;
+  transition: background 0.2s;
 }
 
 .mystats-hbar li:hover {
-  background-color: #f8f9fa;
+  background: rgba(255, 255, 255, 0.7);
 }
 
 .mystats-hbar-rank {
-  color: #6c757d;
+  color: var(--tfaint);
+  font-size: 12.5px;
+  font-weight: 700;
   text-align: right;
+}
+
+.mystats-hbar li:nth-child(-n + 3) .mystats-hbar-rank {
+  color: var(--gold-dk);
 }
 
 .mystats-hbar-name {
   overflow: hidden;
-  color: #343a40;
+  color: var(--t);
+  font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .mystats-hbar-track {
   height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(70, 86, 79, 0.08);
 }
 
 .mystats-hbar-fill {
   display: block;
   height: 100%;
-  min-width: 2px;
-  border-radius: 0 4px 4px 0;
-  background-color: #2a78d6;
+  min-width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(63, 184, 163, 0.75), var(--teal2));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.mystats-hbar li:first-child .mystats-hbar-fill {
+  background: linear-gradient(90deg, rgba(235, 199, 106, 0.85), var(--gold2));
 }
 
 .mystats-hbar-value,
 .mystats-vbar-value {
-  color: #343a40;
+  color: var(--t);
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
-  font-weight: 600;
 }
 
-/* 3행: 세로 막대 (언어가 많으면 가로 스크롤) */
+.mystats-hbar-value {
+  text-align: right;
+}
+
+/* 3행: 세로 막대 (냥바구니가 많으면 가로 스크롤) */
 .mystats-vbar {
   display: flex;
   align-items: stretch;
-  gap: 8px;
-  height: 200px;
+  gap: 12px;
+  height: 210px;
+  padding: 0 4px;
   overflow-x: auto;
-  border-bottom: 1px solid #ced4da;
+  border-bottom: 1px solid rgba(70, 86, 79, 0.24);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(70, 86, 79, 0.3) transparent;
 }
 
 .mystats-vbar-item {
   display: flex;
-  flex: 1 0 48px;
+  flex: 1 0 56px;
   flex-direction: column;
   align-items: center;
-  max-width: 72px;
-  font-size: 0.75rem;
+  max-width: 88px;
+  font-size: 12px;
+}
+
+.mystats-vbar-value {
+  color: var(--tink);
 }
 
 .mystats-vbar-track {
   display: flex;
   flex: 1;
   align-items: flex-end;
-  width: 60%;
+  width: 56%;
 }
 
 .mystats-vbar-fill {
   display: block;
   width: 100%;
-  min-height: 2px;
-  border-radius: 4px 4px 0 0;
-  background-color: #2a78d6;
+  min-height: 3px;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(180deg, #86d3c3, var(--teal2));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 8px 14px -10px rgba(30, 52, 46, 0.5);
+  transition: filter 0.2s;
 }
 
 .mystats-vbar-item:hover .mystats-vbar-fill,
 .mystats-hbar li:hover .mystats-hbar-fill {
-  background-color: #1c5cab;
+  filter: brightness(0.92) saturate(1.1);
 }
 
 .mystats-vbar-name {
   overflow: hidden;
   width: 100%;
-  padding: 4px 0;
-  color: #495057;
+  padding: 8px 0 6px;
+  color: var(--tsoft);
+  font-weight: 700;
   text-align: center;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -304,36 +371,53 @@
 /* 4행: 모든 언어 통계 표 */
 .mystats-table-wrap {
   overflow-x: auto;
+  scrollbar-width: thin;
 }
 
 .mystats-table {
   width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
-
-.mystats-table th,
-.mystats-table td {
-  padding: 8px;
-  border-bottom: 1px solid #f1f3f5;
-  white-space: nowrap;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+  font-size: 13.5px;
 }
 
 .mystats-table th {
-  color: #6c757d;
-  font-weight: 600;
-  border-bottom-color: #dee2e6;
+  padding: 2px 14px 6px;
+  color: var(--tfaint);
+  font-size: 12.5px;
+  font-weight: 800;
+  text-align: left;
+  white-space: nowrap;
 }
 
 .mystats-table td {
-  color: #343a40;
+  padding: 10px 14px;
+  color: var(--t);
+  font-weight: 700;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.58);
+  border-top: 1px solid rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.9);
+  transition: background 0.2s;
 }
 
-.mystats-table tbody tr:hover {
-  background-color: #f8f9fa;
+.mystats-table td:first-child {
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 14px 0 0 14px;
+  color: var(--tfaint);
 }
 
-.mystats-num {
+.mystats-table td:last-child {
+  border-right: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 0 14px 14px 0;
+}
+
+.mystats-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.mystats-table th.mystats-num,
+.mystats-table td.mystats-num {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
@@ -345,6 +429,11 @@
 }
 
 @media (max-width: 480px) {
+  .mystats {
+    padding: 18px 14px 20px;
+    border-radius: 26px;
+  }
+
   .mystats-summary {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -355,6 +444,10 @@
 
   .mystats-legend {
     width: 100%;
+  }
+
+  .mystats-hbar li {
+    grid-template-columns: 20px 78px minmax(0, 1fr) 28px;
   }
 }
 

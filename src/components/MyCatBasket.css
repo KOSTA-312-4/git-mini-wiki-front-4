@@ -2,77 +2,111 @@
   display: flex;
   justify-content: space-between; /*양쪽 끝 배치*/
   align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+/* "냥바구니" 제목은 Favorites.css 의 패널 제목 스타일을 따라가지만, 툴바 안에서는 여백이 없어야 해요 */
+.favorite-collection .catBasket-toolbar h5 {
+  margin: 0;
 }
 
 .catBasket-add-button {
-  padding: 4px 5px; /*안쪽 여백*/
-  border: 1px solid #dedede;
-  border-radius: 6px;
-  background-color: #ffffff;
-  color: #495057;
-  font-size: 13px;
+  padding: 9px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 14px;
+  background: var(--gold-btn);
+  color: var(--gold-ink);
+  font-size: 13.5px;
+  font-weight: 800;
   cursor: pointer; /*마우스 커서를 갖다댔을때 pointer(손가락 모양으로)*/
+  box-shadow: var(--gold-btn-shadow);
+  transition: background 0.25s;
 }
 
 .catBasket-add-button:hover {
-  background-color: #f1f3f5;
-  border-color: #adb5bd;
+  background: var(--gold-btn-hover);
 }
 
 /* 카드를 가로로 배치 */
 .catBasket-list {
   display: flex;
-  gap: 5px;
+  gap: 14px;
   overflow-x: auto; /*내용이 가로로 넘칠때 줄바꿈이나 화면 바깥으로 빠져나가는거 방지*/
-  padding: 8px 0;
+  padding: 6px 4px 14px;
+  margin: 0 -4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(70, 86, 79, 0.3) transparent;
 }
 
 /* 카드 공통 모양 */
 .catBasket-card {
-  flex: 0 0 150px;
+  flex: 0 0 190px;
   box-sizing: border-box;
-  min-height: 80px; /*최소 높이 80px*/
-  padding: 10px;
-  border: 1px solid #dedede;
-  border-radius: 10px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+  min-height: 118px; /*최소 높이*/
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 22px;
+  background: var(--card-bg);
+  color: var(--t);
+  box-shadow: var(--card-shadow);
+  transition: transform 0.25s, box-shadow 0.25s;
 }
+
+/* 맨 처음 "전체" 카드(클릭 불가)는 민트빛 */
+.catBasket-card:first-child:not(.catBasket-card-click):not(.catBasket-card-empty) {
+  background: linear-gradient(160deg, rgba(185, 221, 211, 0.75), rgba(255, 255, 255, 0.5));
+}
+
 /* '아이콘' 과 '개수'를 양 끝으로 */
 .catBasket-card-top {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-  font-size: 15px;
+  margin-bottom: 10px;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--teal2);
 }
+
 .catBasket-card-count {
-  font-size: 10px;
-  color: #6c757d;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: rgba(63, 184, 163, 0.2);
+  color: var(--tink);
+  font-size: 11px;
+  font-weight: 800;
 }
 
 .catBasket-card-name {
   margin: 0 0 4px;
-  font-weight: 600;
-  font-size: 13px;
+  font-size: 15.5px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--t);
 }
 
 .catBasket-card-description {
   margin: 0;
-  font-size: 10px;
-  color: #868e96;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--tsoft);
 }
 
-/* + 카드: 회색 점선 */
+/* + 카드: 점선 */
 .catBasket-card-empty {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px dashed #adb5bd;
-  background-color: #f8f9fa;
-  color: #adb5bd;
-  font-size: 28px;
+  display: grid;
+  place-items: center;
+  border: 1.5px dashed rgba(70, 86, 79, 0.35);
+  background: transparent;
   box-shadow: none;
+  cursor: pointer;
+}
+
+.catBasket-card-empty:hover {
+  border-color: var(--gold);
+  background: rgba(255, 248, 224, 0.4);
 }
 
 .catBasket-card-click {
@@ -80,12 +114,29 @@
 }
 
 .catBasket-card-click:hover {
-  background-color: #c2deff;
-  transition: background-color 0.2s ease;
+  background: var(--card-bg);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 28px -16px rgba(30, 52, 46, 0.55), 0 0 0 1px var(--gold), inset 0 1px 0 #fff;
 }
 
 .plus-button {
+  width: 100%;
+  height: 100%;
   border: none;
-  background-color: #f8f9fa;
-  color: #adb5bd;
+  background: none;
+  color: var(--tfaint);
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.catBasket-card-empty:hover .plus-button {
+  color: var(--gold-dk);
+}
+
+@media (max-width: 600px) {
+  .catBasket-card {
+    flex-basis: 160px;
+  }
 }
