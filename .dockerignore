@@ -1,0 +1,16 @@
+# 이미지 빌드에 필요한 것은 dist(빌드 결과), nginx.conf, Dockerfile 뿐입니다.
+# 나머지를 빌드 컨텍스트에서 빼면 빌드가 빠르고 불필요한 파일이 섞이지 않습니다.
+node_modules
+src
+public
+.github
+.git
+.env
+.env.*
+README.md
+eslint.config.js
+index.html
+vite.config.js
+package.json
+package-lock.json
+*.log
