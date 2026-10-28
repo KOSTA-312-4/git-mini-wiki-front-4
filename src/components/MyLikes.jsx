@@ -3,20 +3,11 @@ import "./MyLikes.css";
 import "../pages/GithubRepositories.css"; //기존 레포 출력 스타일 반영
 import MyLikesCard from "./MyLikesCard";
 import { useSelector } from "react-redux";
+import { selectMyFavorites } from "../store/store";
 
 function MyLikes() {
-  //좋아요 정보, email 정보 가져오기
-  const userEmail = useSelector((s) => {
-    if (s.loginUser === null || s.loginUser === undefined) {
-      return undefined;
-    }
-
-    return s.loginUser.email;
-  });
-
-  const favorites = useSelector((s) => s.favorites).filter(
-    (f) => f.userId === userEmail,
-  );
+  //로그인한 사용자의 좋아요 정보 가져오기
+  const favorites = useSelector(selectMyFavorites);
 
   //=====페이지네이션====//
   const PAGE = 9; //한페이지에 9개만

@@ -1,6 +1,7 @@
 import { useId } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { selectMyBaskets, selectMyFavorites } from "../store/store";
 import "./MyStats.css";
 
 // 언어별 고유 색상 (색맹 안전성을 검사한 순서이므로 순서를 바꾸지 않습니다)
@@ -33,9 +34,8 @@ function percent(count, total) {
 const MyStats = () => {
   // 도넛 차트를 위에서부터 시계방향으로 그려내는 mask 의 고유 id
   const donutMaskId = useId();
-  const userEmail = useSelector((s) => s.loginUser?.email);
-  const favorites = useSelector((s) => s.favorites).filter((f) => f.userId === userEmail);
-  const baskets = useSelector((s) => s.baskets).filter((b) => b.userId === userEmail);
+  const favorites = useSelector(selectMyFavorites);
+  const baskets = useSelector(selectMyBaskets);
 
   const languageStats = countByLanguage(favorites);
   const total = favorites.length;

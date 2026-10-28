@@ -1,7 +1,9 @@
 import { useReducer } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { addUser } from "../store/users.js";
+import { login } from "../store/store";
+import { setToken } from "../api/client";
+import { alertError, signupRequest } from "../api/auth";
 import "./SignupPage.css";
 
 const initialForm = {
@@ -25,8 +27,6 @@ function formReducer(state, action) {
 const SignupPage = () => {
   const [form, formDispatch] = useReducer(formReducer, initialForm);
 
-  // store.js 의 users 배열
-  const users = useSelector((state) => state.users);
   // dispatch는 store.js 로 요청보내주는 함수
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const SignupPage = () => {
   };
 
   // 회원가입
-  const submitSignup = (e) => {
+  const submitSignup = async (e) => {
     e.preventDefault();
 
     if (!form.email || !form.id || !form.password) {
@@ -49,20 +49,21 @@ const SignupPage = () => {
       return;
     }
 
-    if (users.some((user) => user.id === form.id)) {
-      alert("이미 사용 중인 아이디입니다.");
-      return;
+    // 중복 아이디/이메일, 아이디 형식 검사는 서버가 하고 메시지를 돌려줍니다.
+    try {
+      const { token, user } = await signupRequest({
+        ...form,
+        id: form.id.trim(),
+        email: form.email.trim(),
+      });
+      setToken(token);
+      dispatch(login(user));
+      alert(`${user.id}님, 회원가입이 완료되었습니다.`);
+      formDispatch({ type: "RESET" });
+      navigate("/");
+    } catch (error) {
+      alertError(error);
     }
-
-    if (users.some((user) => user.email === form.email)) {
-      alert("이미 가입된 이메일입니다.");
-      return;
-    }
-
-    dispatch(addUser({ ...form, githubRepo: "", EXP: 0 }));
-    alert(`${form.id}님, 회원가입이 완료되었습니다.`);
-    formDispatch({ type: "RESET" });
-    navigate("/login");
   };
 
   // 취소

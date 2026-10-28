@@ -16,7 +16,7 @@ function GithubRepositories() {
   console.log(selectUser);
 
   const [params] = useSearchParams();
-  const initKeyword = params.get('q') + (params.get('lang') != ''? ' language:' + params.get('lang') : '');
+  const initKeyword = (params.get('q') ?? '') + (params.get('lang') ? ' language:' + params.get('lang') : '');
 
   const [repositories, setRepositories] = useState([]);
   const [page, setPage] = useState(1);
@@ -117,7 +117,7 @@ function GithubRepositories() {
       inputRef.current.focus();
       return;
     }
-    setKeyword(inputRef.current.value + " language:" + detailRef.current);
+    setKeyword(inputRef.current.value + (detailRef.current ? " language:" + detailRef.current : ""));
   }
 
   return (
@@ -148,7 +148,7 @@ function GithubRepositories() {
           !error &&
           visibleRepositories.map((repo) => {
             const isFavorite = favorites.some(
-              (favorite) => favorite.id === repo.id && favorite.userId == selectUser.email
+              (favorite) => favorite.id === repo.id && favorite.userId === selectUser?.email
             );
 
             return (
@@ -161,7 +161,7 @@ function GithubRepositories() {
                     className={`favorite-button ${
                       isFavorite ? "is-favorite" : ""
                     }`}
-                    onClick={() => dispatch(toggleFavorite({repo, userEmail:selectUser.email}))}
+                    onClick={() => dispatch(toggleFavorite({repo, userEmail:selectUser?.email}))}
                     aria-label={
                       isFavorite
                         ? "즐겨찾기 해제"

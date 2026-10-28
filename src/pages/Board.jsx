@@ -1,60 +1,77 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Table, Form, Alert, Badge } from 'react-bootstrap';
-import { useSelector } from 'react-redux';
-
-const BOARD_KEY = 'gitnyang-board';
-
-// 초기 더미 데이터 (저장된 게시글이 없을 때만 사용)
-const DEFAULT_BOARD_LIST = [
-    { no: "1", userId: 'guest', baskets: [], title: '111', description: '123', viewCount: 1 },
-    { no: "2", userId: 'guest', baskets: [], title: '222', description: '234', viewCount: 2 },
-    { no: "3", userId: 'guest', baskets: [], title: '333', description: '345', viewCount: 1 },
-    { no: "4", userId: 'guest', baskets: [], title: '444', description: '456', viewCount: 1 }
-];
-
-function loadBoardList() {
-    try {
-        const saved = JSON.parse(localStorage.getItem(BOARD_KEY));
-        if (Array.isArray(saved)) return saved;
-    } catch {
-        // 파싱 실패 시 기본값 사용
-    }
-    return DEFAULT_BOARD_LIST;
-}
+import { useDispatch, useSelector } from 'react-redux';
+import { selectMyBaskets, selectMyFavorites, setBoard } from '../store/store';
+import { alertError, errorMessage as apiErrorMessage } from '../api/auth';
+import {
+    addCommentRequest,
+    createPostRequest,
+    deleteCommentRequest,
+    deletePostRequest,
+    fetchPosts,
+    readPostRequest,
+    updateCommentRequest,
+    updatePostRequest,
+} from '../api/board';
 
 const Board = () => {
 
     // ---------------------- 로그인 유저 / 냥바구니 ----------------------
     const loginUser = useSelector((s) => s.loginUser);
-    const baskets = useSelector((s) => s.baskets);
-    const favorites = useSelector((s) => s.favorites);
+    const dispatch = useDispatch();
+    const myFavorites = useSelector(selectMyFavorites);
+    const myBasketList = useSelector(selectMyBaskets);
 
     // 로그인한 유저의 냥바구니 목록 (담긴 레포의 name/url 포함)
-    const myBaskets = loginUser
-        ? baskets
-            .filter((b) => b.userId === loginUser.email)
-            .map((b) => ({
-                id: b.id,
-                name: b.name,
-                repos: b.repoIds
-                    .map((repoId) => favorites.find((f) => f.id === repoId))
-                    .filter(Boolean)
-                    .map((f) => ({ id: f.id, name: f.name, html_url: f.html_url })),
-            }))
-        : [];
+    const myBaskets = myBasketList.map((b) => ({
+        id: b.id,
+        name: b.name,
+        repos: b.repoIds
+            .map((repoId) => myFavorites.find((f) => f.id === repoId))
+            .filter(Boolean)
+            .map((f) => ({ id: f.id, name: f.name, html_url: f.html_url })),
+    }));
 
     // ---------------------- 게시글 목록 상태 ----------------------
-    // 화면에 출력할 게시물 목록 (초기 더미 데이터 4개)
-    const [boardList, setBoardList] = useState(loadBoardList);
+    // 게시글은 서버에서 불러와 Redux(board)에 보관합니다.
+    const boardList = useSelector((s) => s.board);
+    // 서버 응답을 기다린 뒤에도 항상 최신 목록을 기준으로 계산하도록 store 의 현재 값을 사용합니다.
+    const setBoardList = (next) =>
+        dispatch((dispatchNow, getState) =>
+            dispatchNow(setBoard(typeof next === 'function' ? next(getState().board) : next)));
 
-    // 게시글이 바뀔 때마다 localStorage 에 저장 (페이지 이동/새로고침해도 유지)
-    useEffect(() => {
+    const [loading, setLoading] = useState(true);   // 목록을 처음 불러오는 중
+    const [loadError, setLoadError] = useState(''); // 목록을 불러오지 못했을 때 메시지
+
+    // 서버에서 게시글 목록 다시 불러오기
+    const loadBoard = async () => {
         try {
-            localStorage.setItem(BOARD_KEY, JSON.stringify(boardList));
-        } catch {
-            // 저장 공간을 사용할 수 없는 경우 무시
+            dispatch(setBoard(await fetchPosts()));
+            setLoadError('');
+        } catch (error) {
+            setLoadError(apiErrorMessage(error));
+        } finally {
+            setLoading(false);
         }
-    }, [boardList]);
+    };
+
+    // 화면을 열 때 한 번 불러오기
+    useEffect(() => {
+        let ignore = false;
+        fetchPosts()
+            .then((posts) => {
+                if (!ignore) dispatch(setBoard(posts));
+            })
+            .catch((error) => {
+                if (!ignore) setLoadError(apiErrorMessage(error));
+            })
+            .finally(() => {
+                if (!ignore) setLoading(false);
+            });
+        return () => {
+            ignore = true;
+        };
+    }, [dispatch]);
 
     // ---------------------- 화면 모드 관리용 상태 ----------------------
     // 어떤 화면을 보여줄지 제어하는 플래그들
@@ -71,28 +88,36 @@ const Board = () => {
     const [editCommentId, setEditCommentId] = useState(null);  // 수정 중인 댓글 id
     const [editCommentText, setEditCommentText] = useState(''); // 수정 중인 댓글 내용
 
-    // 읽기 화면에서는 항상 최신 목록의 글을 사용 (댓글 변경 즉시 반영)
-    const currentPost = boardList.find(b => b.no === boardInfo.no) || boardInfo;
-    const comments = currentPost.comments || [];
+    // 읽기 화면의 댓글은 글을 읽을 때 서버에서 함께 받아 boardInfo 에 보관합니다.
+    const comments = boardInfo.comments || [];
 
-    // 특정 글의 댓글 목록을 갱신하는 공통 함수
-    const updateComments = (no, fn) =>
-        setBoardList(list => list.map(b =>
-            b.no === no ? { ...b, comments: fn(b.comments || []) } : b
-        ));
+    // 읽고 있는 글의 댓글 목록을 갱신하는 공통 함수 (서버 저장이 성공한 뒤에만 호출)
+    const updateComments = (fn) =>
+        setBoardInfo(info => ({ ...info, comments: fn(info.comments || []) }));
+
+    // 서버에 반영하다 실패했을 때: 안내 후, 글이 이미 사라졌다면(404) 목록으로 돌아가 새로 불러옴
+    const handleBoardError = (error) => {
+        alertError(error);
+        if (error.response?.status === 404) {
+            boardListView();
+            loadBoard();
+        }
+    };
 
     // ▶ 댓글 등록
-    const commentAdd = () => {
+    const commentAdd = async () => {
         if (!loginUser) {
             alert('로그인 후 댓글을 작성할 수 있습니다.');
             return;
         }
         if (commentText.trim() === '') return;
-        updateComments(currentPost.no, cs => [
-            ...cs,
-            { id: Date.now(), userId: loginUser.id, content: commentText.trim() }
-        ]);
-        setCommentText('');
+        try {
+            const comment = await addCommentRequest(boardInfo.no, commentText.trim());
+            updateComments(cs => [...cs, comment]);
+            setCommentText('');
+        } catch (error) {
+            handleBoardError(error);
+        }
     };
 
     // ▶ 댓글 수정 시작 (작성자만)
@@ -102,23 +127,27 @@ const Board = () => {
         setEditCommentText(c.content);
     };
 
-    // ▶ 댓글 수정 저장 (작성자만)
-    const commentUpdate = () => {
+    // ▶ 댓글 수정 저장 (작성자만 - 서버도 한 번 더 확인)
+    const commentUpdate = async () => {
         if (editCommentText.trim() === '') return;
-        updateComments(currentPost.no, cs => cs.map(c =>
-            c.id === editCommentId && loginUser && c.userId === loginUser.id
-                ? { ...c, content: editCommentText.trim() }
-                : c
-        ));
-        setEditCommentId(null);
-        setEditCommentText('');
+        try {
+            const saved = await updateCommentRequest(editCommentId, editCommentText.trim());
+            updateComments(cs => cs.map(c => (c.id === saved.id ? saved : c)));
+            setEditCommentId(null);
+            setEditCommentText('');
+        } catch (error) {
+            handleBoardError(error);
+        }
     };
 
-    // ▶ 댓글 삭제 (작성자만)
-    const commentDelete = (id) => {
-        updateComments(currentPost.no, cs => cs.filter(c =>
-            !(c.id === id && loginUser && c.userId === loginUser.id)
-        ));
+    // ▶ 댓글 삭제 (작성자만 - 서버도 한 번 더 확인)
+    const commentDelete = async (id) => {
+        try {
+            await deleteCommentRequest(id);
+            updateComments(cs => cs.filter(c => c.id !== id));
+        } catch (error) {
+            handleBoardError(error);
+        }
     };
 
     // ---------------------- 작성 폼 상태 ----------------------
@@ -135,12 +164,6 @@ const Board = () => {
     // 냥바구니 체크박스 토글 공통 함수
     const toggleId = (list, setList, id) =>
         setList(list.includes(id) ? list.filter(n => n !== id) : [...list, id]);
-
-    // 선택한 냥바구니 id들을 게시글에 저장할 스냅샷으로 변환 (이미 사라진 바구니는 prev에서 유지)
-    const buildBaskets = (ids, prev = []) =>
-        ids
-            .map(id => myBaskets.find(b => b.id === id) || prev.find(b => b.id === id))
-            .filter(Boolean);
 
     // 작성자 본인 여부
     const isOwner = (board) => !!loginUser && board.userId === loginUser.id;
@@ -162,27 +185,27 @@ const Board = () => {
     };
 
     // ▶ 게시글 읽기 화면으로 전환 + 조회수 증가
-    const boardRead = (no) => {
-        // 먼저 화면 모드 전환
-        setListOk(false);
-        setWriteOk(false);
-        setEditOk(false);
-        setReadOk(true);
+    const boardRead = async (no) => {
+        try {
+            // 1) 서버가 조회수를 1 올리고 글과 댓글을 돌려줌
+            const post = await readPostRequest(no);
 
-        // 1) 클릭한 게시글의 조회수 1 증가
-        const updatedList = boardList.map(b =>
-            b.no === no ? { ...b, viewCount: b.viewCount + 1 } : b
-        );
-        // 변경된 리스트로 상태 업데이트 → 화면 전체 다시 렌더링
-        setBoardList(updatedList);
+            // 2) 목록의 조회수도 서버 값으로 맞춤
+            setBoardList(list => list.map(b =>
+                b.no === no ? { ...b, viewCount: post.viewCount } : b
+            ));
 
-        setEditCommentId(null);
-        setCommentText('');
-
-        // 2) 클릭한 게시글 정보 찾기
-        const selectedBoard = boardList.find(b => b.no === no);
-        // 읽기 화면에 보여줄 게시글 정보 저장
-        setBoardInfo(selectedBoard);
+            // 3) 읽기 화면에 보여줄 게시글 정보 저장 후 화면 전환
+            setBoardInfo(post);
+            setEditCommentId(null);
+            setCommentText('');
+            setListOk(false);
+            setWriteOk(false);
+            setEditOk(false);
+            setReadOk(true);
+        } catch (error) {
+            handleBoardError(error);
+        }
     };
 
     // ▶ 게시글 작성 화면으로 전환
@@ -199,7 +222,7 @@ const Board = () => {
     };
 
     // ▶ 새 글 저장 (등록 기능)
-    const boardSave = () => {
+    const boardSave = async () => {
         if (!loginUser) {
             setErrorMessage('로그인 후 작성할 수 있습니다.');
             return;
@@ -210,19 +233,17 @@ const Board = () => {
             return; // 저장 막기
         }
 
-        // 2) 새 글 객체 생성
-        const newBoard = {
-            // 번호는 단순히 현재 리스트 길이 + 1 (실제 서비스라면 PK 사용)
-            no: (Math.max(0, ...boardList.map(b => Number(b.no))) + 1).toString(),
-            userId: loginUser.id,       // 작성자 (로그인 유저 id)
-            baskets: buildBaskets(basketIds), // 첨부한 냥바구니 (이름 + 담긴 레포)
-            title: title,
-            description: description,
-            viewCount: 0  // 처음 등록 시 조회수는 0
-        };
+        // 2) 서버에 저장 (번호, 작성자, 조회수, 첨부 냥바구니 스냅샷은 서버가 정함)
+        let newBoard;
+        try {
+            newBoard = await createPostRequest({ title, description, basketIds });
+        } catch (error) {
+            alertError(error);
+            return; // 실패하면 작성 화면에 입력 내용이 그대로 남음
+        }
 
         // 3) 기존 리스트에 새 글 추가 (불변성 유지)
-        setBoardList([...boardList, newBoard]);
+        setBoardList(list => [...list, newBoard]);
 
         // 4) 입력창 초기화
         setTitle('');
@@ -234,16 +255,21 @@ const Board = () => {
     };
 
     // ▶ 게시글 삭제 기능
-    const boardDelete = (no) => {
-        const target = boardList.find(b => b.no === no.toString());
+    const boardDelete = async (no) => {
+        const target = boardList.find(b => b.no === no);
         if (!target || !isOwner(target)) {
             alert('작성자만 삭제할 수 있습니다.');
             return;
         }
+        try {
+            await deletePostRequest(no);
+        } catch (error) {
+            handleBoardError(error);
+            return;
+        }
+
         // 전달받은 번호와 다른 게시글만 남기고 필터링 → 해당 글 삭제 효과
-        const updatedList = boardList.filter(b => b.no !== no.toString());
-        // 필터링 결과로 상태 업데이트
-        setBoardList(updatedList);
+        setBoardList(list => list.filter(b => b.no !== no));
 
         // 삭제 후 목록 화면으로 이동
         boardListView();
@@ -273,16 +299,22 @@ const Board = () => {
     };
 
     // ▶ 수정된 게시글 저장 (수정 기능)
-    const updateBoard = () => {
-        // map을 돌며 수정 대상 번호와 일치하면 제목/내용 교체
-        const updatedBoardList = boardList.map(b =>
-            b.no === editNo
-                ? { ...b, title: editTitle, description: editDescription, baskets: buildBaskets(editBasketIds, b.baskets) }
-                : b
-        );
+    const updateBoard = async () => {
+        // 서버에 저장 (작성자 확인과 첨부 냥바구니 스냅샷 생성은 서버가 함)
+        let saved;
+        try {
+            saved = await updatePostRequest(editNo, {
+                title: editTitle,
+                description: editDescription,
+                basketIds: editBasketIds,
+            });
+        } catch (error) {
+            handleBoardError(error);
+            return; // 실패하면 수정 화면에 입력 내용이 그대로 남음
+        }
 
-        // 게시글 목록 상태를 수정된 리스트로 갱신
-        setBoardList(updatedBoardList);
+        // map을 돌며 수정 대상 번호와 일치하면 서버가 돌려준 글로 교체
+        setBoardList(list => list.map(b => (b.no === editNo ? { ...b, ...saved } : b)));
 
         // 수정 후 목록 화면으로 이동
         boardListView();
@@ -296,6 +328,13 @@ const Board = () => {
             {/* ---------------------- 게시글 목록 보기 화면 ---------------------- */}
             {listOk && (
                 <div style={{ marginTop: "30px" }}>
+                    {loadError && (
+                        <Alert variant="danger">
+                            {loadError}{' '}
+                            <Button size="sm" variant="outline-danger" onClick={loadBoard}>다시 시도</Button>
+                        </Alert>
+                    )}
+                    {loading && <div className="text-muted">게시글을 불러오는 중입니다...</div>}
                     <Table striped bordered hover center='true'>
                         <thead>
                             <tr>
