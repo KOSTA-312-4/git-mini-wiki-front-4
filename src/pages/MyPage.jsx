@@ -1,12 +1,19 @@
 import { useReducer, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { changePassword, logout, updateProfile } from "../store/users.js";
+import { logout, updateProfile } from "../store/store";
+import {
+  alertError,
+  changePasswordRequest,
+  saveAvatarRequest,
+  updateGithubRepo,
+} from "../api/auth";
+import { resizeToSquareJpeg } from "../utils/avatar";
 import MyStats from "../components/MyStats.jsx";
 import "./MyPage.css";
 
-// 프로필 사진은 localStorage 에 저장되므로 크기를 제한합니다.
-const MAX_AVATAR_SIZE = 1024 * 1024; // 1MB
+// 선택한 사진은 256x256 으로 줄여서 서버에 저장합니다. 너무 큰 원본 파일만 막습니다.
+const MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5MB
 const AVATAR_TYPES = ["image/png", "image/jpeg", "image/webp"];
 const GITHUB_REPO_PATTERN = /^https:\/\/github\.com\/[^/\s]+\/[^/\s]+\/?$/;
 
@@ -31,8 +38,6 @@ function passwordReducer(state, action) {
 const MyPage = () => {
   // store.js 의 현재 로그인한 유저
   const loginUser = useSelector((state) => state.loginUser);
-  // 비밀번호는 로그인 상태에 없으므로 회원 목록에서 확인
-  const users = useSelector((state) => state.users);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [repoInput, setRepoInput] = useState(loginUser?.githubRepo ?? "");
@@ -57,7 +62,7 @@ const MyPage = () => {
   const avatar = loginUser.avatar?.startsWith("data:image/") ? loginUser.avatar : null;
 
   // 프로필 사진 변경
-  const changeAvatar = (e) => {
+  const changeAvatar = async (e) => {
     const file = e.target.files[0];
     // 같은 파일을 다시 선택해도 onChange 가 동작하도록 초기화
     e.target.value = "";
@@ -69,15 +74,20 @@ const MyPage = () => {
     }
 
     if (file.size > MAX_AVATAR_SIZE) {
-      alert("1MB 이하의 이미지를 선택해주세요.");
+      alert("5MB 이하의 이미지를 선택해주세요.");
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      dispatch(updateProfile({ id: loginUser.id, avatar: reader.result }));
-    };
-    reader.readAsDataURL(file);
+    // 줄여서 서버에 저장한 뒤에 화면에 반영합니다. (실패하면 기존 사진 유지)
+    try {
+      const resized = await resizeToSquareJpeg(file);
+      await saveAvatarRequest(resized);
+      dispatch(updateProfile({ avatar: resized }));
+    } catch (error) {
+      // 서버 오류가 아니라 이미지를 읽지 못한 경우에는 그 메시지를 그대로 안내
+      if (error.isAxiosError) alertError(error);
+      else alert(error.message);
+    }
   };
 
   // input 에 값이 입력될 때 비밀번호 폼 상태 값 수정
@@ -96,7 +106,7 @@ const MyPage = () => {
   };
 
   // 프로필 수정 (GitHub 레포 주소, 비밀번호)
-  const submitProfile = (e) => {
+  const submitProfile = async (e) => {
     e.preventDefault();
     const url = repoInput.trim();
     const { currentPassword, newPassword, confirmPassword } = passwordForm;
@@ -109,15 +119,8 @@ const MyPage = () => {
     }
 
     if (isChangingPassword) {
-      const account = users.find((user) => user.id === loginUser.id);
-
       if (!currentPassword || !newPassword || !confirmPassword) {
         alert("비밀번호를 변경하려면 비밀번호 칸을 모두 입력해주세요.");
-        return;
-      }
-
-      if (!account || account.password !== currentPassword) {
-        alert("현재 비밀번호가 올바르지 않습니다.");
         return;
       }
 
@@ -132,9 +135,16 @@ const MyPage = () => {
       }
     }
 
-    dispatch(updateProfile({ id: loginUser.id, githubRepo: url }));
-    if (isChangingPassword) {
-      dispatch(changePassword({ id: loginUser.id, password: newPassword }));
+    // 현재 비밀번호 확인은 서버가 합니다.
+    try {
+      await updateGithubRepo(url);
+      dispatch(updateProfile({ githubRepo: url }));
+      if (isChangingPassword) {
+        await changePasswordRequest(currentPassword, newPassword);
+      }
+    } catch (error) {
+      alertError(error);
+      return;
     }
 
     passwordDispatch({ type: "RESET" });
@@ -142,7 +152,7 @@ const MyPage = () => {
     alert("프로필이 수정되었습니다.");
   };
 
-  // 로그아웃 (sessionStorage 의 로그인 정보도 store.js 에서 함께 삭제됨)
+  // 로그아웃 (sessionStorage 의 로그인 정보와 토큰도 store 에서 함께 삭제됨)
   const submitLogout = () => {
     if (!confirm("로그아웃 하시겠습니까?")) return;
 
