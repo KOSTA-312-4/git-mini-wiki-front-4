@@ -4,21 +4,17 @@ import NewCatBasketModal from "./NewCatBasketModal";
 import MyCatBasketDetail from "./MyCatBasketDetail";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  addBasket,
   addRepoToBasket,
+  createBasket,
   deleteBasket,
   removeRepoFromBasket,
-} from "../store/store.js";
+  selectMyBaskets,
+  selectMyFavorites,
+} from "../store/store";
+import { alertError } from "../api/auth";
 
 function MyCatBasket() {
   const dispatch = useDispatch();
-  const userEmail = useSelector((s) => {
-    if (s.loginUser === null || s.loginUser === undefined) {
-      return undefined;
-    }
-
-    return s.loginUser.email;
-  });
 
   //새 냥바구니 버튼 감지
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -30,12 +26,8 @@ function MyCatBasket() {
   // const saveBaskets = (next) => setBaskets(next);
 
   //로그인한 사용자의 favorites과 baskets
-  const favorites = useSelector((s) => s.favorites).filter(
-    (f) => f.userId === userEmail,
-  );
-  const baskets = useSelector((s) => s.baskets).filter(
-    (b) => b.userId === userEmail,
-  ); //basket의 userId와 userEmail이 일치하는 바구니만
+  const favorites = useSelector(selectMyFavorites);
+  const baskets = useSelector(selectMyBaskets); //basket의 userId와 userEmail이 일치하는 바구니만
 
   //냥바구니에 있는 레포지토리
   //만약 레포지토리가 없으면 undefined로 저장됨(undefined인지 확인하는 로직 필요)
@@ -45,18 +37,14 @@ function MyCatBasket() {
 
   //새 냥바구니 만들기
   //name, description, repoIds(바구니에 담기로한 레포)는 모달을 통해 전달 받은 정보
-  const handleCreate = ({ name, description, repoIds }) => {
-    // saveBaskets([...baskets, { id: Date.now(), name, description, repoIds }]); //기존 바구니 목록에서 새로운 냥바구니(컬렉션) 추가
-
-    dispatch(
-      addBasket({
-        id: Date.now(),
-        userId: userEmail,
-        name,
-        description,
-        repoIds,
-      }),
-    );
+  const handleCreate = async ({ name, description, repoIds }) => {
+    // id 는 서버가 정하므로 저장이 끝난 뒤에 목록에 나타납니다.
+    try {
+      await dispatch(createBasket({ name, description, repoIds }));
+    } catch (error) {
+      alertError(error);
+      return; // 실패하면 모달을 닫지 않아 입력한 내용이 남습니다.
+    }
 
     //모달 닫기
     setIsCreateOpen(false);

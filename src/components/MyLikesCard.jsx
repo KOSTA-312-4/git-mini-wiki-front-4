@@ -1,17 +1,11 @@
 import React from "react";
 import "../pages/GithubRepositories.css"; //기존 레포 출력 스타일 반영
-import { addRepoTag, toggleFavorite } from "../store/store";
+import { addRepoTag, selectUserEmail, toggleFavorite } from "../store/store";
 import { useDispatch, useSelector } from "react-redux";
 
 function MyLikesCard({ repo }) {
   const dispatch = useDispatch();
-  const userEmail = useSelector((s) => {
-    if (s.loginUser === null || s.loginUser === undefined) {
-      return undefined;
-    }
-
-    return s.loginUser.email;
-  });
+  const userEmail = useSelector(selectUserEmail);
 
   return (
     <article className="repo-card">

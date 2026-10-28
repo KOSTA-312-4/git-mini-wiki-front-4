@@ -30,7 +30,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}         # EC2의 공인 IP 또는 도메인 (Secrets에 등록 필요)
           username: ${{ secrets.EC2_USERNAME }} # EC2 접속용 사용자명 (예: ubuntu)
           key: ${{ secrets.EC2_SSH_KEY }}       # SSH 개인 키 (Secrets에 등록)
-          source: "./docker-compose.yml,./dist,./Dockerfile"  # EC2로 복사할 파일/폴더 목록
+          source: "./docker-compose.yml,./dist,./Dockerfile,./nginx.conf"  # EC2로 복사할 파일/폴더 목록 (Dockerfile 이 nginx.conf 를 복사하므로 필요)
           target: "~/react-cicd"                # EC2 상의 대상 디렉토리
 
       - name: SSH into EC2 and deploy

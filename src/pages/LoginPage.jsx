@@ -1,7 +1,9 @@
 import { useReducer } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../store/users.js";
+import { login } from "../store/store";
+import { setToken } from "../api/client";
+import { alertError, loginRequest } from "../api/auth";
 import "./LoginPage.css";
 
 const initialMember = {
@@ -24,8 +26,6 @@ function memberReducer(state, action) {
 const LoginPage = () => {
   const [member, memberDispatch] = useReducer(memberReducer, initialMember);
 
-  // store.js 의 users 배열
-  const users = useSelector((state) => state.users);
   // dispatch는 store.js 로 요청보내주는 함수
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ const LoginPage = () => {
   };
 
   // 로그인
-  const submitLogin = (e) => {
+  const submitLogin = async (e) => {
     e.preventDefault();
 
     if (!member.id || !member.password) {
@@ -44,19 +44,16 @@ const LoginPage = () => {
       return;
     }
 
-    const user = users.find(
-      (item) => item.id === member.id && item.password === member.password,
-    );
-
-    if (!user) {
-      alert("아이디 또는 비밀번호가 올바르지 않습니다.");
-      return;
+    try {
+      const { token, user } = await loginRequest(member.id.trim(), member.password);
+      setToken(token);
+      dispatch(login(user));
+      alert(`${user.id}님, 환영합니다!`);
+      memberDispatch({ type: "RESET" });
+      navigate("/");
+    } catch (error) {
+      alertError(error);
     }
-
-    dispatch(login(user));
-    alert(`${user.id}님, 환영합니다!`);
-    memberDispatch({ type: "RESET" });
-    navigate("/");
   };
 
   // 취소
