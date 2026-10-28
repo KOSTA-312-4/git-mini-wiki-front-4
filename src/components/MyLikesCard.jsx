@@ -1,6 +1,6 @@
 import React from "react";
 import "../pages/GithubRepositories.css"; //기존 레포 출력 스타일 반영
-import { toggleFavorite } from "../store/store";
+import { addRepoTag, toggleFavorite } from "../store/store";
 import { useDispatch, useSelector } from "react-redux";
 
 function MyLikesCard({ repo }) {
@@ -18,6 +18,21 @@ function MyLikesCard({ repo }) {
       {/*헤더*/}
       <div className="repo-card-header">
         <h2 className="repo-title">{repo.name}</h2>
+        {/*태그 설정*/}
+        <select
+          className="myLike-select"
+          value={repo.tag ?? ""}
+          onChange={(e) =>
+            dispatch(
+              addRepoTag({ repoId: repo.id, userEmail, tag: e.target.value }),
+            )
+          }
+        >
+          <option value="">태그 선택</option>
+          <option value="백엔드">백엔드</option>
+          <option value="프론트엔드">프론트엔드</option>
+          <option value="DB">DB</option>
+        </select>
         <button
           type="button"
           className="favorite-button is-favorite"
