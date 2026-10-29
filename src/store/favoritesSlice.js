@@ -17,7 +17,7 @@ const favoritesSlice = createSlice({
         const repo = action.payload.repo;
         const index = state.findIndex(
           (favorite) =>
-            favorite.id === repo.id && favorite.userId === action.payload.userEmail,
+            favorite.id === repo.id && favorite.userId === action.payload.loginId,
         );
 
         if (index >= 0) {
@@ -38,7 +38,7 @@ const favoritesSlice = createSlice({
           stargazers_count: repo.stargazers_count,
           forks_count: repo.forks_count,
           language: repo.language,
-          userId: action.payload.userEmail, // 로그인 한 유저의 email
+          userId: action.payload.loginId, // 로그인 한 유저의 아이디(login_id)
           tag: "", // 5 ~ 6가지 태그 내용으로, 메인 페이지에서 비로그인 유저들에게 각 태그별 인기 repo 표시 위함.
           // sortedByNyang: "", // collection 분류 시, 유저가 작성한 collection 이름으로 분류
           // isSelected: false, // 좋아요 페이지에서 repo 좋아요 삭제하면 boolean값 변경으로 저장 내역에서 제거
@@ -52,9 +52,9 @@ const favoritesSlice = createSlice({
     },
 
     addRepoTag: (state, action) => {
-      const { repoId, userEmail, tag } = action.payload;
+      const { repoId, loginId, tag } = action.payload;
       const favorite = state.find(
-        (f) => f.id === repoId && f.userId === userEmail,
+        (f) => f.id === repoId && f.userId === loginId,
       ); //레포id와 사용자 값이 일치하면
 
       if (favorite) {

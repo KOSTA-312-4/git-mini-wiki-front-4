@@ -21,20 +21,20 @@ export const enqueue = (task) => {
 
 // 서버의 내 즐겨찾기 / 냥바구니로 화면 상태를 통째로 교체
 export async function reloadFavorites({ dispatch, getState }) {
-  const email = getState().loginUser?.email;
-  if (!email) return;
+  const loginId = getState().loginUser?.id;
+  if (!loginId) return;
   const list = await fetchFavorites();
   // 불러오는 사이에 로그아웃/다른 유저 로그인이 됐다면 버림
-  if (getState().loginUser?.email !== email) return;
-  dispatch(setFavorites(list.map((favorite) => ({ ...favorite, userId: email }))));
+  if (getState().loginUser?.id !== loginId) return;
+  dispatch(setFavorites(list.map((favorite) => ({ ...favorite, userId: loginId }))));
 }
 
 export async function reloadBaskets({ dispatch, getState }) {
-  const email = getState().loginUser?.email;
-  if (!email) return;
+  const loginId = getState().loginUser?.id;
+  if (!loginId) return;
   const list = await fetchBaskets();
-  if (getState().loginUser?.email !== email) return;
-  dispatch(setBaskets(list.map((basket) => ({ ...basket, userId: email }))));
+  if (getState().loginUser?.id !== loginId) return;
+  dispatch(setBaskets(list.map((basket) => ({ ...basket, userId: loginId }))));
 }
 
 // 요청 실패 처리: 안내 후 서버 기준으로 되돌림 (이미 로그아웃됐다면 조용히 무시)

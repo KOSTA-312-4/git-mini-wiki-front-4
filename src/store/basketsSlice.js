@@ -16,7 +16,7 @@ const basketsSlice = createSlice({
     /*
       {
         id:1
-        userId: email값
+        userId: 로그인 아이디(login_id)
         name : 냥바구니 이름
         description: 레포 설명
         repoId: [1,2,3, ... ]
@@ -58,9 +58,9 @@ const basketsSlice = createSlice({
     // 즐겨찾기를 해제하면 그 유저의 모든 냥바구니에서도 빠짐 (서버 DB 의 연쇄 삭제와 같은 동작)
     // 즐겨찾기를 추가하는 경우에는 바구니에 담겨 있을 수 없으므로 아무 일도 일어나지 않음
     builder.addCase(toggleFavorite, (state, action) => {
-      const { repo, userEmail } = action.payload;
+      const { repo, loginId } = action.payload;
       state.forEach((basket) => {
-        if (basket.userId === userEmail) {
+        if (basket.userId === loginId) {
           basket.repoIds = basket.repoIds.filter((id) => id !== repo.id);
         }
       });

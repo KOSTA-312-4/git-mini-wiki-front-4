@@ -27,7 +27,7 @@ function MyCatBasket() {
 
   //로그인한 사용자의 favorites과 baskets
   const favorites = useSelector(selectMyFavorites);
-  const baskets = useSelector(selectMyBaskets); //basket의 userId와 userEmail이 일치하는 바구니만
+  const baskets = useSelector(selectMyBaskets); //basket의 userId와 loginId이 일치하는 바구니만
 
   //냥바구니에 있는 레포지토리
   //만약 레포지토리가 없으면 undefined로 저장됨(undefined인지 확인하는 로직 필요)

@@ -23,7 +23,7 @@ export {
   removeRepoFromBasket,
 } from "./basketsSlice";
 export { setBoard } from "./boardSlice";
-export { selectUserEmail, selectMyFavorites, selectMyBaskets } from "./selectors";
+export { selectLoginId, selectMyFavorites, selectMyBaskets } from "./selectors";
 
 // 서버 저장으로 바뀌기 전 버전이 브라우저에 남긴 데이터는 앱을 시작할 때 삭제
 removeLegacyStorage();

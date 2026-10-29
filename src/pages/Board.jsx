@@ -335,7 +335,7 @@ const Board = () => {
                         </Alert>
                     )}
                     {loading && <div className="text-muted">게시글을 불러오는 중입니다...</div>}
-                    <Table striped bordered hover center='true'>
+                    <Table striped bordered hover>
                         <thead>
                             <tr>
                                 <th>번호</th>

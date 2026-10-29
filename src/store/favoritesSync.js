@@ -17,11 +17,11 @@ sync.startListening({
 sync.startListening({
   actionCreator: toggleFavorite,
   effect: (action, api) => {
-    const { repo, userEmail } = action.payload;
+    const { repo, loginId } = action.payload;
     // 리듀서가 이미 반영한 결과: 지금 즐겨찾기 상태인가?
     const isFavorite = api
       .getState()
-      .favorites.some((favorite) => favorite.id === repo.id && favorite.userId === userEmail);
+      .favorites.some((favorite) => favorite.id === repo.id && favorite.userId === loginId);
 
     enqueue(() =>
       isFavorite ? addFavoriteRequest(repo) : removeFavoriteRequest(repo.id),

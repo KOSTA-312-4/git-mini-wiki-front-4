@@ -1,13 +1,13 @@
 import React from "react";
 import "../pages/GithubRepositories.css"; //기존 레포 출력 스타일 반영
-import { addRepoTag, selectUserEmail, toggleFavorite } from "../store/store";
+import { addRepoTag, selectLoginId, toggleFavorite } from "../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import TagPicker from "./TagPicker.jsx";
 import { langColor } from "../utils/langColors";
 
 function MyLikesCard({ repo }) {
   const dispatch = useDispatch();
-  const userEmail = useSelector(selectUserEmail);
+  const loginId = useSelector(selectLoginId);
 
   return (
     <article className="repo-card" data-tag={repo.tag || undefined}>
@@ -18,7 +18,7 @@ function MyLikesCard({ repo }) {
         <button
           type="button"
           className="favorite-button is-favorite"
-          onClick={() => dispatch(toggleFavorite({ repo, userEmail }))}
+          onClick={() => dispatch(toggleFavorite({ repo, loginId }))}
         >
           ♥
         </button>
@@ -28,7 +28,7 @@ function MyLikesCard({ repo }) {
       <TagPicker
         value={repo.tag ?? ""}
         onChange={(tag) =>
-          dispatch(addRepoTag({ repoId: repo.id, userEmail, tag }))
+          dispatch(addRepoTag({ repoId: repo.id, loginId, tag }))
         }
       />
 
