@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import "./NewCatBasketModal.css";
 
 function MyCatBasketDetail({
@@ -24,7 +25,8 @@ function MyCatBasketDetail({
     onDelete();
   };
 
-  return (
+  // 패널의 blur(backdrop-filter) 안에 모달이 갇히지 않도록 body 에 바로 그림
+  return createPortal(
     <div className="catBasket-modal-overlay">
       <div className="catBasket-total-modal">
         {/*헤드*/}
@@ -35,17 +37,24 @@ function MyCatBasketDetail({
             className="catBasket-modal-close"
             onClick={onClose}
           >
-            x
+            ×
           </button>
         </div>
         {/*본문*/}
         <div className="catBasket-modal-body">
-          <p>{basket.description}</p>
+          <p className="catBasket-field-label">설명</p>
+          <p className={`catBasket-descbox${basket.description ? "" : " none"}`}>
+            {basket.description || "설명이 없습니다."}
+          </p>
+          <p className="catBasket-field-label">담긴 레포지토리</p>
           {/*목록 출력*/}
           <ul className="catBasket-repo-list">
             {inBasket.map((repository) => (
               <li key={repository.id} className="catBasket-repo-item">
                 <span>{repository.name}</span>
+                {repository.tag && (
+                  <span className="catBasketDetail-tag" data-tag={repository.tag}>#{repository.tag}</span>
+                )}
                 <button
                   type="button"
                   className="catBasket-btn"
@@ -68,7 +77,9 @@ function MyCatBasketDetail({
               {notInBasket.map((repository) => (
                 <li key={repository.id} className="catBasket-repo-item">
                   <span>{repository.name}</span>
-                  <span className="catBasketDetail-tag">#{repository.tag}</span>
+                  {repository.tag && (
+                    <span className="catBasketDetail-tag" data-tag={repository.tag}>#{repository.tag}</span>
+                  )}
                   <button
                     type="button"
                     className="catBasket-btn"
@@ -93,7 +104,8 @@ function MyCatBasketDetail({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

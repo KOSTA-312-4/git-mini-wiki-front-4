@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { toggleFavorite } from "../store/store";
+import GlassSelect from "../components/GlassSelect.jsx";
+import { langColor, languageOptions } from "../utils/langColors";
 
 import "./GithubRepositories.css";
 
@@ -12,11 +14,13 @@ const API_URL = "https://api.github.com/search/repositories";
 const DISPLAY_PER_PAGE = 9;
 
 function GithubRepositories() {
-  let selectUser = useSelector(s=>s.loginUser);
+  let selectUser = useSelector((s) => s.loginUser);
   console.log(selectUser);
 
   const [params] = useSearchParams();
-  const initKeyword = (params.get('q') ?? '') + (params.get('lang') ? ' language:' + params.get('lang') : '');
+  const initKeyword =
+    (params.get("q") ?? "") +
+    (params.get("lang") ? " language:" + params.get("lang") : "");
 
   const [repositories, setRepositories] = useState([]);
   const [page, setPage] = useState(1);
@@ -26,12 +30,13 @@ function GithubRepositories() {
   const [keyword, setKeyword] = useState(initKeyword);
 
   let defaultKeyword = keyword;
-  if(keyword.split(' language:').length>=2) defaultKeyword = keyword.split(' language:')[0];
+  if (keyword.split(" language:").length >= 2)
+    defaultKeyword = keyword.split(" language:")[0];
 
   const favorites = useSelector((s) => s.favorites);
   const dispatch = useDispatch();
   const inputRef = useRef();
-  const detailRef = useRef('');
+  const detailRef = useRef("");
 
   // 검색어가 변경되면 API 요청
   useEffect(() => {
@@ -61,12 +66,9 @@ function GithubRepositories() {
       } catch (err) {
         if (controller.signal.aborted) return;
 
-        if (
-          err.response?.status === 403 ||
-          err.response?.status === 429
-        ) {
+        if (err.response?.status === 403 || err.response?.status === 429) {
           setError(
-            "API 요청 한도에 도달했을 수 있습니다. 잠시 후 다시 시도해주세요."
+            "API 요청 한도에 도달했을 수 있습니다. 잠시 후 다시 시도해주세요.",
           );
         } else {
           setError("저장소를 불러오지 못했습니다.");
@@ -87,17 +89,14 @@ function GithubRepositories() {
   const searchableCount = Math.min(totalCount, 1000);
 
   // 화면 페이지 수 계산
-  const totalPages = Math.max(
-    1,
-    Math.ceil(searchableCount / DISPLAY_PER_PAGE)
-  );
+  const totalPages = Math.max(1, Math.ceil(searchableCount / DISPLAY_PER_PAGE));
 
   // 현재 페이지에 해당하는 저장소 9개 추출
   const startIndex = (page - 1) * DISPLAY_PER_PAGE;
 
   const visibleRepositories = repositories.slice(
     startIndex,
-    startIndex + DISPLAY_PER_PAGE
+    startIndex + DISPLAY_PER_PAGE,
   );
 
   const goToPreviousPage = () => {
@@ -105,50 +104,61 @@ function GithubRepositories() {
   };
 
   const goToNextPage = () => {
-    setPage((prevPage) =>
-      Math.min(totalPages, prevPage + 1)
-    );
+    setPage((prevPage) => Math.min(totalPages, prevPage + 1));
   };
 
   function handleSearch(event) {
     event.preventDefault();
-    if(inputRef.current.value == '') {
-      alert('검색어를 입력해주세요.');
+    if (inputRef.current.value == "") {
+      alert("검색어를 입력해주세요.");
       inputRef.current.focus();
       return;
     }
-    setKeyword(inputRef.current.value + (detailRef.current ? " language:" + detailRef.current : ""));
+    setKeyword(
+      inputRef.current.value +
+        (detailRef.current ? " language:" + detailRef.current : ""),
+    );
   }
 
   return (
     <section className="repo-page">
       <form onSubmit={handleSearch} className="d-flex gap-2 mb-4">
-        <input className="form-control" type="search" ref={inputRef} name="q" placeholder="검색어를 입력하세요." aria-label="검색어" defaultValue={defaultKeyword}/>
-        <select
-                        onChange={(e) => detailRef.current = e.target.value}
-                        style={{
-                          padding: "10px",
-                          marginLeft: "10px",
-                          borderRadius: "4px",
-                          border: "1px solid #ccc",
-                          width: "150px",
-                        }}
-                      >
-                        <option value="">언어 선택</option>
-                        <option value="Java">Java</option>
-                        <option value="Kotlin">Kotlin</option>
-                        <option value="JavaScript">JavaScript</option>
-                        <option value="Python">Python</option>
-                        <option value="TypeScript">TypeScript</option>
-                      </select>
-                      <button className="btn btn-primary flex-shrink-0" type="submit">검색</button>
+        <input
+          className="form-control"
+          type="search"
+          ref={inputRef}
+          name="q"
+          placeholder="검색어를 입력하세요."
+          aria-label="검색어"
+          defaultValue={defaultKeyword}
+        />
+        <GlassSelect
+          options={languageOptions("언어 선택")}
+          onChange={(value) => (detailRef.current = value)}
+          ariaLabel="언어 선택"
+          align="right"
+        />
+        <button className="btn btn-primary flex-shrink-0" type="submit">
+          검색
+        </button>
       </form>
+
+      {/* 검색 결과 요약 */}
+      {!loading && !error && repositories.length > 0 && (
+        <p className="repo-summary">
+          <b>‘{defaultKeyword}’</b> 검색 결과{" "}
+          <b className="cnt">{totalCount.toLocaleString()}</b>개
+        </p>
+      )}
+
       <div className="repo-grid">
         {!loading &&
           !error &&
           visibleRepositories.map((repo) => {
             const isFavorite = favorites.some(
-              (favorite) => favorite.id === repo.id && favorite.userId === selectUser?.email
+              (favorite) =>
+                favorite.id === repo.id &&
+                favorite.userId === selectUser?.email,
             );
 
             return (
@@ -161,35 +171,37 @@ function GithubRepositories() {
                     className={`favorite-button ${
                       isFavorite ? "is-favorite" : ""
                     }`}
-                    onClick={() => dispatch(toggleFavorite({repo, userEmail:selectUser?.email}))}
-                    aria-label={
-                      isFavorite
-                        ? "즐겨찾기 해제"
-                        : "즐겨찾기 추가"
+                    onClick={() =>
+                      dispatch(
+                        toggleFavorite({ repo, userEmail: selectUser?.email }),
+                      )
                     }
+                    aria-label={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
                     aria-pressed={isFavorite}
-                    title={
-                      isFavorite
-                        ? "즐겨찾기 해제"
-                        : "즐겨찾기 추가"
-                    }
+                    title={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}
                     // 로그인 유저 판별 후 버튼 표시
-                    hidden={selectUser==null?true:false}
+                    hidden={selectUser == null ? true : false}
                   >
                     {isFavorite ? "♥" : "♡"}
                   </button>
                 </div>
 
-                {repo.owner?.avatar_url && (
-                  <img
-                    className="repo-avatar"
-                    src={repo.owner.avatar_url}
-                    alt={`${repo.owner.login} 프로필`}
-                    loading="lazy"
-                  />
-                )}
+                {/* 소유자 (프로필 + 이름) */}
+                <div className="repo-owner">
+                  {repo.owner?.avatar_url && (
+                    <img
+                      className="repo-avatar"
+                      src={repo.owner.avatar_url}
+                      alt={`${repo.owner.login} 프로필`}
+                      loading="lazy"
+                    />
+                  )}
+                  <small>{repo.owner?.login}</small>
+                </div>
 
-                <p className="repo-description">
+                <p
+                  className={`repo-description${repo.description ? "" : " none"}`}
+                >
                   {repo.description || "설명이 없습니다."}
                 </p>
 
@@ -197,17 +209,27 @@ function GithubRepositories() {
                   <div className="repo-stats">
                     <p className="repo-stat">
                       <strong>Stars:</strong>{" "}
-                      {(repo.stargazers_count ?? 0).toLocaleString()}
+                      <span className="star">
+                        ★ {(repo.stargazers_count ?? 0).toLocaleString()}
+                      </span>
                     </p>
 
                     <p className="repo-stat">
                       <strong>Forks:</strong>{" "}
-                      {(repo.forks_count ?? 0).toLocaleString()}
+                      <span>{(repo.forks_count ?? 0).toLocaleString()}</span>
                     </p>
 
                     <p className="repo-stat">
                       <strong>Language:</strong>{" "}
-                      {repo.language ?? "정보 없음"}
+                      <span>
+                        {repo.language && (
+                          <i
+                            className="lang-dot"
+                            style={{ "--c": langColor(repo.language) }}
+                          />
+                        )}
+                        {repo.language ?? "정보 없음"}
+                      </span>
                     </p>
                   </div>
 
@@ -217,7 +239,7 @@ function GithubRepositories() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    View on GitHub
+                    View on GitHub ↗
                   </a>
                 </div>
               </article>
@@ -240,45 +262,36 @@ function GithubRepositories() {
       )}
 
       {/* 검색 결과 없음 */}
-      {!loading &&
-        !error &&
-        repositories.length === 0 && (
-          <p className="repo-message">
-            검색 결과가 없습니다.
-          </p>
-        )}
+      {!loading && !error && repositories.length === 0 && (
+        <p className="repo-message">검색 결과가 없습니다.</p>
+      )}
 
       {/* 페이지네이션 */}
-      {!loading &&
-        !error &&
-        repositories.length > 0 && (
-          <nav
-            className="repo-pagination"
-            aria-label="저장소 검색 페이지 이동"
+      {!loading && !error && repositories.length > 0 && (
+        <nav className="repo-pagination" aria-label="저장소 검색 페이지 이동">
+          <button
+            type="button"
+            className="pagination-button"
+            onClick={goToPreviousPage}
+            disabled={page <= 1}
           >
-            <button
-              type="button"
-              className="pagination-button"
-              onClick={goToPreviousPage}
-              disabled={page <= 1}
-            >
-              Previous
-            </button>
+            이전
+          </button>
 
-            <span className="repo-page-number">
-              {page} / {totalPages}
-            </span>
+          <span className="repo-page-number">
+            <b>{page}</b> / {totalPages}
+          </span>
 
-            <button
-              type="button"
-              className="pagination-button"
-              onClick={goToNextPage}
-              disabled={page >= totalPages}
-            >
-              Next
-            </button>
-          </nav>
-        )}
+          <button
+            type="button"
+            className="pagination-button"
+            onClick={goToNextPage}
+            disabled={page >= totalPages}
+          >
+            다음
+          </button>
+        </nav>
+      )}
     </section>
   );
 }
