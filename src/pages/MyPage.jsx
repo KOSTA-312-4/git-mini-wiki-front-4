@@ -10,6 +10,7 @@ import {
 } from "../api/auth";
 import { resizeToSquareJpeg } from "../utils/avatar";
 import MyStats from "../components/MyStats.jsx";
+import LevelBadge from "../components/LevelBadge.jsx";
 import "./MyPage.css";
 
 // 선택한 사진은 256x256 으로 줄여서 서버에 저장합니다. 너무 큰 원본 파일만 막습니다.
@@ -277,6 +278,23 @@ const MyPage = () => {
             </form>
           )}
         </div>
+
+        {/* 프로필 오른쪽: 레벨 이미지와 다음 레벨까지의 EXP */}
+        {loginUser.level && (
+          <div className="mypage-level" aria-label="내 레벨">
+            <LevelBadge level={loginUser.level} size={96} className="mypage-level-img" />
+            <strong className="mypage-level-name">Lv.{loginUser.level}</strong>
+            <span className="mypage-level-exp">
+              EXP {loginUser.EXP ?? 0}
+              {loginUser.nextLevelExp ? ` / ${loginUser.nextLevelExp}` : " · 최고 레벨"}
+            </span>
+            {loginUser.nextLevelExp && (
+              <span className="mypage-level-bar" aria-hidden="true">
+                <i style={{ width: `${Math.min(100, ((loginUser.EXP ?? 0) / loginUser.nextLevelExp) * 100)}%` }} />
+              </span>
+            )}
+          </div>
+        )}
       </section>
 
       <MyStats />

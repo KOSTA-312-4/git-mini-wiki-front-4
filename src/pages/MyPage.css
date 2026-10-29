@@ -346,3 +346,57 @@
     animation: none;
   }
 }
+
+/* 프로필 카드 오른쪽: 레벨 이미지 + EXP */
+.mypage-level {
+  display: flex;
+  flex-shrink: 0;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 150px;
+  padding: 4px 10px 0;
+  margin-left: auto;
+  text-align: center;
+}
+
+.mypage-level .mypage-level-img {
+  margin: 0 0 2px;
+  filter: drop-shadow(0 10px 14px rgba(30, 52, 46, 0.25));
+}
+
+.mypage-level-name {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--tink);
+}
+
+.mypage-level-exp {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tsoft);
+}
+
+.mypage-level-bar {
+  display: block;
+  overflow: hidden;
+  width: 120px;
+  height: 7px;
+  border-radius: 999px;
+  background: rgba(63, 184, 163, 0.22);
+}
+
+.mypage-level-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--teal), var(--gold));
+  transition: width 0.4s;
+}
+
+@media (max-width: 600px) {
+  .mypage-level {
+    margin-left: 0;
+  }
+}

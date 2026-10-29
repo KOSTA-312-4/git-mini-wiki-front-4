@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/store";
+import LevelBadge from "./LevelBadge.jsx";
 import "./Header.css";
 
 export default function Header() {
@@ -89,6 +90,7 @@ export default function Header() {
                   )}
                 </span>
                 <span className="gn-nick">{loginUser.id}</span>
+                <LevelBadge level={loginUser.level} size={22} />
               </Link>
 
               <button type="button" className="gn-logout" onClick={handleLogout}>

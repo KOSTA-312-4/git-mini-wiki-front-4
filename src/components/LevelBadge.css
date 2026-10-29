@@ -1,0 +1,9 @@
+/* 아이디 오른쪽에 붙는 작은 레벨 이미지 */
+.level-badge {
+  display: inline-block;
+  flex-shrink: 0;
+  width: auto;
+  margin-left: 4px;
+  object-fit: contain;
+  vertical-align: middle;
+}
