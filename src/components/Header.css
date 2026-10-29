@@ -1,6 +1,10 @@
-/* Header는 브라우저 화면의 최상단에 고정됩니다. */
+/*
+ * Header는 브라우저 화면의 최상단에 고정됩니다. (시안과 같은 구조)
+ * 맨 위에서는 배경 위에 투명하게 놓이고, 스크롤하면 어두운 글라스로 바뀝니다 (.scrolled).
+ * 왼쪽 로고 · 가운데 메뉴(홈/즐겨찾기/커뮤니티) · 오른쪽 프로필(또는 로그인/회원가입)
+ */
 :root {
-  --site-header-height: 64px;
+  --site-header-height: 76px;
 }
 
 .site-header {
@@ -9,35 +13,240 @@
   left: 0;
   right: 0;
   z-index: 1030;
+  display: flex;
+  align-items: center;
   width: 100%;
   height: var(--site-header-height);
-  color: #fff;
-  background-color: #343a40; /* 완전한 검정보다 밝은 차콜 그레이 */
-  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+  padding: 0 28px;
+  font-family: var(--gn-font);
+  line-height: normal;
+  color: var(--t);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+  transition: background 0.4s, border-color 0.4s, color 0.4s;
 }
 
-.site-header .navbar {
-  height: 100%;
-  padding-top: 0;
-  padding-bottom: 0;
+.site-header.scrolled {
+  color: #fff;
+  background: rgba(30, 42, 39, 0.62);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom-color: rgba(255, 255, 255, 0.14);
 }
 
-.site-header .navbar-brand {
-  color: #fff;
+.site-header a,
+.site-header a:hover {
+  color: inherit;
+}
+
+.gn-nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+/* 로고 */
+.gn-brand {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 22px;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.3px;
 }
 
-.site-header .navbar-brand:hover {
-  color: #f8f9fa;
+.gn-logo {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(30, 52, 46, 0.28), 0 0 0 3px rgba(63, 184, 163, 0.42);
 }
 
-.site-header .header-link {
-  color: #dee2e6;
+.gn-logo img {
+  width: 29px;
 }
 
-.site-header .header-link:hover,
-.site-header .header-link:focus,
-.site-header .header-link.active {
-  color: #fff;
+/* 가운데 메뉴: 민트 글라스 알약 */
+.gn-links {
+  justify-self: center;
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(45, 150, 134, 0.62) 0%, rgba(98, 196, 178, 0.46) 55%, rgba(185, 221, 211, 0.5) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(255, 255, 255, 0.2), 0 12px 24px -14px rgba(23, 64, 58, 0.5);
+  backdrop-filter: blur(16px) saturate(1.25);
+  -webkit-backdrop-filter: blur(16px) saturate(1.25);
+}
+
+.gn-links a {
+  padding: 9px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #123832 !important;
+  transition: color 0.25s, background 0.25s;
+}
+
+.gn-links a:hover {
+  color: #0a2b26 !important;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.gn-links a.on {
+  color: var(--tink) !important;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.66));
+  box-shadow: 0 6px 14px -8px rgba(23, 64, 58, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+
+.site-header.scrolled .gn-links a {
+  color: rgba(255, 255, 255, 0.92) !important;
+  text-shadow: 0 1px 2px rgba(23, 64, 58, 0.5);
+}
+
+.site-header.scrolled .gn-links a.on {
+  color: var(--tink) !important;
+  text-shadow: none;
+}
+
+/* 오른쪽 */
+.gn-actions {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.gn-login {
+  padding: 10px 14px;
+  opacity: 0.85;
+}
+
+.gn-signup {
+  display: inline-flex;
+  align-items: center;
+  padding: 11px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  color: var(--tink) !important;
+  background: linear-gradient(180deg, rgba(86, 200, 180, 0.82), rgba(45, 174, 154, 0.64));
+  backdrop-filter: blur(10px) saturate(1.3);
+  -webkit-backdrop-filter: blur(10px) saturate(1.3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), inset 0 -1px 0 rgba(23, 64, 58, 0.1), 0 6px 14px -8px rgba(23, 64, 58, 0.45);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.gn-signup:hover {
+  background: linear-gradient(180deg, rgba(104, 210, 191, 0.9), rgba(55, 182, 160, 0.74));
+}
+
+/* 로그인 후: 동그란 프로필 + 닉네임 */
+.gn-me {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 3px 4px 3px 3px;
+  border-radius: 999px;
+}
+
+.gn-profile {
+  display: grid;
+  place-items: end center;
+  overflow: hidden;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.92);
+  background: linear-gradient(160deg, #86d3c3 0%, #3fb8a3 60%, #2dae9a 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 6px 16px rgba(30, 52, 46, 0.28), 0 0 0 3px rgba(235, 199, 106, 0.5);
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.gn-profile svg,
+.gn-profile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.gn-profile img {
+  object-fit: cover;
+}
+
+.gn-me:hover .gn-profile {
+  transform: translateY(-1px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 8px 18px rgba(30, 52, 46, 0.32), 0 0 0 4px rgba(235, 199, 106, 0.65);
+}
+
+.site-header.scrolled .gn-profile {
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.gn-nick {
+  max-width: 120px;
+  overflow: hidden;
+  font-size: 14.5px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 로그아웃: 눈에 덜 띄는 글자 버튼 (시안에는 없지만 기능 유지) */
+.gn-logout {
+  margin-left: 2px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: inherit;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.2s, background 0.2s;
+}
+
+.gn-logout:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+@media (max-width: 640px) {
+  .site-header {
+    padding: 0 12px;
+  }
+
+  .gn-nav {
+    gap: 8px;
+  }
+
+  .gn-brand-text,
+  .gn-login,
+  .gn-nick,
+  .gn-logout {
+    display: none;
+  }
+
+  .gn-links a {
+    padding: 8px 11px;
+    font-size: 13px;
+  }
+
+  .gn-signup {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
 }

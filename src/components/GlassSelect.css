@@ -1,0 +1,175 @@
+/* 글라스 드롭다운 (GlassSelect): 버튼 + 펼친 목록. 크기는 쓰는 화면에서 .gsel / .gsel-btn 으로 맞춰요. */
+.gsel {
+  position: relative;
+  flex: none;
+  font-family: var(--gn-font);
+}
+
+.gsel.is-open {
+  z-index: 40;
+}
+
+.gsel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  height: 42px;
+  padding: 0 10px 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: normal;
+  color: var(--t);
+  white-space: nowrap;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(222, 240, 236, 0.6));
+  box-shadow: inset 0 1px 0 #fff, 0 0 0 1px rgba(63, 184, 163, 0.28), 0 4px 10px -6px rgba(30, 52, 46, 0.4);
+  transition: box-shadow 0.25s;
+}
+
+.gsel-btn:hover {
+  box-shadow: inset 0 1px 0 #fff, 0 0 0 1px var(--gold), 0 4px 10px -6px rgba(30, 52, 46, 0.4);
+}
+
+.gsel-btn:focus-visible {
+  outline: 0;
+  box-shadow: inset 0 1px 0 #fff, 0 0 0 3px var(--gold-soft), 0 0 0 1px var(--gold);
+}
+
+.gsel.is-open .gsel-btn {
+  box-shadow: inset 0 1px 0 #fff, 0 0 0 3px var(--gold-soft), 0 0 0 1px var(--gold);
+}
+
+.gsel-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+}
+
+.gsel-ic {
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.gsel-ic svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  color: var(--teal2);
+}
+
+.gsel-chev {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  color: var(--tsoft);
+  transition: transform 0.3s;
+}
+
+.gsel.is-open .gsel-chev {
+  transform: rotate(180deg);
+}
+
+/* 펼친 목록 */
+.gsel-menu {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 10px);
+  z-index: 30;
+  min-width: max(100%, 196px);
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  background: rgba(250, 253, 252, 0.97);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  box-shadow: 0 24px 40px -18px rgba(30, 52, 46, 0.55), inset 0 1px 0 #fff;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(0.98);
+  transform-origin: top left;
+  transition: opacity 0.2s, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.2s;
+}
+
+.gsel.is-open .gsel-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.gsel.is-up .gsel-menu {
+  top: auto;
+  bottom: calc(100% + 10px);
+  transform-origin: bottom left;
+}
+
+.gsel.is-right .gsel-menu {
+  left: auto;
+  right: 0;
+  transform-origin: top right;
+}
+
+.gsel-menu li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 11px;
+  border-radius: 13px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: normal;
+  color: var(--tsoft);
+  white-space: nowrap;
+  transition: background 0.2s, color 0.2s;
+}
+
+.gsel-menu li.is-active,
+.gsel-menu li:hover {
+  color: var(--t);
+  background: rgba(70, 86, 79, 0.07);
+}
+
+.gsel-menu li[aria-selected="true"] {
+  color: var(--gold-ink);
+  font-weight: 800;
+  background: linear-gradient(160deg, rgba(255, 244, 200, 0.95), rgba(238, 206, 112, 0.62));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.85);
+}
+
+.gsel-dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  margin: 0 3.5px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7);
+}
+
+.gsel-ck {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  margin-left: auto;
+  opacity: 0;
+}
+
+.gsel-menu li[aria-selected="true"] .gsel-ck {
+  opacity: 1;
+  color: var(--gold-dk);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gsel-menu,
+  .gsel-chev {
+    transition: none;
+  }
+}

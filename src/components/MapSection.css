@@ -1,0 +1,246 @@
+/* 메인 페이지 아래의 세계 지도 (어두운 배경). 위쪽은 그라데이션 배경에서 서서히 어두워지며 이어져요. */
+.map-sec {
+  position: relative;
+  padding: 24px 24px 56px;
+  overflow-x: clip;
+  font-family: var(--gn-font);
+  line-height: normal;
+  color: #fff;
+  background:
+    radial-gradient(ellipse 60% 55% at 70% 48%, rgba(63, 184, 163, 0.17) 0%, rgba(63, 184, 163, 0.1) 30%, rgba(63, 184, 163, 0.04) 58%, rgba(63, 184, 163, 0) 80%),
+    radial-gradient(ellipse 38% 46% at 12% 36%, rgba(235, 199, 106, 0.08) 0%, rgba(235, 199, 106, 0.04) 40%, rgba(235, 199, 106, 0) 78%),
+    linear-gradient(180deg, var(--dk) 0%, #1f2d2a 30%, #20312d 55%, #1f2e2b 78%, var(--dk) 100%);
+}
+
+/* 지도 위쪽으로 번지는 어두운 그라데이션 (메인 패널 아래 여백 안에 들어가요) */
+.map-sec::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 260px;
+  pointer-events: none;
+  background: linear-gradient(180deg,
+    rgba(30, 42, 39, 0) 0%, rgba(40, 62, 56, 0.03) 8%, rgba(42, 66, 60, 0.09) 17%, rgba(40, 64, 58, 0.19) 27%, rgba(38, 58, 53, 0.33) 38%,
+    rgba(36, 54, 49, 0.5) 50%, rgba(33, 49, 45, 0.67) 62%, rgba(31, 45, 41, 0.82) 74%, rgba(30, 43, 40, 0.93) 86%, rgba(30, 42, 39, 0.98) 94%, var(--dk) 100%);
+}
+
+/* 지도 바로 뒤에 푸터가 오므로 푸터 위의 그라데이션은 끔 */
+.app-shell:has(.map-sec) .site-footer::before {
+  display: none;
+}
+
+.map-wrap {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(250px, 0.75fr) minmax(0, 2fr);
+  gap: 32px;
+  align-items: center;
+  max-width: 1480px;
+  margin: 0 auto;
+}
+
+.map-head {
+  position: relative;
+  z-index: 3;
+}
+
+.map-kick {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  color: var(--teal);
+}
+
+.map-head h2 {
+  margin: 8px 0 0;
+  font-size: clamp(24px, 2.6vw, 36px);
+  font-weight: 700;
+  letter-spacing: -1px;
+  word-break: keep-all;
+  color: #fff;
+}
+
+.map-head p {
+  margin: 8px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.map-more {
+  display: inline-block;
+  margin-top: 22px;
+  padding: 12px 28px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 999px;
+  background: transparent;
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 700;
+  transition: background 0.3s, color 0.3s;
+}
+
+.map-more:hover {
+  background: #fff;
+  color: var(--dk) !important;
+}
+
+/* 화면에 들어오면 나타남 */
+.map-sec .fx {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.map-sec.in .fx {
+  opacity: 1;
+  transform: none;
+}
+
+.map-stage {
+  --k: 0.74;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 1;
+}
+
+.map-land,
+.map-marks {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+
+.map-land svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 1.3s ease, transform 1.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.map-sec.in .map-land svg {
+  opacity: 1;
+  transform: none;
+}
+
+.map-mk {
+  position: absolute;
+  opacity: 0;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.9s ease var(--d);
+}
+
+.map-sec.in .map-mk {
+  opacity: 1;
+}
+
+.map-pl {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: calc(var(--s) * var(--k));
+  height: calc(var(--s) * var(--k));
+  border: 1.5px solid rgba(var(--c), 0.8);
+  border-radius: 50%;
+  background: rgba(var(--c), 0.16);
+  color: rgb(var(--c));
+  font-size: calc(var(--s) * var(--k) * 0.72);
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 0 20px rgba(var(--c), 0.38);
+  transform: scale(0.35);
+  transition: transform 0.95s cubic-bezier(0.3, 1.5, 0.4, 1) var(--d);
+}
+
+.map-sec.in .map-pl {
+  transform: scale(1);
+}
+
+.map-pl::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 1px solid rgba(var(--c), 0.55);
+  border-radius: 50%;
+  opacity: 0;
+  animation: map-ping 3.8s ease-out infinite;
+  animation-delay: var(--p);
+}
+
+@keyframes map-ping {
+  0% { opacity: 0.75; transform: scale(0.8); }
+  70%, 100% { opacity: 0; transform: scale(1.9); }
+}
+
+.map-lab {
+  position: absolute;
+  padding: 3px 9px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font-size: 10.5px;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.9s ease calc(var(--d) + 0.35s);
+}
+
+.map-sec.in .map-lab {
+  opacity: 1;
+}
+
+.map-lab b {
+  font-weight: 800;
+  color: rgb(var(--c));
+}
+
+.map-lab.r { left: calc(100% + 8px); top: 50%; transform: translateY(-50%); }
+.map-lab.l { right: calc(100% + 8px); top: 50%; transform: translateY(-50%); }
+.map-lab.t { bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); }
+.map-lab.b { top: calc(100% + 8px); left: 50%; transform: translateX(-50%); }
+
+.map-note {
+  position: relative;
+  z-index: 3;
+  margin: 4px 0 0;
+  font-size: 12px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+@media (max-width: 1100px) {
+  .map-wrap {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .map-lab {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-sec .fx,
+  .map-land svg,
+  .map-mk,
+  .map-pl,
+  .map-lab {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .map-pl::after {
+    animation: none;
+  }
+}

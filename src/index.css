@@ -1,14 +1,20 @@
+/* 글꼴 (Quicksand: 영문·숫자, Noto Sans KR: 한글). 오프라인이면 아래 시스템 글꼴로 대체됩니다. */
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap");
+@import "./styles/tokens.css";
+@import "./styles/skin.css";
+
 :root {
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans KR",
-    "Malgun Gothic", sans-serif;
+  font-family: var(--gn-font);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
 
 body {
   margin: 0;
-  background: #f8f9fa;
-  color: #212529;
+  font-family: var(--gn-font); /* Bootstrap 이 body 에 지정하는 system-ui 대신 */
+  line-height: normal; /* Bootstrap 기본 1.5 대신 시안과 같은 기본 줄 높이 */
+  background: var(--dk); /* 스크롤을 끝까지 내렸을 때 푸터 색과 이어지도록 */
+  color: var(--t);
 }
 
 a {
@@ -23,7 +29,7 @@ input {
 .eyebrow {
   display: inline-block;
   margin-bottom: 8px;
-  color: #0d6efd;
+  color: var(--teal2);
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.12em;
