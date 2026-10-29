@@ -42,6 +42,15 @@ function pickProfile({ avatar, githubRepo }) {
   return profile;
 }
 
+// 서버가 계산한 EXP / 레벨 정보만 골라냄
+function pickStats({ EXP, level, nextLevelExp }) {
+  const stats = {};
+  if (EXP !== undefined) stats.EXP = EXP;
+  if (level !== undefined) stats.level = level;
+  if (nextLevelExp !== undefined) stats.nextLevelExp = nextLevelExp;
+  return stats;
+}
+
 // 현재 로그인한 유저 (없으면 null)
 const loginUser = createSlice({
   name: "loginUser",
@@ -58,6 +67,10 @@ const loginUser = createSlice({
     refreshUser(state, action) {
       return state ? { ...state, ...action.payload } : state;
     },
+    // 글/댓글 작성·삭제로 바뀐 EXP 와 레벨 반영 (refreshUser 와 달리 즐겨찾기 등을 다시 불러오지 않음)
+    updateStats(state, action) {
+      if (state) Object.assign(state, pickStats(action.payload));
+    },
     // 마이페이지: 프로필 사진, GitHub 레포 주소 수정
     updateProfile(state, action) {
       if (state) Object.assign(state, pickProfile(action.payload));
@@ -65,5 +78,5 @@ const loginUser = createSlice({
   },
 });
 
-export const { login, logout, refreshUser, updateProfile } = loginUser.actions;
+export const { login, logout, refreshUser, updateProfile, updateStats } = loginUser.actions;
 export const loginUserReducer = loginUser.reducer;

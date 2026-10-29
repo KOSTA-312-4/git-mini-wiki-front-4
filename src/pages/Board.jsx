@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table, Form, Alert, Badge } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectMyBaskets, selectMyFavorites, setBoard } from '../store/store';
-import { alertError, errorMessage as apiErrorMessage } from '../api/auth';
+import { selectMyBaskets, selectMyFavorites, setBoard, updateStats } from '../store/store';
+import LevelBadge from '../components/LevelBadge.jsx';
+import { alertError, errorMessage as apiErrorMessage, fetchMe } from '../api/auth';
 import {
     addCommentRequest,
     createPostRequest,
@@ -106,6 +107,12 @@ const Board = () => {
         }
     };
 
+    // 글/댓글 작성·삭제로 내 EXP 와 레벨이 바뀌었을 수 있으므로 서버 값으로 갱신 (실패해도 화면은 그대로)
+    const refreshMyStats = () => {
+        if (!loginUser) return;
+        fetchMe().then(user => dispatch(updateStats(user))).catch(() => {});
+    };
+
     // ▶ 댓글 등록
     const commentAdd = async () => {
         if (commentText.trim() === '') return;
@@ -123,6 +130,7 @@ const Board = () => {
             updateComments(cs => [...cs, comment]);
             setCommentText('');
             setGuestPassword('');
+            refreshMyStats();
         } catch (error) {
             handleBoardError(error);
         }
@@ -163,6 +171,7 @@ const Board = () => {
         try {
             await deleteCommentRequest(id, password);
             updateComments(cs => cs.filter(c => c.id !== id));
+            refreshMyStats();
         } catch (error) {
             handleBoardError(error);
         }
@@ -262,6 +271,7 @@ const Board = () => {
 
         // 3) 기존 리스트에 새 글 추가 (불변성 유지)
         setBoardList(list => [...list, newBoard]);
+        refreshMyStats(); // 냥바구니를 첨부했다면 EXP 가 올랐음
 
         // 4) 입력창 초기화
         setTitle('');
@@ -288,6 +298,7 @@ const Board = () => {
 
         // 전달받은 번호와 다른 게시글만 남기고 필터링 → 해당 글 삭제 효과
         setBoardList(list => list.filter(b => b.no !== no));
+        refreshMyStats(); // 글과 그 글에 달린 내 댓글의 EXP 가 회수됨
 
         // 삭제 후 목록 화면으로 이동
         boardListView();
@@ -379,7 +390,7 @@ const Board = () => {
                                         {board.title}
                                     </td>
 
-                                    <td>{board.userId}</td>
+                                    <td>{board.userId}<LevelBadge level={board.level} /></td>
                                     <td style={{ textAlign: 'left' }}>
                                         {(board.baskets || []).map(bk => (
                                             <Badge key={bk.id} bg="secondary" style={{ marginRight: "4px" }}>{bk.name}</Badge>
@@ -447,7 +458,7 @@ const Board = () => {
             {readOk && (
                 <div>
                     <h5 style={{ textAlign: "left" }}>{boardInfo.title}</h5>
-                    <div style={{ textAlign: "left" }}>작성자: {boardInfo.userId}</div>
+                    <div style={{ textAlign: "left" }}>작성자: {boardInfo.userId}<LevelBadge level={boardInfo.level} /></div>
                     {(boardInfo.baskets || []).map(bk => (
                         <div key={bk.id} style={{ textAlign: "left", marginTop: "10px" }}>
                             <strong>🧺 {bk.name}</strong>
@@ -473,6 +484,7 @@ const Board = () => {
                     {comments.map(c => (
                         <div key={c.id} style={{ textAlign: "left", padding: "8px 0", borderBottom: "1px solid #eee" }}>
                             <strong>{c.userId}</strong>
+                            <LevelBadge level={c.level} size={18} />
                             {c.guest && <Badge bg="light" text="dark" style={{ marginLeft: "6px" }}>비회원</Badge>}
                             {editCommentId === c.id ? (
                                 <div style={{ marginTop: "6px" }}>

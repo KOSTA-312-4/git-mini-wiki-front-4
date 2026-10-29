@@ -14,7 +14,7 @@ import "./basketsSync";
 import "./avatarSync";
 
 // 컴포넌트는 액션과 셀렉터를 모두 이 파일에서 가져옵니다.
-export { login, logout, updateProfile } from "./users";
+export { login, logout, updateProfile, updateStats } from "./users";
 export { toggleFavorite, addRepoTag } from "./favoritesSlice";
 export {
   addBasket,
