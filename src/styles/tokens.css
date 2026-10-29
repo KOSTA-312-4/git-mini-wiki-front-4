@@ -67,3 +67,8 @@
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+/* 태그별 색 변수: data-tag 속성이 있는 요소(카드, 태그 칩 등) 안에서 --tc(선) --tb(배경) --ti(글자)로 써요 */
+[data-tag="백엔드"] { --tc: var(--tag-be); --tb: var(--tag-be-bg); --ti: var(--tag-be-ink); }
+[data-tag="프론트엔드"] { --tc: var(--tag-fe); --tb: var(--tag-fe-bg); --ti: var(--tag-fe-ink); }
+[data-tag="DB"] { --tc: var(--tag-db); --tb: var(--tag-db-bg); --ti: var(--tag-db-ink); }

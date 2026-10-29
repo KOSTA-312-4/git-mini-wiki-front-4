@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "./MyLikes.css";
 import "../pages/GithubRepositories.css"; //기존 레포 출력 스타일 반영
 import MyLikesCard from "./MyLikesCard";
+import GlassSelect from "./GlassSelect.jsx";
+import { languageOptions } from "../utils/langColors";
 import { useSelector } from "react-redux";
 import { selectMyFavorites } from "../store/store";
 
@@ -54,7 +56,9 @@ function MyLikes() {
 
   return (
     <div>
-      <h5>나의 좋아요</h5>
+      <h5>
+        나의 좋아요 <small>총 {favorites.length}개</small>
+      </h5>
 
       {/*툴바영역(검색 칸, 언어별 필터, 정렬*/}
       <div className="myLike-toolbar">
@@ -70,32 +74,27 @@ function MyLikes() {
           <div className="language-filter">
             {/*언어별 필터*/}
             <label className="myLike-label">언어:</label>
-            <select
-              id="likeLanguage"
-              className="myLike-select"
+            <GlassSelect
+              options={languageOptions("전체", ["Java", "JavaScript", "Python", "TypeScript"])}
               value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-            >
-              <option value="">전체</option>
-              <option value="Java">Java</option>
-              <option value="JavaScript">JavaScript</option>
-              <option value="Python">Python</option>
-              <option value="TypeScript">TypeScript</option>
-            </select>
+              onChange={setLanguage}
+              ariaLabel="언어"
+            />
           </div>
           {/*정렬*/}
           <div className="like-sort">
             <label className="myLike-label">정렬:</label>
-            <select
-              id="likeSort"
-              className="myLike-select"
+            <GlassSelect
+              options={[
+                { value: "", label: "전체" },
+                { value: "recent", label: "최근 저장순" },
+                { value: "name", label: "이름순" },
+              ]}
               value={sort}
-              onChange={(e) => setSort(e.target.value)}
-            >
-              <option value="">전체</option>
-              <option value="recent">최근 저장순</option>
-              <option value="name">이름순</option>
-            </select>
+              onChange={setSort}
+              ariaLabel="정렬"
+              align="right"
+            />
           </div>
         </div>
       </div>

@@ -31,29 +31,60 @@
   padding: 20px;
   border: 1px solid var(--edge);
   border-radius: 28px;
-  background: linear-gradient(150deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.34) 58%, rgba(255, 255, 255, 0.5));
+  background: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.72),
+    rgba(255, 255, 255, 0.34) 58%,
+    rgba(255, 255, 255, 0.5)
+  );
   backdrop-filter: blur(14px) saturate(1.3);
   -webkit-backdrop-filter: blur(14px) saturate(1.3);
-  box-shadow: 0 26px 44px -28px rgba(30, 52, 46, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 26px 44px -28px rgba(30, 52, 46, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.3);
   animation: rise 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   animation-delay: calc(var(--i, 0) * 60ms + 120ms);
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
 }
 
 /* 카드가 차례대로 떠오르는 순서 (한 페이지 9개) */
-.repo-card:nth-child(1) { --i: 0; }
-.repo-card:nth-child(2) { --i: 1; }
-.repo-card:nth-child(3) { --i: 2; }
-.repo-card:nth-child(4) { --i: 3; }
-.repo-card:nth-child(5) { --i: 4; }
-.repo-card:nth-child(6) { --i: 5; }
-.repo-card:nth-child(7) { --i: 6; }
-.repo-card:nth-child(8) { --i: 7; }
-.repo-card:nth-child(9) { --i: 8; }
+.repo-card:nth-child(1) {
+  --i: 0;
+}
+.repo-card:nth-child(2) {
+  --i: 1;
+}
+.repo-card:nth-child(3) {
+  --i: 2;
+}
+.repo-card:nth-child(4) {
+  --i: 3;
+}
+.repo-card:nth-child(5) {
+  --i: 4;
+}
+.repo-card:nth-child(6) {
+  --i: 5;
+}
+.repo-card:nth-child(7) {
+  --i: 6;
+}
+.repo-card:nth-child(8) {
+  --i: 7;
+}
+.repo-card:nth-child(9) {
+  --i: 8;
+}
 
 .repo-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 32px 50px -26px rgba(30, 52, 46, 0.55), 0 0 0 1px var(--gold), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 32px 50px -26px rgba(30, 52, 46, 0.55),
+    0 0 0 1px var(--gold),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 /* 카드 상단 */
@@ -93,8 +124,12 @@
   font-size: 24px;
   line-height: 1;
   cursor: pointer;
-  box-shadow: inset 0 1px 0 #fff, 0 6px 12px -8px rgba(30, 52, 46, 0.5);
-  transition: background 0.2s, transform 0.2s;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 6px 12px -8px rgba(30, 52, 46, 0.5);
+  transition:
+    background 0.2s,
+    transform 0.2s;
 }
 
 .favorite-button:hover {
@@ -104,11 +139,54 @@
 
 .favorite-button.is-favorite {
   color: #d8574b;
-  background: linear-gradient(145deg, rgba(255, 214, 208, 0.95), rgba(244, 165, 155, 0.7));
+  background: linear-gradient(
+    145deg,
+    rgba(255, 214, 208, 0.95),
+    rgba(244, 165, 155, 0.7)
+  );
+}
+
+/* 검색 결과 요약 (검색창 바로 아래) */
+.repo-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: -12px 0 26px;
+  padding: 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--t);
+}
+
+.repo-summary b {
+  font-size: 17px;
+  color: var(--tink);
+}
+
+.repo-summary .cnt {
+  color: var(--gold-dk);
+}
+
+/* 소유자 (프로필 이미지 + 이름) */
+.repo-owner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.repo-owner small {
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tsoft);
+  overflow-wrap: anywhere;
 }
 
 /* 소유자 프로필 이미지 */
 .repo-avatar {
+  flex: none;
   display: block;
   width: 60px;
   height: 60px;
@@ -117,7 +195,13 @@
   border-radius: 50%;
   object-fit: cover;
   background: #fff;
-  box-shadow: 0 8px 16px -8px rgba(30, 52, 46, 0.55), 0 0 0 1px rgba(63, 184, 163, 0.3);
+  box-shadow:
+    0 8px 16px -8px rgba(30, 52, 46, 0.55),
+    0 0 0 1px rgba(63, 184, 163, 0.3);
+}
+
+.repo-owner .repo-avatar {
+  margin: 0;
 }
 
 /* 저장소 설명 */
@@ -136,6 +220,10 @@
   -webkit-line-clamp: 4;
   line-clamp: 4;
   overflow: hidden;
+}
+
+.repo-description.none {
+  color: var(--tfaint);
 }
 
 /* 통계와 링크를 카드 하단에 배치 */
@@ -173,6 +261,27 @@
   color: var(--tsoft);
 }
 
+.repo-stat span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.repo-stat .star {
+  color: var(--gold-dk);
+}
+
+/* 언어 색 점 */
+.lang-dot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--c);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7);
+}
+
 /* GitHub 링크 */
 .repo-link {
   display: flex;
@@ -187,7 +296,9 @@
   background: rgba(255, 255, 255, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.85);
   border-radius: 16px;
-  transition: background 0.25s, box-shadow 0.25s;
+  transition:
+    background 0.25s,
+    box-shadow 0.25s;
 }
 
 .repo-link:hover {
@@ -215,8 +326,12 @@
   font-size: 15px;
   font-weight: 800;
   cursor: pointer;
-  box-shadow: inset 0 1px 0 #fff, 0 6px 14px -10px rgba(30, 52, 46, 0.5);
-  transition: background 0.25s, box-shadow 0.25s;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 6px 14px -10px rgba(30, 52, 46, 0.5);
+  transition:
+    background 0.25s,
+    box-shadow 0.25s;
 }
 
 .pagination-button:hover:not(:disabled) {
@@ -238,6 +353,10 @@
   color: var(--tsoft);
   font-size: 14px;
   font-weight: 800;
+}
+
+.repo-page-number b {
+  color: var(--tink);
 }
 
 /* 로딩, 오류, 검색 결과 없음 */

@@ -1,14 +1,12 @@
 /*
- * Sidebar는 문서 흐름에서 분리해 뷰포트의 오른쪽 지정 위치에 고정합니다. (글라스 패널)
- * 페이지를 스크롤해도 top/right 위치는 변하지 않습니다.
- * 콘텐츠 폭(최대 1440px) 오른쪽 끝에 맞춰져요.
+ * Sidebar는 본문 오른쪽 열(page-layout 그리드)에 놓이고, 스크롤하면 헤더 아래에 붙어서 따라와요. (글라스 패널)
+ * sticky 라서 본문이 끝나면 함께 올라가, 메인 페이지의 지도나 푸터를 덮지 않아요.
  */
 .side-area {
-  position: fixed;
+  position: sticky;
   z-index: 1020;
   top: calc(var(--site-header-height, 76px) + 28px);
-  right: calc((100vw - min(100vw, 1440px)) / 2 + 20px);
-  width: 300px;
+  align-self: start;
   min-width: 0;
   max-height: calc(100vh - var(--site-header-height, 76px) - 56px);
   overflow-y: auto;

@@ -110,6 +110,13 @@
   border-color: transparent !important;
 }
 
+/* 머리글 줄 양끝: 위의 :first-child / :last-child 테두리보다 우선 */
+.main-content .table > thead > tr > :first-child,
+.main-content .table > thead > tr > :last-child {
+  border-left: 0 !important;
+  border-right: 0 !important;
+}
+
 /* 제목 칸 (클릭하면 읽기 화면) */
 .main-content .table td[style*="cursor"] {
   font-size: 15px;

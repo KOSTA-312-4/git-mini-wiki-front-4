@@ -11,6 +11,8 @@
 
 body {
   margin: 0;
+  font-family: var(--gn-font); /* Bootstrap 이 body 에 지정하는 system-ui 대신 */
+  line-height: normal; /* Bootstrap 기본 1.5 대신 시안과 같은 기본 줄 높이 */
   background: var(--dk); /* 스크롤을 끝까지 내렸을 때 푸터 색과 이어지도록 */
   color: var(--t);
 }

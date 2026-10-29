@@ -1,4 +1,5 @@
 import React, { use, useState } from "react";
+import { createPortal } from "react-dom";
 import "./NewCatBasketModal.css";
 
 function NewCatBasketModal({ favorites, onClose, onCreate }) {
@@ -24,7 +25,8 @@ function NewCatBasketModal({ favorites, onClose, onCreate }) {
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
 
-  return (
+  // 패널의 blur(backdrop-filter) 안에 모달이 갇히지 않도록 body 에 바로 그림
+  return createPortal(
     <div className="catBasket-modal-overlay">
       <div className="catBasket-total-modal">
         {/*모달 헤더 */}
@@ -36,7 +38,7 @@ function NewCatBasketModal({ favorites, onClose, onCreate }) {
             className="catBasket-modal-close"
             onClick={onClose}
           >
-            x
+            ×
           </button>
         </div>
 
@@ -81,9 +83,11 @@ function NewCatBasketModal({ favorites, onClose, onCreate }) {
                     />{" "}
                     {repository.name}{" "}
                   </label>
-                  <label>
-                    <span className="newCatBasket-tag">#{repository.tag}</span>
-                  </label>
+                  {repository.tag && (
+                    <label>
+                      <span className="newCatBasket-tag" data-tag={repository.tag}>#{repository.tag}</span>
+                    </label>
+                  )}
                 </li>
               ))}
             </ul>
@@ -100,7 +104,8 @@ function NewCatBasketModal({ favorites, onClose, onCreate }) {
           </div>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

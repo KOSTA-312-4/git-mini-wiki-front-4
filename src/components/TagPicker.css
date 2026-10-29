@@ -1,0 +1,146 @@
+/* 좋아요 카드의 태그 선택기 (TagPicker). 태그별 색은 styles/tokens.css 의 [data-tag] 변수(--tc, --tb, --ti)를 써요. */
+.tagpick {
+  position: relative;
+  margin: -2px 0 12px;
+}
+
+.tagpick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px 0 12px;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: var(--gn-font);
+  font-size: 13.5px;
+  font-weight: 800;
+  line-height: normal;
+  color: var(--ti);
+  background: var(--tb);
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--tc) 60%, transparent), 0 8px 14px -10px var(--tc);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.tagpick-btn:hover {
+  transform: translateY(-1px);
+}
+
+.tagpick-btn i {
+  font-style: normal;
+  opacity: 0.65;
+}
+
+.tagpick-btn svg {
+  width: 13px;
+  height: 13px;
+  opacity: 0.75;
+  transition: transform 0.25s;
+}
+
+.tagpick.is-open .tagpick-btn svg {
+  transform: rotate(180deg);
+}
+
+/* 태그가 없을 때: 점선 "+ 태그 추가" */
+.tagpick-btn.is-empty {
+  padding: 0 14px 0 12px;
+  color: var(--tfaint);
+  background: transparent;
+  border: 1.5px dashed rgba(70, 86, 79, 0.32);
+  box-shadow: none;
+}
+
+.tagpick-btn.is-empty:hover {
+  color: var(--gold-dk);
+  border-color: var(--gold);
+  background: rgba(255, 248, 224, 0.5);
+  transform: none;
+}
+
+/* 펼친 태그 목록 */
+.tagpick-pop {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 8px);
+  z-index: 30;
+  min-width: 196px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  border: 1px solid #fff;
+  border-radius: 20px;
+  background: rgba(250, 253, 252, 0.97);
+  box-shadow: 0 24px 40px -18px rgba(30, 52, 46, 0.55), inset 0 1px 0 #fff;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(0.98);
+  transform-origin: top left;
+  transition: opacity 0.2s, transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0.2s;
+}
+
+.tagpick.is-open .tagpick-pop {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+
+.tagpick-pop li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 13px;
+  cursor: pointer;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--tsoft);
+  transition: background 0.2s;
+}
+
+.tagpick-pop li:hover {
+  color: var(--t);
+  background: rgba(70, 86, 79, 0.07);
+}
+
+.tagpick-pop li[aria-selected="true"] {
+  background: var(--tb, rgba(70, 86, 79, 0.08));
+}
+
+.tagpick-pop li.is-none {
+  color: var(--tfaint);
+}
+
+.tagpick-ck {
+  width: 15px;
+  height: 15px;
+  margin-left: auto;
+  opacity: 0;
+  color: var(--ti, var(--t));
+}
+
+.tagpick-pop li[aria-selected="true"] .tagpick-ck {
+  opacity: 1;
+}
+
+/* 작은 태그 칩 (목록 안) */
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px 3px 8px;
+  border-radius: 999px;
+  background: var(--tb);
+  color: var(--ti);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--tc) 55%, transparent);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+
+.tag-chip::before {
+  content: "#";
+  margin-right: 1px;
+  opacity: 0.65;
+}

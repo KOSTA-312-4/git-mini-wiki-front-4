@@ -2,6 +2,7 @@ import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import Header from "./components/Header.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 import Footer from "./components/Footer.jsx";
+import MapSection from "./components/MapSection.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import GithubRepositories from "./pages/GithubRepositories.jsx";
 import Board from "./pages/Board.jsx";
@@ -37,6 +38,9 @@ export default function App() {
 
         {!isAuthPage && <Sidebar />}
       </div>
+
+      {/* 메인 페이지에만: 세계 지도 (본문 · 사이드바 아래 화면 전체 폭) */}
+      {pathname === "/" && <MapSection />}
 
       <Footer />
     </div>

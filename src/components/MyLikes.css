@@ -59,30 +59,19 @@
   color: var(--tsoft);
 }
 
-/* 언어 / 정렬 select (닫혀 있을 때의 모양. 펼친 목록은 브라우저 기본 모양이에요) */
-.myLike-select {
-  width: 136px;
-  height: 40px;
-  padding: 0 34px 0 14px;
-  border: 1px solid rgba(255, 255, 255, 0.95);
-  border-radius: 15px;
-  outline: 0;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--t);
-  -webkit-appearance: none;
-  appearance: none;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2346564F' stroke-opacity='.74' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 12px center / 14px,
-    linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(222, 240, 236, 0.6));
-  box-shadow: inset 0 1px 0 #fff, 0 0 0 1px rgba(63, 184, 163, 0.28), 0 4px 10px -6px rgba(30, 52, 46, 0.4);
-  transition: box-shadow 0.25s;
+/* 언어 / 정렬 드롭다운 (GlassSelect): 툴바 크기에 맞춤 */
+.myLike-toolbar {
+  position: relative;
+  z-index: 20; /* 펼친 목록이 아래 카드 위로 보이도록 */
 }
 
-.myLike-select:hover,
-.myLike-select:focus {
-  box-shadow: inset 0 1px 0 #fff, 0 0 0 1px var(--gold), 0 4px 10px -6px rgba(30, 52, 46, 0.4);
+.myLike-toolbar .gsel {
+  width: 136px;
+}
+
+.myLike-toolbar .gsel-btn {
+  height: 40px;
+  font-size: 13px;
 }
 
 /* ── 좋아요 카드 목록 ── */
@@ -111,70 +100,9 @@
   color: var(--tfaint);
 }
 
-/* ── 태그 (카드 안의 select) ──
-   카드마다 있는 "태그 선택" select 를 색깔 알약으로 꾸미고, 고른 태그에 따라 색이 바뀌어요.
-   (:has() 로 선택된 option 의 값을 읽기 때문에 코드 변경이 필요 없어요) */
-.repo-card-header {
-  flex-wrap: wrap;
-}
-
-.repo-card-header .repo-title {
-  flex: 1 1 calc(100% - 54px);
-}
-
-.repo-card-header .favorite-button {
-  order: 2;
-}
-
-.repo-card-header .myLike-select {
-  order: 3;
-  flex: 0 0 auto;
-  width: auto;
-  height: 32px;
-  margin: 0 0 4px;
-  padding: 0 30px 0 14px;
-  font-size: 13.5px;
-  color: var(--tfaint);
-  border: 1.5px dashed rgba(70, 86, 79, 0.32);
-  border-radius: 999px;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2346564F' stroke-opacity='.6' stroke-width='2.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center / 12px,
-    transparent;
-  box-shadow: none;
-}
-
-.repo-card-header .myLike-select:hover {
-  color: var(--gold-dk);
-  border-color: var(--gold);
-  background-color: rgba(255, 248, 224, 0.5);
-  box-shadow: none;
-}
-
-.repo-card-header .myLike-select:has(option[value="백엔드"]:checked) {
-  color: var(--tag-be-ink);
-  border: 1.5px solid color-mix(in srgb, var(--tag-be) 60%, transparent);
-  background-color: var(--tag-be-bg);
-  box-shadow: 0 8px 14px -10px var(--tag-be);
-}
-
-.repo-card-header .myLike-select:has(option[value="프론트엔드"]:checked) {
-  color: var(--tag-fe-ink);
-  border: 1.5px solid color-mix(in srgb, var(--tag-fe) 60%, transparent);
-  background-color: var(--tag-fe-bg);
-  box-shadow: 0 8px 14px -10px var(--tag-fe);
-}
-
-.repo-card-header .myLike-select:has(option[value="DB"]:checked) {
-  color: var(--tag-db-ink);
-  border: 1.5px solid color-mix(in srgb, var(--tag-db) 60%, transparent);
-  background-color: var(--tag-db-bg);
-  box-shadow: 0 8px 14px -10px var(--tag-db);
-}
-
-/* 카드 위쪽 색 띠: 목록을 훑어봐도 어떤 태그인지 보여요 */
-.repo-card:has(option[value="백엔드"]:checked)::before,
-.repo-card:has(option[value="프론트엔드"]:checked)::before,
-.repo-card:has(option[value="DB"]:checked)::before {
+/* ── 태그 (TagPicker, components/TagPicker.css) ──
+   카드 위쪽 색 띠: 목록을 훑어봐도 어떤 태그인지 보여요 (색은 tokens.css 의 [data-tag] 변수) */
+.repo-card[data-tag]::before {
   content: "";
   position: absolute;
   left: 28px;
@@ -183,18 +111,12 @@
   height: 4px;
   border-radius: 0 0 6px 6px;
   pointer-events: none;
+  background: linear-gradient(90deg, var(--tc), color-mix(in srgb, var(--tc) 35%, #fff));
 }
 
-.repo-card:has(option[value="백엔드"]:checked)::before {
-  background: linear-gradient(90deg, var(--tag-be), color-mix(in srgb, var(--tag-be) 35%, #fff));
-}
-
-.repo-card:has(option[value="프론트엔드"]:checked)::before {
-  background: linear-gradient(90deg, var(--tag-fe), color-mix(in srgb, var(--tag-fe) 35%, #fff));
-}
-
-.repo-card:has(option[value="DB"]:checked)::before {
-  background: linear-gradient(90deg, var(--tag-db), color-mix(in srgb, var(--tag-db) 35%, #fff));
+/* 태그 목록을 펼친 카드는 옆·아래 카드보다 위로 */
+.repo-card:has(.tagpick.is-open) {
+  z-index: 6;
 }
 
 /* ── 페이지네이션 ── */
