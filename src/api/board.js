@@ -16,10 +16,13 @@ export const updatePostRequest = (postNo, { title, description, basketIds }) =>
 
 export const deletePostRequest = (postNo) => api.delete(`/posts/${postNo}`);
 
-export const addCommentRequest = (postNo, content) =>
-  api.post(`/posts/${postNo}/comments`, { content }).then((res) => res.data.comment);
+// 비회원은 guest({ nickname, password })를 함께 보냅니다. (로그인 유저는 토큰으로 작성자가 정해짐)
+export const addCommentRequest = (postNo, content, guest) =>
+  api.post(`/posts/${postNo}/comments`, { content, ...guest }).then((res) => res.data.comment);
 
-export const updateCommentRequest = (commentId, content) =>
-  api.patch(`/comments/${commentId}`, { content }).then((res) => res.data.comment);
+// 비회원 댓글은 작성할 때 정한 비밀번호(password)가 있어야 수정/삭제할 수 있습니다.
+export const updateCommentRequest = (commentId, content, password) =>
+  api.patch(`/comments/${commentId}`, { content, password }).then((res) => res.data.comment);
 
-export const deleteCommentRequest = (commentId) => api.delete(`/comments/${commentId}`);
+export const deleteCommentRequest = (commentId, password) =>
+  api.delete(`/comments/${commentId}`, { data: { password } });

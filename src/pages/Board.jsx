@@ -87,6 +87,8 @@ const Board = () => {
     const [commentText, setCommentText] = useState('');        // 새 댓글 입력값
     const [editCommentId, setEditCommentId] = useState(null);  // 수정 중인 댓글 id
     const [editCommentText, setEditCommentText] = useState(''); // 수정 중인 댓글 내용
+    const [guestName, setGuestName] = useState('');         // 비회원 댓글 닉네임
+    const [guestPassword, setGuestPassword] = useState(''); // 비회원 댓글 비밀번호 (수정/삭제용)
 
     // 읽기 화면의 댓글은 글을 읽을 때 서버에서 함께 받아 boardInfo 에 보관합니다.
     const comments = boardInfo.comments || [];
@@ -106,32 +108,46 @@ const Board = () => {
 
     // ▶ 댓글 등록
     const commentAdd = async () => {
-        if (!loginUser) {
-            alert('로그인 후 댓글을 작성할 수 있습니다.');
+        if (commentText.trim() === '') return;
+        // 비회원은 닉네임과 비밀번호를 함께 보냅니다. (자세한 검사는 서버가 함)
+        if (!loginUser && (guestName.trim() === '' || guestPassword === '')) {
+            alert('닉네임과 비밀번호를 입력해주세요.');
             return;
         }
-        if (commentText.trim() === '') return;
         try {
-            const comment = await addCommentRequest(boardInfo.no, commentText.trim());
+            const comment = await addCommentRequest(
+                boardInfo.no,
+                commentText.trim(),
+                loginUser ? undefined : { nickname: guestName.trim(), password: guestPassword },
+            );
             updateComments(cs => [...cs, comment]);
             setCommentText('');
+            setGuestPassword('');
         } catch (error) {
             handleBoardError(error);
         }
     };
 
-    // ▶ 댓글 수정 시작 (작성자만)
+    // 수정/삭제할 수 있는 댓글인지: 비회원 댓글은 누구나 시도(비밀번호 확인), 회원 댓글은 작성자 본인만
+    const canManage = (c) => c.guest || (!!loginUser && c.userId === loginUser.id);
+
+    // 비회원 댓글이면 비밀번호를 물어봅니다. (취소하면 null)
+    const askPassword = (c) => (c.guest ? prompt('댓글 작성 시 정한 비밀번호를 입력하세요.') : undefined);
+
+    // ▶ 댓글 수정 시작
     const commentEditStart = (c) => {
-        if (!loginUser || c.userId !== loginUser.id) return;
+        if (!canManage(c)) return;
         setEditCommentId(c.id);
         setEditCommentText(c.content);
     };
 
-    // ▶ 댓글 수정 저장 (작성자만 - 서버도 한 번 더 확인)
+    // ▶ 댓글 수정 저장 (작성자만, 비회원은 비밀번호 - 서버도 한 번 더 확인)
     const commentUpdate = async () => {
         if (editCommentText.trim() === '') return;
+        const password = askPassword(comments.find(c => c.id === editCommentId) || {});
+        if (password === null) return;
         try {
-            const saved = await updateCommentRequest(editCommentId, editCommentText.trim());
+            const saved = await updateCommentRequest(editCommentId, editCommentText.trim(), password);
             updateComments(cs => cs.map(c => (c.id === saved.id ? saved : c)));
             setEditCommentId(null);
             setEditCommentText('');
@@ -140,10 +156,12 @@ const Board = () => {
         }
     };
 
-    // ▶ 댓글 삭제 (작성자만 - 서버도 한 번 더 확인)
+    // ▶ 댓글 삭제 (작성자만, 비회원은 비밀번호 - 서버도 한 번 더 확인)
     const commentDelete = async (id) => {
+        const password = askPassword(comments.find(c => c.id === id) || {});
+        if (password === null) return;
         try {
-            await deleteCommentRequest(id);
+            await deleteCommentRequest(id, password);
             updateComments(cs => cs.filter(c => c.id !== id));
         } catch (error) {
             handleBoardError(error);
@@ -335,7 +353,7 @@ const Board = () => {
                         </Alert>
                     )}
                     {loading && <div className="text-muted">게시글을 불러오는 중입니다...</div>}
-                    <Table striped bordered hover center='true'>
+                    <Table striped bordered hover>
                         <thead>
                             <tr>
                                 <th>번호</th>
@@ -455,6 +473,7 @@ const Board = () => {
                     {comments.map(c => (
                         <div key={c.id} style={{ textAlign: "left", padding: "8px 0", borderBottom: "1px solid #eee" }}>
                             <strong>{c.userId}</strong>
+                            {c.guest && <Badge bg="light" text="dark" style={{ marginLeft: "6px" }}>비회원</Badge>}
                             {editCommentId === c.id ? (
                                 <div style={{ marginTop: "6px" }}>
                                     <Form.Control
@@ -471,7 +490,7 @@ const Board = () => {
                             ) : (
                                 <div style={{ display: "flex", justifyContent: "space-between", gap: "10px" }}>
                                     <span style={{ whiteSpace: "pre-wrap" }}>{c.content}</span>
-                                    {loginUser && c.userId === loginUser.id && (
+                                    {canManage(c) && (
                                         <span style={{ whiteSpace: "nowrap" }}>
                                             <Button size="sm" variant="outline-success" onClick={() => commentEditStart(c)}>수정</Button>
                                             <Button size="sm" variant="outline-danger" onClick={() => commentDelete(c.id)} style={{ marginLeft: "6px" }}>삭제</Button>
@@ -482,25 +501,40 @@ const Board = () => {
                         </div>
                     ))}
 
-                    {/* 댓글 작성 (로그인 유저만) */}
-                    {loginUser ? (
-                        <div style={{ marginTop: "12px" }}>
-                            <Form.Control
-                                as="textarea"
-                                rows={2}
-                                value={commentText}
-                                onChange={(e) => setCommentText(e.target.value)}
-                                placeholder={`${loginUser.id}님, 댓글을 입력하세요`}
-                            />
-                            <div style={{ textAlign: "right", marginTop: "6px" }}>
-                                <Button size="sm" variant="primary" onClick={commentAdd}>댓글 등록</Button>
+                    {/* 댓글 작성 (비회원은 닉네임과 비밀번호를 함께 입력) */}
+                    <div style={{ marginTop: "12px" }}>
+                        {!loginUser && (
+                            <div style={{ display: "flex", gap: "8px", marginBottom: "6px" }}>
+                                <Form.Control
+                                    type="text"
+                                    size="sm"
+                                    maxLength={20}
+                                    value={guestName}
+                                    onChange={(e) => setGuestName(e.target.value)}
+                                    placeholder="닉네임 (2~20자)"
+                                />
+                                <Form.Control
+                                    type="password"
+                                    size="sm"
+                                    maxLength={50}
+                                    value={guestPassword}
+                                    onChange={(e) => setGuestPassword(e.target.value)}
+                                    placeholder="비밀번호 (수정/삭제용, 4자 이상)"
+                                    autoComplete="new-password"
+                                />
                             </div>
+                        )}
+                        <Form.Control
+                            as="textarea"
+                            rows={2}
+                            value={commentText}
+                            onChange={(e) => setCommentText(e.target.value)}
+                            placeholder={loginUser ? `${loginUser.id}님, 댓글을 입력하세요` : '댓글을 입력하세요'}
+                        />
+                        <div style={{ textAlign: "right", marginTop: "6px" }}>
+                            <Button size="sm" variant="primary" onClick={commentAdd}>댓글 등록</Button>
                         </div>
-                    ) : (
-                        <div className="text-muted" style={{ textAlign: "left", marginTop: "12px" }}>
-                            로그인 후 댓글을 작성할 수 있습니다.
-                        </div>
-                    )}
+                    </div>
                     <br />
                     <div style={{ textAlign: "right" }}>
                         <Button

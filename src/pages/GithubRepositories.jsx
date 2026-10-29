@@ -15,7 +15,6 @@ const DISPLAY_PER_PAGE = 9;
 
 function GithubRepositories() {
   let selectUser = useSelector((s) => s.loginUser);
-  console.log(selectUser);
 
   const [params] = useSearchParams();
   const initKeyword =
@@ -158,7 +157,7 @@ function GithubRepositories() {
             const isFavorite = favorites.some(
               (favorite) =>
                 favorite.id === repo.id &&
-                favorite.userId === selectUser?.email,
+                favorite.userId === selectUser?.id,
             );
 
             return (
@@ -173,7 +172,7 @@ function GithubRepositories() {
                     }`}
                     onClick={() =>
                       dispatch(
-                        toggleFavorite({ repo, userEmail: selectUser?.email }),
+                        toggleFavorite({ repo, loginId: selectUser?.id }),
                       )
                     }
                     aria-label={isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"}

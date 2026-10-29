@@ -8,11 +8,11 @@ import { fetchAvatar } from "../api/auth";
 sync.startListening({
   matcher: isAnyOf(login, refreshUser),
   effect: async (action, api) => {
-    const email = api.getState().loginUser?.email;
+    const loginId = api.getState().loginUser?.id;
     try {
       const avatar = await fetchAvatar();
       // 불러오는 사이에 로그아웃/다른 유저 로그인이 됐다면 버림
-      if (api.getState().loginUser?.email === email) {
+      if (api.getState().loginUser?.id === loginId) {
         api.dispatch(updateProfile({ avatar }));
       }
     } catch {

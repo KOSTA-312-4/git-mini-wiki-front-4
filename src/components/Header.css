@@ -57,6 +57,19 @@
   letter-spacing: -0.3px;
 }
 
+/* 로고 글자 전용 폰트 (이 요소에만 사용) */
+@font-face {
+  font-family: "NEXON Kart Gothic";
+  src: url("../font/TTF/Kor/NEXON Kart Gothic Kor Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+.gn-brand-text {
+  font-family: "NEXON Kart Gothic", var(--gn-font);
+}
+
 .gn-logo {
   display: grid;
   place-items: center;

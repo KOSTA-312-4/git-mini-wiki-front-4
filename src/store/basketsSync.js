@@ -15,7 +15,7 @@ import {
 // 실패하면 오류를 던지므로 호출한 화면에서 안내합니다.
 export const createBasket = (data) => (dispatch, getState) =>
   enqueue(async () => {
-    const userId = getState().loginUser?.email;
+    const userId = getState().loginUser?.id;
     const basket = await createBasketRequest(data);
     dispatch(addBasket({ ...basket, userId }));
     return basket;

@@ -21,12 +21,12 @@ function HomePage() {
       inputRef.current.focus();
       return;
     }
-    navigate(`/search?q=${inputRef.current.value}&lang=${detailRef.current}`);
+    navigate(`/search?${new URLSearchParams({ q: inputRef.current.value, lang: detailRef.current })}`);
   }
 
   // 추천 검색어로 바로 검색 (선택한 언어는 그대로 적용)
   function searchQuickWord(word) {
-    navigate(`/search?q=${word}&lang=${detailRef.current}`);
+    navigate(`/search?${new URLSearchParams({ q: word, lang: detailRef.current })}`);
   }
 
   // "/" 키를 누르면 검색창으로 이동 (다른 입력칸에서 타이핑 중일 때는 제외)
