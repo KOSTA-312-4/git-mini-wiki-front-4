@@ -90,7 +90,7 @@ export default function Header() {
                   )}
                 </span>
                 <span className="gn-nick">{loginUser.id}</span>
-                <LevelBadge level={loginUser.level} size={22} />
+                <LevelBadge level={loginUser.level} size={44} />
               </Link>
 
               <button type="button" className="gn-logout" onClick={handleLogout}>
