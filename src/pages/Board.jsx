@@ -373,7 +373,7 @@ const Board = () => {
                                 <th>냥바구니</th>
                                 {/* <th>문의글</th> */}
                                 <th>조회수</th>
-                                <th>문의하기</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -390,7 +390,7 @@ const Board = () => {
                                         {board.title}
                                     </td>
 
-                                    <td>{board.userId}<LevelBadge level={board.level} /></td>
+                                    <td>{board.userId}<LevelBadge level={board.level} size={40} /></td>
                                     <td style={{ textAlign: 'left' }}>
                                         {(board.baskets || []).map(bk => (
                                             <Badge key={bk.id} bg="secondary" style={{ marginRight: "4px" }}>{bk.name}</Badge>
@@ -449,7 +449,7 @@ const Board = () => {
                         onClick={boardWrite}
                         style={{ float: 'right' }}
                     >
-                        문의글 작성하기
+                        게시글 작성하기
                     </Button>
                 </div>
             )}
@@ -458,7 +458,7 @@ const Board = () => {
             {readOk && (
                 <div>
                     <h5 style={{ textAlign: "left" }}>{boardInfo.title}</h5>
-                    <div style={{ textAlign: "left" }}>작성자: {boardInfo.userId}<LevelBadge level={boardInfo.level} /></div>
+                    <div style={{ textAlign: "left" }}>작성자: {boardInfo.userId}<LevelBadge level={boardInfo.level} size={40} /></div>
                     {(boardInfo.baskets || []).map(bk => (
                         <div key={bk.id} style={{ textAlign: "left", marginTop: "10px" }}>
                             <strong>🧺 {bk.name}</strong>
@@ -484,7 +484,7 @@ const Board = () => {
                     {comments.map(c => (
                         <div key={c.id} style={{ textAlign: "left", padding: "8px 0", borderBottom: "1px solid #eee" }}>
                             <strong>{c.userId}</strong>
-                            <LevelBadge level={c.level} size={18} />
+                            <LevelBadge level={c.level} size={36} />
                             {c.guest && <Badge bg="light" text="dark" style={{ marginLeft: "6px" }}>비회원</Badge>}
                             {editCommentId === c.id ? (
                                 <div style={{ marginTop: "6px" }}>
@@ -563,7 +563,7 @@ const Board = () => {
             {/* ---------------------- 새 글 작성 폼 화면 ---------------------- */}
             {writeOk && (
                 <div style={{ marginTop: "30px" }}>
-                    <h5 style={{ textAlign: "left" }}>문의글 남기기</h5>
+                    <h5 style={{ textAlign: "left" }}>게시글 남기기</h5>
 
                     {/* 유효성 검사 실패 시 경고창 */}
                     {errorMessage && (
@@ -627,7 +627,7 @@ const Board = () => {
             {/* ---------------------- 게시글 수정 폼 화면 ---------------------- */}
             {editOk && (
                 <div style={{ marginTop: "30px" }}>
-                    <h5 style={{ textAlign: "left" }}>게시물 수정</h5>
+                    <h5 style={{ textAlign: "left" }}>게시글 수정</h5>
 
                     {/* 제목 수정 입력 */}
                     <Form.Group controlId="formEditName">
